@@ -22,7 +22,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import com.ampelement.cdm.CDMActivity;
-import com.ampelement.cdm.objects.Media;
 import com.ampelement.cdm.utils.DatabaseHandler;
 import com.ampelement.cdm.R;
 
@@ -108,64 +107,20 @@ public class Update_Service extends Service {
 									if (titleElement.getChildNodes().getLength() > 0) {
 										title = titleElement.getTextContent();
 
-										if (title.contains("&&")) {
-
-											String[] titleSet = title.split("&&");
-											if (titleSet.length > 1) {
-												String titleNameWithExtension = titleSet[0];
-												String[] titleNameSet = titleNameWithExtension.split("\\.");
-												if (titleNameSet.length > 1) {
-													title = titleNameSet[0];
-													String path = titleSet[0].replace(" ", "");
-													description = titleSet[1];
-
-													NodeList descriptionNodeList = element.getElementsByTagName("description");
-													if (descriptionNodeList.getLength() > 0) {
-														Element descriptionNode = (Element) descriptionNodeList.item(0);
-														String descString = descriptionNode.getTextContent();
-														String[] descSplitString = descString.split("src=\"");
-														if (descSplitString.length > 1) {
-															String[] descSplit2String = descSplitString[1].split("\"");
-															imageSrc = descSplit2String[0];
-
-															// No Thumbnail
-															// because
-															// create a runtime
-															// is
-															// easier/uses less
-															// space
-
-															/*NodeList thumbnailNodeList = element.getElementsByTagName("media:thumbnail");
-															if (thumbnailNodeList.getLength() > 0) {
-																Element thumbnailNode = (Element) descriptionNodeList.item(0);
-																thumbnailSrc = thumbnailNode.getAttribute("url");*/
-
-															DatabaseHandler db = new DatabaseHandler(getApplicationContext());
-															List<Media> matchingList = db.getMediasByMatch(DatabaseHandler.MEDIA_KEY_NAME, title);
-															if (!(matchingList.size() > 0)) {
-																DownloadFromUrl(imageSrc, path, getApplicationContext());
-																db.addMedia(new Media(title, description, 0.00, "", Calendar.getInstance().getTimeInMillis(), 0.00, "", imageSrc, path, Media.THUMBNAIL_NONE, Media.TYPE_IMAGE, Media.FROM_TEST_BLOG, Media.OTHER_NONE));
-															}
-															// }
-														}
-													}
-												}
-											}
+										if (title.contains("%cancel")) {
+											cancelNotification(title.split("%cancel")[0]);
 										} else {
-											if (title.contains("%cancel")) {
-												cancelNotification(title.split("%cancel")[0]);
-											} else {
-												NodeList descriptionNodeList = element.getElementsByTagName("description");
-												if (descriptionNodeList.getLength() > 0) {
-													Element descriptionNode = (Element) descriptionNodeList.item(0);
-													String descString = descriptionNode.getTextContent();
-													String more = Jsoup.clean(descString, Whitelist.simpleText());
-													showNotification(title, more);
-												}
+											NodeList descriptionNodeList = element.getElementsByTagName("description");
+											if (descriptionNodeList.getLength() > 0) {
+												Element descriptionNode = (Element) descriptionNodeList.item(0);
+												String descString = descriptionNode.getTextContent();
+												String more = Jsoup.clean(descString, Whitelist.simpleText());
+												showNotification(title, more);
 											}
 										}
 									}
 								}
+
 							} catch (Exception e) {
 								// TODO: handle exception
 							}

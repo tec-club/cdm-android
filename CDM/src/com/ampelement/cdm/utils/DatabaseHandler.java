@@ -3,8 +3,6 @@ package com.ampelement.cdm.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ampelement.cdm.objects.Media;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,9 +11,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.preference.PreferenceManager;
 
-public class DatabaseHandler extends SQLiteOpenHelper {
+//	public class DatabaseHandler extends SQLiteOpenHelper {
+public class DatabaseHandler {
 	// Table name variables
-	private static final String TABLE_MEDIA = "media";
+	/*private static final String TABLE_MEDIA = "media";
 	// Column variables for Assignment table
 	public static final String MEDIA_KEY_ID = "id";
 	public static final String MEDIA_KEY_NAME = "name";
@@ -212,5 +211,5 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		SQLiteDatabase db = getWritableDatabase();
 		db.delete(TABLE_MEDIA, MEDIA_KEY_ID + " = ?", new String[] { String.valueOf(media.id) });
 		db.close();
-	}
+	}*/
 }

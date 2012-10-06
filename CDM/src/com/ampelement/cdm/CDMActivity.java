@@ -4,8 +4,6 @@ package com.ampelement.cdm;
 //import com.actionbarsherlock.view.Window;
 import com.ampelement.cdm.fragments.EventListFragment;
 import com.ampelement.cdm.fragments.EventListFragment.EventInterface;
-import com.ampelement.cdm.fragments.MediaFragment;
-import com.ampelement.cdm.fragments.MediaFragment.MediaInterface;
 import com.ampelement.cdm.services.Update_Service;
 
 import android.content.Intent;
@@ -18,7 +16,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.LinearLayout;
 
-public class CDMActivity extends FragmentActivity implements EventInterface, MediaInterface {
+public class CDMActivity extends FragmentActivity implements EventInterface {
 
 	private static final String TAG = "CDMActivity";
 
@@ -55,13 +53,6 @@ public class CDMActivity extends FragmentActivity implements EventInterface, Med
 		if (getSupportFragmentManager().findFragmentByTag(EventListFragment.TAG) != null) {
 		} else {
 			transitionFragments(new EventListFragment(), EventListFragment.TAG);
-		}
-	}
-
-	public void OnClickMedia(View view) {
-		if (getSupportFragmentManager().findFragmentByTag(MediaFragment.TAG) != null) {
-		} else {
-			transitionFragments(new MediaFragment(), MediaFragment.TAG);
 		}
 	}
 
