@@ -184,7 +184,6 @@ public class SchoolLoopFragment extends Fragment {
 			if (success != null) {
 				if (success) {
 					((LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_webview_screen)).setVisibility(View.VISIBLE);
-					new Thread(createLoadingScreenRunnable()).start();
 				} else {
 					loginScreenWithErrorMessage("Bad Username or Password");
 				}
@@ -201,30 +200,6 @@ public class SchoolLoopFragment extends Fragment {
 		TextView errorText = (TextView) schoolLoopScreen.findViewById(R.id.school_loop_error);
 		errorText.setVisibility(View.VISIBLE);
 		errorText.setText(errorString);
-	}
-
-	private Runnable createLoadingScreenRunnable() {
-		return new Runnable() {
-			@Override
-			public void run() {
-				while (webView.getProgress() < 100) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-					}
-				}
-				try {
-					Thread.sleep(200);
-				} catch (InterruptedException e) {
-				}
-				loadingHandler.post(new Runnable() {
-					@Override
-					public void run() {
-						//((RelativeLayout) schoolLoopScreen.findViewById(R.id.school_loop_loading)).setVisibility(View.GONE);
-					}
-				});
-			}
-		};
 	}
 
 	private class SchoolLoopWebViewClient extends WebViewClient {
