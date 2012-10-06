@@ -53,7 +53,7 @@ public class CDMActivity extends FragmentActivity implements EventInterface, Sch
 
 	@Override
 	public void onBackPressed() {
-		Fragment fragment = getSupportFragmentManager().findFragmentByTag(EventListFragment.TAG);
+		Fragment fragment = getSupportFragmentManager().findFragmentByTag(SchoolLoopFragment.TAG);
 		if (fragment != null && fragment instanceof SchoolLoopFragment) {
 			SchoolLoopFragment schoolLoopFragment = (SchoolLoopFragment) fragment;
 			if (schoolLoopFragment.webView.canGoBack()) {

@@ -1,88 +1,47 @@
 package com.ampelement.cdm.fragments;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.objects.Preferences;
 import com.ampelement.cdm.utils.SchoolLoopAPI;
-import com.ampelement.cdm.utils.SchoolLoopAPI.Event;
-import com.ampelement.cdm.utils.SchoolLoopAPI.EventFetcher;
-import com.ampelement.cdm.utils.WebAPI;
 
 public class SchoolLoopFragment extends Fragment {
 
-	private ListView eventListView;
-	private LinearLayout schoolLoopScreen;
+	private RelativeLayout schoolLoopScreen;
 	private SchoolLoopInterface schoolLoopInterface;
-	
+
+	private Handler loadingHandler;
+
 	boolean newCredentials = false;
 
 	public WebView webView;
+	SharedPreferences sharedPreferences;
 
 	public static final String TAG = "SchoolLoopFragment";
 
@@ -103,18 +62,23 @@ public class SchoolLoopFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		// Loading Screen Handler
+		loadingHandler = new Handler();
+		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+		// Show Tab Indicator
+		schoolLoopInterface.setIndicator(R.id.main_school_loop_indicator);
 		// Get Screens
-		schoolLoopScreen = (LinearLayout) inflater.inflate(R.layout.school_loop_screen, container, false);
+		schoolLoopScreen = (RelativeLayout) inflater.inflate(R.layout.school_loop_screen, container, false);
 		final LinearLayout loginScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_inputs);
 		final RelativeLayout loadingScreen = (RelativeLayout) schoolLoopScreen.findViewById(R.id.school_loop_loading);
-		final LinearLayout webViewScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_webview_screen);
 		// Attempt to retrieve stored credentials
-		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(inflater.getContext());
 		String username = sharedPreferences.getString(Preferences.SCHOOL_LOOP_USERNAME, "");
 		String password = sharedPreferences.getString(Preferences.SCHOOL_LOOP_PASSWORD, "");
 		// If credentials don't exist then show login screen
 		webView = new WebView(getActivity().getApplicationContext());
-		if (username.matches("") && password.matches("")) {
+		((LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_webview_screen)).addView(webView);
+		if (username.matches("") || password.matches("")) {
+			// Show Login Screen
 			loginScreen.setVisibility(View.VISIBLE);
 			final EditText usernameInput = (EditText) schoolLoopScreen.findViewById(R.id.school_loop_username);
 			final EditText passwordInput = (EditText) schoolLoopScreen.findViewById(R.id.school_loop_password);
@@ -122,9 +86,11 @@ public class SchoolLoopFragment extends Fragment {
 			submitButton.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
+					// Get Login Credentials
 					String[] credentialStringArray = new String[2];
 					credentialStringArray[0] = usernameInput.getEditableText().toString();
 					credentialStringArray[1] = passwordInput.getEditableText().toString();
+					// Check for blank credentials
 					if (credentialStringArray[0].matches("") || credentialStringArray[1].matches("")) {
 						TextView errorText = (TextView) schoolLoopScreen.findViewById(R.id.school_loop_error);
 						errorText.setVisibility(View.VISIBLE);
@@ -134,6 +100,7 @@ public class SchoolLoopFragment extends Fragment {
 							errorText.setText(((credentialStringArray[0].matches("")) ? "Username" : "Password") + "is Blank");
 						}
 					} else {
+						// Attempt Login
 						loginScreen.setVisibility(View.GONE);
 						loadingScreen.setVisibility(View.VISIBLE);
 						newCredentials = true;
@@ -142,13 +109,13 @@ public class SchoolLoopFragment extends Fragment {
 				}
 			});
 		} else {
+			// Load School Loop Mobile page
 			loadingScreen.setVisibility(View.VISIBLE);
 			String[] credentialStringArray = new String[2];
 			credentialStringArray[0] = username;
 			credentialStringArray[1] = password;
 			new SchoolLoopLoginTask().execute(credentialStringArray);
 		}
-		schoolLoopInterface.setIndicator(R.id.main_school_loop_indicator);
 		return schoolLoopScreen;
 	}
 
@@ -156,70 +123,115 @@ public class SchoolLoopFragment extends Fragment {
 
 		@Override
 		protected Boolean doInBackground(String... cred) {
-			if (cred.length == 2) {
-				try {
-					CookieStore loginCookieStore = SchoolLoopAPI.loginToSchoolloop(new DefaultHttpClient(), cred[0], cred[1], true);
-					if (loginCookieStore != null) {
-						webView.getSettings().setJavaScriptEnabled(true);
-						webView.setWebViewClient(new SchoolLoopWebViewClient());
-						CookieSyncManager syncManager = CookieSyncManager.createInstance(webView.getContext());
-						CookieManager cookieManager = CookieManager.getInstance();
-						for (Cookie cookie : loginCookieStore.getCookies()) {
-							cookieManager.setCookie((cookie.isSecure() ? "https" : "http") + "://" + cookie.getDomain() + cookie.getPath(), cookie.getName() + "=" + cookie.getValue());
+			long lastActiveTime = sharedPreferences.getLong(Preferences.SCHOOL_LOOP_TIME, 0);
+			SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
+			if (lastActiveTime != 0 && (System.currentTimeMillis() - lastActiveTime) < 900000) { // Logged in still
+				CookieSyncManager syncManager = CookieSyncManager.createInstance(webView.getContext());
+				CookieManager cookieManager = CookieManager.getInstance();
+				cookieManager.setCookie("http://cdm.schoolloop.com/", "JSESSIONID=" + sharedPreferences.getString(Preferences.SCHOOL_LOOP_JSESSIONID, ""));
+				cookieManager.setCookie("http://cdm.schoolloop.com/", "slid=" + sharedPreferences.getString(Preferences.SCHOOL_LOOP_SLID, ""));
+				CookieSyncManager.getInstance().sync();
+				loadWebView();
+				return true;
+			} else { // Not logged in
+				if (cred.length == 2) {
+					try {
+						CookieStore loginCookieStore = SchoolLoopAPI.loginToSchoolloop(new DefaultHttpClient(), cred[0], cred[1], true);
+						if (loginCookieStore != null) {
+							CookieSyncManager syncManager = CookieSyncManager.createInstance(webView.getContext());
+							CookieManager cookieManager = CookieManager.getInstance();
+							for (Cookie cookie : loginCookieStore.getCookies()) {
+								cookieManager.setCookie((cookie.isSecure() ? "https" : "http") + "://" + cookie.getDomain() + cookie.getPath(), cookie.getName() + "=" + cookie.getValue());
+								if (cookie.getName().matches("slid")) {
+									sharedPrefEditor.putString(Preferences.SCHOOL_LOOP_SLID, cookie.getValue());
+									sharedPrefEditor.commit();
+								} else if (cookie.getName().matches("JSESSIONID")) {
+									sharedPrefEditor.putString(Preferences.SCHOOL_LOOP_JSESSIONID, cookie.getValue());
+									sharedPrefEditor.commit();
+								}
+							}
+							CookieSyncManager.getInstance().sync();
+							if (newCredentials) {
+								sharedPrefEditor.putString(Preferences.SCHOOL_LOOP_USERNAME, cred[0]);
+								sharedPrefEditor.putString(Preferences.SCHOOL_LOOP_PASSWORD, cred[1]);
+								sharedPrefEditor.commit();
+							}
+							loadWebView();
+							sharedPrefEditor.putLong(Preferences.SCHOOL_LOOP_TIME, System.currentTimeMillis()).commit();
+							return true;
+						} else {
+							return false;
 						}
-						CookieSyncManager.getInstance().sync();
-						webView.loadUrl(SchoolLoopAPI.BASE_URL_SECURE + "/mobile/index");
-						if (newCredentials) {
-							SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(webView.getContext());
-							SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
-							sharedPrefEditor.putString(Preferences.SCHOOL_LOOP_USERNAME, cred[0]);
-							sharedPrefEditor.putString(Preferences.SCHOOL_LOOP_PASSWORD, cred[1]);
-							sharedPrefEditor.commit();
-						}
-						return true;
-					} else {
-						return false;
+					} catch (ClientProtocolException e) {
+						return null;
+					} catch (IOException e) {
+						return null;
 					}
-				} catch (ClientProtocolException e) {
-					return null;
-				} catch (IOException e) {
+				} else {
 					return null;
 				}
-			} else {
-				return null;
 			}
+		}
+		
+		private void loadWebView() {
+			webView.getSettings().setJavaScriptEnabled(true);
+			webView.setWebViewClient(new SchoolLoopWebViewClient());
+			webView.loadUrl(SchoolLoopAPI.BASE_URL_SECURE + "/mobile/index");
 		}
 
 		@Override
 		protected void onPostExecute(Boolean success) {
-			RelativeLayout loadingScreen = (RelativeLayout) schoolLoopScreen.findViewById(R.id.school_loop_loading);
-			loadingScreen.setVisibility(View.GONE);
 			if (success != null) {
 				if (success) {
-					LinearLayout webViewScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_webview_screen);
-					webViewScreen.addView(webView);
-					webViewScreen.setVisibility(View.VISIBLE);
+					((LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_webview_screen)).setVisibility(View.VISIBLE);
+					new Thread(createLoadingScreenRunnable()).start();
 				} else {
-					LinearLayout loginScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_inputs);
-					loginScreen.setVisibility(View.VISIBLE);
-					TextView errorText = (TextView) schoolLoopScreen.findViewById(R.id.school_loop_error);
-					errorText.setVisibility(View.VISIBLE);
-					errorText.setText("Bad Username or Password");
+					loginScreenWithErrorMessage("Bad Username or Password");
 				}
 			} else {
-				LinearLayout loginScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_inputs);
-				loginScreen.setVisibility(View.VISIBLE);
-				TextView errorText = (TextView) schoolLoopScreen.findViewById(R.id.school_loop_error);
-				errorText.setVisibility(View.VISIBLE);
-				errorText.setText("Error Logging In");
+				loginScreenWithErrorMessage("Error Logging In");
 			}
 		}
+	}
+
+	private void loginScreenWithErrorMessage(String errorString) {
+		((RelativeLayout) schoolLoopScreen.findViewById(R.id.school_loop_loading)).setVisibility(View.VISIBLE);
+		LinearLayout loginScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_inputs);
+		loginScreen.setVisibility(View.VISIBLE);
+		TextView errorText = (TextView) schoolLoopScreen.findViewById(R.id.school_loop_error);
+		errorText.setVisibility(View.VISIBLE);
+		errorText.setText(errorString);
+	}
+
+	private Runnable createLoadingScreenRunnable() {
+		return new Runnable() {
+			@Override
+			public void run() {
+				while (webView.getProgress() < 100) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+					}
+				}
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+				}
+				loadingHandler.post(new Runnable() {
+					@Override
+					public void run() {
+						//((RelativeLayout) schoolLoopScreen.findViewById(R.id.school_loop_loading)).setVisibility(View.GONE);
+					}
+				});
+			}
+		};
 	}
 
 	private class SchoolLoopWebViewClient extends WebViewClient {
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			view.loadUrl(url);
+			sharedPreferences.edit().putLong(Preferences.SCHOOL_LOOP_TIME, System.currentTimeMillis()).commit();
 			return true;
 		}
 	}
