@@ -4,6 +4,8 @@ package com.ampelement.cdm;
 //import com.actionbarsherlock.view.Window;
 import com.ampelement.cdm.fragments.EventListFragment;
 import com.ampelement.cdm.fragments.EventListFragment.EventInterface;
+import com.ampelement.cdm.fragments.SchoolLoopFragment;
+import com.ampelement.cdm.fragments.SchoolLoopFragment.SchoolLoopInterface;
 import com.ampelement.cdm.services.Update_Service;
 
 import android.content.Intent;
@@ -16,7 +18,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.LinearLayout;
 
-public class CDMActivity extends FragmentActivity implements EventInterface {
+public class CDMActivity extends FragmentActivity implements EventInterface, SchoolLoopInterface {
 
 	private static final String TAG = "CDMActivity";
 
@@ -49,10 +51,32 @@ public class CDMActivity extends FragmentActivity implements EventInterface {
 		outState.putString("fragment", savedFragment);*/
 	}
 
+	@Override
+	public void onBackPressed() {
+		Fragment fragment = getSupportFragmentManager().findFragmentByTag(EventListFragment.TAG);
+		if (fragment != null && fragment instanceof SchoolLoopFragment) {
+			SchoolLoopFragment schoolLoopFragment = (SchoolLoopFragment) fragment;
+			if (schoolLoopFragment.webView.canGoBack()) {
+				schoolLoopFragment.webView.goBack();
+			} else {
+				super.onBackPressed();
+			}
+		} else {
+			super.onBackPressed();
+		}
+	}
+
 	public void OnClickEvents(View view) {
 		if (getSupportFragmentManager().findFragmentByTag(EventListFragment.TAG) != null) {
 		} else {
 			transitionFragments(new EventListFragment(), EventListFragment.TAG);
+		}
+	}
+
+	public void OnClickSchoolLoop(View view) {
+		if (getSupportFragmentManager().findFragmentByTag(SchoolLoopFragment.TAG) != null) {
+		} else {
+			transitionFragments(new SchoolLoopFragment(), SchoolLoopFragment.TAG);
 		}
 	}
 
@@ -68,7 +92,7 @@ public class CDMActivity extends FragmentActivity implements EventInterface {
 	public void setIndicator(int indicatorID) {
 		((LinearLayout) findViewById(R.id.main_events_indicator)).setVisibility(View.GONE);
 		((LinearLayout) findViewById(R.id.main_facebook_indicator)).setVisibility(View.GONE);
-		((LinearLayout) findViewById(R.id.main_media_indicator)).setVisibility(View.GONE);
+		((LinearLayout) findViewById(R.id.main_school_loop_indicator)).setVisibility(View.GONE);
 		LinearLayout indicator = (LinearLayout) findViewById(indicatorID);
 		indicator.setVisibility(View.VISIBLE);
 	}
