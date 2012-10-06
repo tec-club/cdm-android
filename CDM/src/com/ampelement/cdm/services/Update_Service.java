@@ -84,57 +84,6 @@ public class Update_Service extends Service {
 	 */
 	Runnable mTask = new Runnable() {
 		public void run() {
-
-			try {
-				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-
-				try {
-					URL u = new URL("http://cdmampelement.blogspot.com/feeds/posts/default?alt=rss");
-
-					try {
-						Document doc = builder.parse(u.openStream());
-						NodeList items = doc.getElementsByTagName("item");
-						for (int i = 0; i < items.getLength(); i++) {
-							try {
-								String title = "";
-								String imageSrc = "";
-								String description = "";
-								String thumbnailSrc = "";
-								Element element = (Element) items.item(i);
-								NodeList titleNodes = element.getElementsByTagName("title");
-								if (titleNodes.getLength() > 0) {
-									Element titleElement = (Element) titleNodes.item(0);
-									if (titleElement.getChildNodes().getLength() > 0) {
-										title = titleElement.getTextContent();
-
-										if (title.contains("%cancel")) {
-											cancelNotification(title.split("%cancel")[0]);
-										} else {
-											NodeList descriptionNodeList = element.getElementsByTagName("description");
-											if (descriptionNodeList.getLength() > 0) {
-												Element descriptionNode = (Element) descriptionNodeList.item(0);
-												String descString = descriptionNode.getTextContent();
-												String more = Jsoup.clean(descString, Whitelist.simpleText());
-												showNotification(title, more);
-											}
-										}
-									}
-								}
-
-							} catch (Exception e) {
-								// TODO: handle exception
-							}
-						}
-					} catch (Exception e) {
-						// TODO: handle exception
-					}
-				} catch (Exception e) {
-					// TODO: handle exception
-				}
-
-			} catch (Exception e) {
-				// TODO: handle exception
-			}
 		}
 	};
 
@@ -146,7 +95,6 @@ public class Update_Service extends Service {
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, CDMActivity.class), 0);
 		notification.setLatestEventInfo(this, title, more, contentIntent);
 		mNM.notify(R.string.app_name + notificationID + title.hashCode(), notification);
-		Log.i(TAG, "Displaying Notification: \"" + title + "\" with \"" + more + "\"");
 	}
 
 	private void cancelNotification(String title) {
@@ -168,37 +116,4 @@ public class Update_Service extends Service {
 			return super.onTransact(code, data, reply, flags);
 		}
 	};
-
-	public static void DownloadFromUrl(String imageURL, String fileName, Context context) throws IOException {
-		URL url = new URL(imageURL);
-		File file = new File(fileName);
-
-		long startTime = System.currentTimeMillis();
-		Log.d(TAG, "download begining");
-		Log.d(TAG, "download url:" + url);
-		Log.d(TAG, "downloaded file name:" + fileName);
-		/* Open a connection to that URL. */
-		URLConnection ucon = url.openConnection();
-
-		/*
-		 * Define InputStreams to read from the URLConnection.
-		 */
-		InputStream is = ucon.getInputStream();
-		BufferedInputStream bis = new BufferedInputStream(is);
-
-		/*
-		 * Read bytes to the Buffer until there is nothing more to read(-1).
-		 */
-		ByteArrayBuffer baf = new ByteArrayBuffer(50);
-		int current = 0;
-		while ((current = bis.read()) != -1) {
-			baf.append((byte) current);
-		}
-
-		/* Convert the Bytes read to a String. */
-		FileOutputStream fos = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-		fos.write(baf.toByteArray());
-		fos.close();
-		Log.d(TAG, "download ready in" + ((System.currentTimeMillis() - startTime) / 1000) + " sec");
-	}
 }
