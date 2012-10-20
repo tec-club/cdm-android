@@ -139,22 +139,13 @@ public class SchoolLoopAPI {
 		String formDataIDString = formDataIDElement.attr("value").toString();
 
 		HttpPost schoolloopLoginHttpPost = new HttpPost(BASE_URL + "/portal/login?etarget=login_form");
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
+		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 		nameValuePairs.add(new BasicNameValuePair("login_name", pUserName));
 		nameValuePairs.add(new BasicNameValuePair("password", pPassword));
 		nameValuePairs.add(new BasicNameValuePair("form_data_id", formDataIDString));
-		nameValuePairs.add(new BasicNameValuePair("reverse", ""));
-		nameValuePairs.add(new BasicNameValuePair("sort", ""));
-		nameValuePairs.add(new BasicNameValuePair("login_form_reverse", ""));
-		nameValuePairs.add(new BasicNameValuePair("login_form_page_index", ""));
-		nameValuePairs.add(new BasicNameValuePair("login_form_page_item_count", ""));
 		nameValuePairs.add(new BasicNameValuePair("event_override", "login"));
-		nameValuePairs.add(new BasicNameValuePair("login_form_sort", ""));
-		nameValuePairs.add(new BasicNameValuePair("return_url", ""));
-		nameValuePairs.add(new BasicNameValuePair("forward", ""));
-		nameValuePairs.add(new BasicNameValuePair("redirect", ""));
-		nameValuePairs.add(new BasicNameValuePair("login_form_letter", ""));
-		nameValuePairs.add(new BasicNameValuePair("login_form_filter", ""));
+		String[] blankFields = { "reverse", "sort", "login_form_reverse", "login_form_page_index", "login_form)page_item_count", "login_form_sort", "return_url", "forward", "redirect", "login_form_letter", "login_form_filter" };
+		populateNVListWithBlank(nameValuePairs, blankFields);
 		schoolloopLoginHttpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 		// Execute HTTP Post Request
@@ -169,4 +160,11 @@ public class SchoolLoopAPI {
 			return httpclient.getCookieStore();
 		}
 	}
+
+	static void populateNVListWithBlank(List<NameValuePair> list, String[] array) {
+		for (String name : array) {
+			list.add(new BasicNameValuePair(name, ""));
+		}
+	}
+
 }
