@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
@@ -125,7 +126,9 @@ public class SchoolLoopFragment extends Fragment {
 		protected Boolean doInBackground(String... cred) {
 			long lastActiveTime = sharedPreferences.getLong(Preferences.SCHOOL_LOOP_TIME, 0);
 			SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
-			if (lastActiveTime != 0 && (System.currentTimeMillis() - lastActiveTime) < 900000) { // Logged in still
+			if (lastActiveTime != 0 && (System.currentTimeMillis() - lastActiveTime) < 900000) { // Logged
+																									// in
+																									// still
 				CookieSyncManager syncManager = CookieSyncManager.createInstance(webView.getContext());
 				CookieManager cookieManager = CookieManager.getInstance();
 				cookieManager.setCookie("http://cdm.schoolloop.com/", "JSESSIONID=" + sharedPreferences.getString(Preferences.SCHOOL_LOOP_JSESSIONID, ""));
@@ -172,7 +175,7 @@ public class SchoolLoopFragment extends Fragment {
 				}
 			}
 		}
-		
+
 		private void loadWebView() {
 			webView.getSettings().setJavaScriptEnabled(true);
 			webView.setWebViewClient(new SchoolLoopWebViewClient());
@@ -194,7 +197,7 @@ public class SchoolLoopFragment extends Fragment {
 	}
 
 	private void loginScreenWithErrorMessage(String errorString) {
-		((RelativeLayout) schoolLoopScreen.findViewById(R.id.school_loop_loading)).setVisibility(View.VISIBLE);
+		((RelativeLayout) schoolLoopScreen.findViewById(R.id.school_loop_loading)).setVisibility(View.GONE);
 		LinearLayout loginScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_inputs);
 		loginScreen.setVisibility(View.VISIBLE);
 		TextView errorText = (TextView) schoolLoopScreen.findViewById(R.id.school_loop_error);
@@ -205,8 +208,21 @@ public class SchoolLoopFragment extends Fragment {
 	private class SchoolLoopWebViewClient extends WebViewClient {
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			view.loadUrl(url);
-			sharedPreferences.edit().putLong(Preferences.SCHOOL_LOOP_TIME, System.currentTimeMillis()).commit();
+			if (url.contains("portal/logout")) {
+				SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
+				sharedPrefEditor.putString(Preferences.SCHOOL_LOOP_USERNAME, "");
+				sharedPrefEditor.putString(Preferences.SCHOOL_LOOP_PASSWORD, "");
+				sharedPrefEditor.putLong(Preferences.SCHOOL_LOOP_TIME, 0);
+				sharedPrefEditor.commit();
+				((RelativeLayout) schoolLoopScreen.findViewById(R.id.school_loop_loading)).setVisibility(View.GONE);
+				((LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_webview_screen)).setVisibility(View.GONE);
+				LinearLayout loginScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_inputs);
+				loginScreen.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), android.R.anim.fade_in));
+				loginScreen.setVisibility(View.VISIBLE);
+			} else {
+				view.loadUrl(url);
+				sharedPreferences.edit().putLong(Preferences.SCHOOL_LOOP_TIME, System.currentTimeMillis()).commit();
+			}
 			return true;
 		}
 	}
