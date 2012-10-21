@@ -1,36 +1,8 @@
 package com.ampelement.cdm.fragments;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 import android.app.Activity;
 import android.content.Context;
@@ -41,25 +13,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.utils.SchoolLoopAPI;
 import com.ampelement.cdm.utils.SchoolLoopAPI.Event;
 import com.ampelement.cdm.utils.SchoolLoopAPI.EventFetcher;
-import com.ampelement.cdm.utils.WebAPI;
+import com.ampelement.cdm.utils.SchoolLoopAPI.EventMap;
 import com.ampelement.cdm.calendar.CalendarView;
 import com.ampelement.cdm.calendar.Cell;
 
@@ -68,6 +34,9 @@ public class EventListFragment extends Fragment implements CalendarView.OnCellTo
 	private ListView eventListView;
 	private RelativeLayout eventLoadingScreen;
 	private EventInterface eventInterface;
+
+	private EventMap eventsMap;
+	private CalendarView calendarView;
 
 	public static final String TAG = "EventListFragment";
 
@@ -93,39 +62,39 @@ public class EventListFragment extends Fragment implements CalendarView.OnCellTo
 		eventListView = (ListView) eventScreen.findViewById(R.id.event_screen_list);
 		eventLoadingScreen = (RelativeLayout) eventScreen.findViewById(R.id.event_screen_loading);
 		
-		CalendarView mView = (CalendarView)eventScreen.findViewById(R.id.event_screen_calendar);
-        mView.setOnCellTouchListener(this);
+		calendarView = (CalendarView) eventScreen.findViewById(R.id.event_screen_calendar);
+		calendarView.setOnCellTouchListener(this);
 
 		new GetEventsTask().execute();
 		eventInterface.setIndicator(R.id.main_events_indicator);
 		return eventScreen;
 	}
 
-	private class GetEventsTask extends AsyncTask<Void, String, ArrayList<Event>> {
+	private class GetEventsTask extends AsyncTask<Void, String, EventMap> {
 
 		@Override
-		protected ArrayList<Event> doInBackground(Void... params) {
+		protected EventMap doInBackground(Void... params) {
 			EventFetcher eventFetcher = new EventFetcher();
 			return eventFetcher.fetchEvents();
 		}
 
 		@Override
-		protected void onPostExecute(ArrayList<Event> result) {
+		protected void onPostExecute(EventMap result) {
+			eventsMap = result;
 			try {
 				eventLoadingScreen.setVisibility(View.GONE);
-				if (result != null && result.size() > 0) {
-					EventListAdapter adapter = new EventListAdapter(result, getActivity().getApplicationContext());
-
+				if (eventsMap != null && !eventsMap.isEmpty()) {
+					calendarView.setVisibility(View.VISIBLE);
+					calendarView.setActiveDayList(eventsMap.activeDatesArrayList);
+					Date now = new Date();
+					EventListAdapter adapter = new EventListAdapter(eventsMap.get(now.getYear(), now.getMonth(), now.getDate()), getActivity().getApplicationContext());
 					eventListView.setAdapter(adapter);
 					eventListView.setAnimationCacheEnabled(false);
 					LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.list_view_slide_in_controller);
 					eventListView.setLayoutAnimation(controller);
-					// ((RelativeLayout)
-					// findViewById(R.id.main_loading)).setVisibility(View.GONE);
 				} else {
 				}
 			} catch (Exception e) {
-				// TODO: handle exception
 			}
 		}
 	}
@@ -171,7 +140,9 @@ public class EventListFragment extends Fragment implements CalendarView.OnCellTo
 
 	@Override
 	public void onTouch(Cell cell) {
-		Toast.makeText(getActivity(), cell.toString(), Toast.LENGTH_LONG).show();
+		EventListAdapter adapter = new EventListAdapter(eventsMap.get(calendarView.getYear(), cell.getMonth(Calendar.getInstance().get(Calendar.MONTH)), cell.getDayOfMonth()), getActivity().getApplicationContext());
+		if (!adapter.eventList.isEmpty())
+			eventListView.setAdapter(adapter);
 	}
 
 }

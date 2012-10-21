@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -28,6 +32,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.ampelement.cdm.calendar.CalendarView;
+
 import android.util.Log;
 
 public class SchoolLoopAPI {
@@ -40,7 +46,7 @@ public class SchoolLoopAPI {
 		public EventFetcher() {
 		}
 
-		public ArrayList<Event> fetchEvents() {
+		public EventMap fetchEvents() {
 			try {
 				// SetUp Parser
 				SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
@@ -50,16 +56,59 @@ public class SchoolLoopAPI {
 				EventParser eventParser = new EventParser();
 				xmlReader.setContentHandler(eventParser);
 				xmlReader.parse(new InputSource(url.openStream()));
-				// Get results
-				ArrayList<Event> eventList = eventParser.eventList;
 				// Add final item which isn't added due to their not being a
 				// start element ("item") after it
-				eventList.add(eventParser.currentEvent);
+				eventParser.eventMap.add(eventParser.currentEvent);
 				// Return Results
-				return eventList;
+				return eventParser.eventMap;
 			} catch (Exception e) {
 				return null;
 			}
+		}
+	}
+
+	public static class EventMap implements Serializable {
+		Map<String, ArrayList<Event>> eventMap;
+		public ArrayList<String> activeDatesArrayList = new ArrayList<String>();
+
+		public EventMap() {
+			this.eventMap = new HashMap<String, ArrayList<Event>>();
+		}
+		
+		public boolean isEmpty() {
+			return eventMap.isEmpty();
+		}
+
+		void add(Event event) {
+			if (eventMap.containsKey(event.isoDate)) {
+				ArrayList<Event> dayArrayList = eventMap.get(event.isoDate);
+				dayArrayList.add(event);
+			} else {
+				ArrayList<Event> newArrayList = new ArrayList<Event>();
+				newArrayList.add(event);
+				eventMap.put(event.isoDate, newArrayList);
+				activeDatesArrayList.add(event.isoDate);
+			}
+		}
+		public ArrayList<Event> get(String key) {
+			return eventMap.get(key);
+		}
+		public ArrayList<Event> get(int year, int month, int day) {
+			ArrayList<Event> list = eventMap.get(toIsoDate(year, month, day));
+			if (list == null)
+				return new ArrayList<Event>();
+			else
+				return list;
+		}
+		public static String toIsoDate(int pyear, int pmonth, int pday) {
+			String year = String.valueOf(pyear);
+			String month = String.valueOf(pmonth + 1);
+			String day = String.valueOf(pday);
+			if (month.length() < 2)
+				month = "0" + month;
+			if (day.length() < 2)
+				day = "0" + day;
+			return year + "-" + month + "-" + day;
 		}
 	}
 
@@ -67,7 +116,7 @@ public class SchoolLoopAPI {
 		StringBuilder content = null;
 		Boolean elementOn = false;
 		Event currentEvent = null;
-		ArrayList<Event> eventList = new ArrayList<Event>();
+		EventMap eventMap = new EventMap();
 
 		/**
 		 * This will be called when the tags of the XML starts.
@@ -78,7 +127,7 @@ public class SchoolLoopAPI {
 			content = new StringBuilder();
 			if (localName.equals("item")) {
 				if (currentEvent != null) {
-					eventList.add(currentEvent);
+					eventMap.add(currentEvent);
 				}
 				currentEvent = new Event();
 			}

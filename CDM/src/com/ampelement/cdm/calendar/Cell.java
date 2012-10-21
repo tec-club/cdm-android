@@ -27,44 +27,58 @@ import android.util.Log;
 public class Cell {
 	private static final String TAG = "Cell";
 	protected Rect mBound = null;
-	protected int mDayOfMonth = 1;	// from 1 to 31
-	protected Paint mPaint = new Paint(Paint.SUBPIXEL_TEXT_FLAG
-            |Paint.ANTI_ALIAS_FLAG);
+	protected int mDayOfMonth = 1; // from 1 to 31
+	protected Paint mTextPaint = new Paint(Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+	protected int backgroundColor = 0;
 	int dx, dy;
-	public Cell(int dayOfMon, Rect rect, float textSize, boolean bold) {
+
+	public Cell(int dayOfMon, Rect rect, float textSize, boolean bold, int textColor, int bgColor) {
 		mDayOfMonth = dayOfMon;
 		mBound = rect;
-		mPaint.setTextSize(textSize/*26f*/);
-		mPaint.setColor(Color.BLACK);
-		if(bold) mPaint.setFakeBoldText(true);
-		
-		dx = (int) mPaint.measureText(String.valueOf(mDayOfMonth)) / 2;
-		dy = (int) (-mPaint.ascent() + mPaint.descent()) / 2;
+		mTextPaint.setTextSize(textSize/*26f*/);
+		mTextPaint.setColor(textColor);
+		if (bold)
+			mTextPaint.setFakeBoldText(true);
+
+		dx = (int) mTextPaint.measureText(String.valueOf(mDayOfMonth)) / 2;
+		dy = (int) (-mTextPaint.ascent() + mTextPaint.descent()) / 2;
+		backgroundColor = bgColor;
 	}
-	
-	public Cell(int dayOfMon, Rect rect, float textSize) {
-		this(dayOfMon, rect, textSize, false);
-	}
-	
+
 	protected void draw(Canvas canvas) {
-		canvas.drawText(String.valueOf(mDayOfMonth), mBound.centerX() - dx, mBound.centerY() + dy, mPaint);
+		if (backgroundColor != 0) {
+			Paint paint = new Paint();
+			paint.setColor(backgroundColor);
+			paint.setStyle(Paint.Style.STROKE);
+			canvas.drawRect(mBound, paint);
+		}
+		canvas.drawText(String.valueOf(mDayOfMonth), mBound.centerX() - dx, mBound.centerY() + dy, mTextPaint);
 	}
-	
+
 	public int getDayOfMonth() {
 		return mDayOfMonth;
 	}
-	
+
 	public boolean hitTest(int x, int y) {
-		return mBound.contains(x, y); 
+		return mBound.contains(x, y);
 	}
-	
+
 	public Rect getBound() {
 		return mBound;
 	}
-	
-	public String toString() {
-		return String.valueOf(mDayOfMonth)+"("+mBound.toString()+")";
-	}
-	
-}
 
+	public String toString() {
+		return String.valueOf(mDayOfMonth) + "(" + mBound.toString() + ")";
+	}
+
+	public int getMonth(int currentMonth) {
+		if (mTextPaint.getColor() == Color.LTGRAY) {
+			if (mDayOfMonth < 15)
+				return currentMonth + 1;
+			else
+				return currentMonth - 1;
+		} else
+			return currentMonth;
+	}
+
+}
