@@ -37,8 +37,6 @@ public class SchoolLoopFragment extends Fragment {
 	private RelativeLayout schoolLoopScreen;
 	private SchoolLoopInterface schoolLoopInterface;
 
-	private Handler loadingHandler;
-
 	boolean newCredentials = false;
 
 	public WebView webView;
@@ -64,7 +62,6 @@ public class SchoolLoopFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Loading Screen Handler
-		loadingHandler = new Handler();
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 		// Show Tab Indicator
 		schoolLoopInterface.setIndicator(R.id.main_school_loop_indicator);

@@ -14,7 +14,7 @@
         <item name="backgroundSplit">@drawable/actionbar</item>
         <item name="android:backgroundSplit">@drawable/actionbar</item>
         <item name="android:textColor">#FFFFFF</item>
-    </style>
+    </style>
     -->
 
     <style name="TextEllipsize">

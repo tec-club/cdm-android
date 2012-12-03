@@ -4,6 +4,8 @@ package com.ampelement.cdm;
 //import com.actionbarsherlock.view.Window;
 import com.ampelement.cdm.fragments.EventListFragment;
 import com.ampelement.cdm.fragments.EventListFragment.EventInterface;
+import com.ampelement.cdm.fragments.InfoListFragment.InfoInterface;
+import com.ampelement.cdm.fragments.InfoListFragment;
 import com.ampelement.cdm.fragments.SchoolLoopFragment;
 import com.ampelement.cdm.fragments.SchoolLoopFragment.SchoolLoopInterface;
 import com.ampelement.cdm.services.Update_Service;
@@ -18,7 +20,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.LinearLayout;
 
-public class CDMActivity extends FragmentActivity implements EventInterface, SchoolLoopInterface {
+public class CDMActivity extends FragmentActivity implements EventInterface, SchoolLoopInterface, InfoInterface {
 
 	private static final String TAG = "CDMActivity";
 
@@ -79,6 +81,13 @@ public class CDMActivity extends FragmentActivity implements EventInterface, Sch
 			transitionFragments(new SchoolLoopFragment(), SchoolLoopFragment.TAG);
 		}
 	}
+	
+	public void OnClickInfo(View view) {
+		if (getSupportFragmentManager().findFragmentByTag(InfoListFragment.TAG) != null) {
+		} else {
+			transitionFragments(new InfoListFragment(), InfoListFragment.TAG);
+		}
+	}
 
 	public void OnClickFacebook(View view) {
 		Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.facebook.com/pages/You-know-you-go-to-CdM-when/239305217972"));
@@ -91,7 +100,7 @@ public class CDMActivity extends FragmentActivity implements EventInterface, Sch
 
 	public void setIndicator(int indicatorID) {
 		((LinearLayout) findViewById(R.id.main_events_indicator)).setVisibility(View.GONE);
-		((LinearLayout) findViewById(R.id.main_facebook_indicator)).setVisibility(View.GONE);
+		((LinearLayout) findViewById(R.id.main_info_indicator)).setVisibility(View.GONE);
 		((LinearLayout) findViewById(R.id.main_school_loop_indicator)).setVisibility(View.GONE);
 		LinearLayout indicator = (LinearLayout) findViewById(indicatorID);
 		indicator.setVisibility(View.VISIBLE);

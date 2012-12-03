@@ -106,16 +106,16 @@
             android:layout_weight="1" >
 
             <ImageButton
-                android:id="@+id/main_facebook"
+                android:id="@+id/main_info"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_centerInParent="true"
                 android:background="@drawable/button_transparent"
-                android:onClick="OnClickFacebook"
+                android:onClick="OnClickInfo"
                 android:src="@drawable/ic_facebook" />
 
             <LinearLayout
-                android:id="@+id/main_facebook_indicator"
+                android:id="@+id/main_info_indicator"
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 android:layout_alignParentBottom="true"

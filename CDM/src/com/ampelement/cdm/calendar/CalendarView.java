@@ -19,6 +19,7 @@ package com.ampelement.cdm.calendar;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.utils.SchoolLoopAPI;
@@ -32,14 +33,15 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.MonthDisplayHelper;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.ImageView;
 
 public class CalendarView extends ImageView {
-	private static int WEEK_TOP_MARGIN = 74;
-	private static int WEEK_LEFT_MARGIN = 40;
+	private static int WEEK_TOP_MARGIN = 0;
+	private static int WEEK_LEFT_MARGIN = 45;
 	private static int CELL_WIDTH = 58;
 	private static int CELL_HEIGH = 53;
-	private static int CELL_MARGIN_TOP = 92;
+	private static int CELL_MARGIN_TOP = 0;
 	private static int CELL_MARGIN_LEFT = 39;
 	private static float CELL_TEXT_SIZE;
 
@@ -51,6 +53,9 @@ public class CalendarView extends ImageView {
 	private OnCellTouchListener mOnCellTouchListener = null;
 	MonthDisplayHelper mHelper;
 	Drawable mDecoration = null;
+	
+	int selectedCellDay;
+	int selectedCellMonth;
 
 	private ArrayList<String> activeDaysList = new ArrayList<String>(0);
 
@@ -76,6 +81,12 @@ public class CalendarView extends ImageView {
 		activeDaysList = days;
 		this.invalidate();
 	}
+	
+	public void setSelectedDate(int day, int month) {
+		selectedCellDay = day;
+		selectedCellMonth = month;
+		this.invalidate();
+	}
 
 	private void initCalendarView() {
 		mRightNow = Calendar.getInstance();
@@ -92,6 +103,10 @@ public class CalendarView extends ImageView {
 		CELL_TEXT_SIZE = res.getDimension(R.dimen.cell_text_size);
 		// set background
 		setImageResource(R.drawable.background);
+//		setImageResource(R.drawable.actionbar);
+//		setBackgroundResource(R.drawable.actionbar);
+//		getBackground().setBounds(0, 0, 408, 412);
+//		getDrawable().setBounds(0, 0, 408, 412);
 		mWeekTitle = res.getDrawable(R.drawable.calendar_week);
 
 		mHelper = new MonthDisplayHelper(mRightNow.get(Calendar.YEAR), mRightNow.get(Calendar.MONTH));
@@ -111,8 +126,7 @@ public class CalendarView extends ImageView {
 			public _calendar(int d) {
 				this(d, false);
 			}
-		}
-		;
+		};
 		_calendar tmp[][] = new _calendar[6][7];
 
 		for (int i = 0; i < tmp.length; i++) {
@@ -136,20 +150,21 @@ public class CalendarView extends ImageView {
 		Rect Bound = new Rect(CELL_MARGIN_LEFT, CELL_MARGIN_TOP, CELL_WIDTH + CELL_MARGIN_LEFT, CELL_HEIGH + CELL_MARGIN_TOP);
 		for (int week = 0; week < mCells.length; week++) {
 			for (int day = 0; day < mCells[week].length; day++) {
-				int backgroundColor = 0;
+				int backgroundColor = Color.BLACK;
 				int cellMonth = tmp[week][day].thisMonth ? mHelper.getMonth() : (tmp[week][day].day > 15) ? mHelper.getMonth() - 1 : mHelper.getMonth() + 1;
 				if (activeDaysList.contains(SchoolLoopAPI.EventMap.toIsoDate(mHelper.getYear(), cellMonth, tmp[week][day].day)))
-					backgroundColor = Color.CYAN;
+					backgroundColor = Color.WHITE;
 				if (tmp[week][day].thisMonth) {
 					if (day == 0 || day == 6)
-						mCells[week][day] = new Cell(tmp[week][day].day, new Rect(Bound), CELL_TEXT_SIZE, false, 0xdddd0000, backgroundColor);
+						mCells[week][day] = new Cell(tmp[week][day].day, cellMonth, new Rect(Bound), CELL_TEXT_SIZE, false, 0xdddd0000, backgroundColor);
 					else
-						mCells[week][day] = new Cell(tmp[week][day].day, new Rect(Bound), CELL_TEXT_SIZE, false, Color.BLACK, backgroundColor);
+						mCells[week][day] = new Cell(tmp[week][day].day, cellMonth, new Rect(Bound), CELL_TEXT_SIZE, false, Color.LTGRAY, backgroundColor);
 				} else {
-					mCells[week][day] = new Cell(tmp[week][day].day, new Rect(Bound), CELL_TEXT_SIZE, false, Color.LTGRAY, backgroundColor);
+					mCells[week][day] = new Cell(tmp[week][day].day, cellMonth, new Rect(Bound), CELL_TEXT_SIZE, false, Color.DKGRAY, backgroundColor);
 				}
-
-				Bound.offset(CELL_WIDTH, 0); // move to next column
+				if (tmp[week][day].day == selectedCellDay && mCells[week][day].getMonth() == selectedCellMonth)
+					mCells[week][day].setSelected();
+				Bound.offset(CELL_WIDTH + 1, 0); // move to next column
 
 				// get today
 				if (tmp[week][day].day == thisDay && tmp[week][day].thisMonth) {
@@ -157,7 +172,7 @@ public class CalendarView extends ImageView {
 					mDecoration.setBounds(mToday.getBound());
 				}
 			}
-			Bound.offset(0, CELL_HEIGH); // move to next row and first column
+			Bound.offset(0, CELL_HEIGH + 1); // move to next row and first column
 			Bound.left = CELL_MARGIN_LEFT;
 			Bound.right = CELL_MARGIN_LEFT + CELL_WIDTH;
 		}
@@ -165,8 +180,7 @@ public class CalendarView extends ImageView {
 
 	@Override
 	public void onLayout(boolean changed, int left, int top, int right, int bottom) {
-		Rect re = getDrawable().getBounds();
-		WEEK_LEFT_MARGIN = CELL_MARGIN_LEFT = (right - left - re.width()) / 2;
+		WEEK_LEFT_MARGIN = CELL_MARGIN_LEFT = (right - left - 413) / 2;
 		mWeekTitle.setBounds(WEEK_LEFT_MARGIN, WEEK_TOP_MARGIN, WEEK_LEFT_MARGIN + mWeekTitle.getMinimumWidth(), WEEK_TOP_MARGIN + mWeekTitle.getMinimumHeight());
 		initCells();
 		super.onLayout(changed, left, top, right, bottom);
@@ -184,6 +198,13 @@ public class CalendarView extends ImageView {
 
 	public int getMonth() {
 		return mHelper.getMonth();
+	}
+	
+	public String getMonthString() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(mHelper.getYear(), mHelper.getMonth(), 1);
+		return calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
+		
 	}
 
 	public void nextMonth() {

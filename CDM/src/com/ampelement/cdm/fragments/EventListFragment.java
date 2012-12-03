@@ -1,21 +1,33 @@
 package com.ampelement.cdm.fragments;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.http.impl.cookie.DateParseException;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -33,10 +45,13 @@ public class EventListFragment extends Fragment implements CalendarView.OnCellTo
 
 	private ListView eventListView;
 	private RelativeLayout eventLoadingScreen;
-	private EventInterface eventInterface;
-
-	private EventMap eventsMap;
 	private CalendarView calendarView;
+	private Button mPrevCalendarButton;
+	private Button mNextCalendarButton;
+	private Button mMonthButton;
+
+	private EventInterface eventInterface;
+	private EventMap eventsMap;
 
 	public static final String TAG = "EventListFragment";
 
@@ -61,13 +76,96 @@ public class EventListFragment extends Fragment implements CalendarView.OnCellTo
 		View eventScreen = inflater.inflate(R.layout.event_screen, container, false);
 		eventListView = (ListView) eventScreen.findViewById(R.id.event_screen_list);
 		eventLoadingScreen = (RelativeLayout) eventScreen.findViewById(R.id.event_screen_loading);
-		
+
 		calendarView = (CalendarView) eventScreen.findViewById(R.id.event_screen_calendar);
 		calendarView.setOnCellTouchListener(this);
+
+		setupCalendarButtons(eventScreen);
 
 		new GetEventsTask().execute();
 		eventInterface.setIndicator(R.id.main_events_indicator);
 		return eventScreen;
+	}
+
+	void setupCalendarButtons(View view) {
+		mPrevCalendarButton = (Button) view.findViewById(R.id.event_screen_prev_button);
+		mNextCalendarButton = (Button) view.findViewById(R.id.event_screen_next_button);
+		mPrevCalendarButton.setText(getResources().getString(R.string.previous));
+		mNextCalendarButton.setText(getResources().getString(R.string.next));
+		mPrevCalendarButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				calendarView.previousMonth();
+				mMonthButton.setText(calendarView.getMonthString());
+			}
+		});
+		mNextCalendarButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				calendarView.nextMonth();
+				mMonthButton.setText(calendarView.getMonthString());
+			}
+		});
+		setupMonthButton(view);
+	}
+
+	void setupMonthButton(View view) {
+		mMonthButton = (Button) view.findViewById(R.id.event_screen_month_button);
+		mMonthButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				AlertDialog.Builder adBuilder = new AlertDialog.Builder(getActivity());
+				final Map<String, int[]> displayDateMap = new HashMap<String, int[]>();
+				for (String dateString : eventsMap.activeDatesArrayList) {
+					try {
+						SimpleDateFormat spd = new SimpleDateFormat("yyyy-MM-dd");
+						Date date = new Date();
+						date = spd.parse(dateString);
+						SimpleDateFormat month_date = new SimpleDateFormat("MMMMMMMMM");
+						String monthName = month_date.format(date);
+						String displayString = monthName + " - " + String.valueOf(date.getYear() + 1900);
+						if (!displayDateMap.containsKey(displayString)) {
+							int[] monthYearPair = new int[2];
+							monthYearPair[0] = date.getMonth();
+							monthYearPair[1] = date.getYear();
+							displayDateMap.put(displayString, monthYearPair);
+						}
+					} catch (ParseException e) {
+					}
+				}
+				int i = 0;
+				final CharSequence[] displayNames = new CharSequence[displayDateMap.size()];
+				for (String key:displayDateMap.keySet()) {
+					displayNames[i] = key;
+					i++;
+				}
+				adBuilder.setItems(displayNames, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						boolean incrementUp = true;
+						int monthsAway = 0;
+						
+						int[] monthYearPair = displayDateMap.get(displayNames[which]);
+						int month = monthYearPair[0];
+						int year = monthYearPair[1];
+						
+						monthsAway = (year + 1900 - calendarView.getYear()) * 12;
+						monthsAway = monthsAway + (month - calendarView.getMonth());
+						incrementUp = monthsAway < 0 ? false : true;
+						int i = 0;
+						while(i != monthsAway) {
+							if (incrementUp)
+								calendarView.nextMonth();
+							else
+								calendarView.previousMonth();
+							i = incrementUp ? i+1 : i-1;
+						}
+						mMonthButton.setText(calendarView.getMonthString());
+					}
+				});
+				adBuilder.show();
+			}
+		});
 	}
 
 	private class GetEventsTask extends AsyncTask<Void, String, EventMap> {
@@ -84,11 +182,14 @@ public class EventListFragment extends Fragment implements CalendarView.OnCellTo
 			try {
 				eventLoadingScreen.setVisibility(View.GONE);
 				if (eventsMap != null && !eventsMap.isEmpty()) {
+					mPrevCalendarButton.setVisibility(View.VISIBLE);
+					mNextCalendarButton.setVisibility(View.VISIBLE);
 					calendarView.setVisibility(View.VISIBLE);
 					calendarView.setActiveDayList(eventsMap.activeDatesArrayList);
 					Date now = new Date();
 					EventListAdapter adapter = new EventListAdapter(eventsMap.get(now.getYear(), now.getMonth(), now.getDate()), getActivity().getApplicationContext());
 					eventListView.setAdapter(adapter);
+					mMonthButton.setText(calendarView.getMonthString());
 					eventListView.setAnimationCacheEnabled(false);
 					LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.list_view_slide_in_controller);
 					eventListView.setLayoutAnimation(controller);
@@ -140,9 +241,11 @@ public class EventListFragment extends Fragment implements CalendarView.OnCellTo
 
 	@Override
 	public void onTouch(Cell cell) {
-		EventListAdapter adapter = new EventListAdapter(eventsMap.get(calendarView.getYear(), cell.getMonth(Calendar.getInstance().get(Calendar.MONTH)), cell.getDayOfMonth()), getActivity().getApplicationContext());
-		if (!adapter.eventList.isEmpty())
+		EventListAdapter adapter = new EventListAdapter(eventsMap.get(calendarView.getYear(), cell.getMonth(), cell.getDayOfMonth()), getActivity().getApplicationContext());
+		if (!adapter.eventList.isEmpty()) {
 			eventListView.setAdapter(adapter);
+			calendarView.setSelectedDate(cell.getDayOfMonth(), cell.getMonth());
+		}
 	}
 
 }

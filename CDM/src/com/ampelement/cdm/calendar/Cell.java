@@ -28,12 +28,15 @@ public class Cell {
 	private static final String TAG = "Cell";
 	protected Rect mBound = null;
 	protected int mDayOfMonth = 1; // from 1 to 31
+	int mMonth = 0;
 	protected Paint mTextPaint = new Paint(Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-	protected int backgroundColor = 0;
+	protected int borderColor = Color.BLACK;
 	int dx, dy;
+	boolean selected = false;
 
-	public Cell(int dayOfMon, Rect rect, float textSize, boolean bold, int textColor, int bgColor) {
+	public Cell(int dayOfMon, int month, Rect rect, float textSize, boolean bold, int textColor, int borColor) {
 		mDayOfMonth = dayOfMon;
+		mMonth = month;
 		mBound = rect;
 		mTextPaint.setTextSize(textSize/*26f*/);
 		mTextPaint.setColor(textColor);
@@ -42,15 +45,24 @@ public class Cell {
 
 		dx = (int) mTextPaint.measureText(String.valueOf(mDayOfMonth)) / 2;
 		dy = (int) (-mTextPaint.ascent() + mTextPaint.descent()) / 2;
-		backgroundColor = bgColor;
+		borderColor = borColor;
+	}
+	
+	public void setSelected() {
+		selected = true;
 	}
 
 	protected void draw(Canvas canvas) {
-		if (backgroundColor != 0) {
-			Paint paint = new Paint();
-			paint.setColor(backgroundColor);
-			paint.setStyle(Paint.Style.STROKE);
-			canvas.drawRect(mBound, paint);
+		Paint borderPaint = new Paint();
+		borderPaint.setColor(borderColor);
+		borderPaint.setStyle(Paint.Style.STROKE);
+		canvas.drawRect(mBound, borderPaint);
+		if (selected) {
+			Paint bgPaint = new Paint();
+			bgPaint.setColor(0x66FFFFFF);
+			bgPaint.setStyle(Paint.Style.FILL);
+			Rect fillRectangle = mBound;
+			canvas.drawRect(fillRectangle, bgPaint);
 		}
 		canvas.drawText(String.valueOf(mDayOfMonth), mBound.centerX() - dx, mBound.centerY() + dy, mTextPaint);
 	}
@@ -71,14 +83,8 @@ public class Cell {
 		return String.valueOf(mDayOfMonth) + "(" + mBound.toString() + ")";
 	}
 
-	public int getMonth(int currentMonth) {
-		if (mTextPaint.getColor() == Color.LTGRAY) {
-			if (mDayOfMonth < 15)
-				return currentMonth + 1;
-			else
-				return currentMonth - 1;
-		} else
-			return currentMonth;
+	public int getMonth() {
+		return mMonth;
 	}
 
 }
