@@ -1,16 +1,14 @@
 package com.ampelement.cdm.fragments;
 
 import java.util.ArrayList;
+
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.AnimationUtils;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -18,15 +16,14 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.objects.Preferences;
 
-public class InfoListFragment extends Fragment {
+public class InfoListFragment extends SherlockFragment {
 
 	private static final String BASE_URL = "http://www.ampelement.com/cdm";
 

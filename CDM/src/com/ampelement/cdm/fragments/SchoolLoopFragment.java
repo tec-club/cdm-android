@@ -1,17 +1,17 @@
 package com.ampelement.cdm.fragments;
 
 import java.io.IOException;
+
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,11 +28,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.objects.Preferences;
 import com.ampelement.cdm.utils.SchoolLoopAPI;
 
-public class SchoolLoopFragment extends Fragment {
+public class SchoolLoopFragment extends SherlockFragment {
 
 	private RelativeLayout schoolLoopScreen;
 	private SchoolLoopInterface schoolLoopInterface;

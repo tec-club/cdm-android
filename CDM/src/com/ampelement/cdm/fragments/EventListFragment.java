@@ -3,14 +3,9 @@ package com.ampelement.cdm.fragments;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-
-import org.apache.http.impl.cookie.DateParseException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,7 +13,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,16 +26,16 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.ampelement.cdm.R;
+import com.ampelement.cdm.calendar.CalendarView;
+import com.ampelement.cdm.calendar.Cell;
 import com.ampelement.cdm.utils.SchoolLoopAPI.Event;
 import com.ampelement.cdm.utils.SchoolLoopAPI.EventFetcher;
 import com.ampelement.cdm.utils.SchoolLoopAPI.EventMap;
-import com.ampelement.cdm.calendar.CalendarView;
-import com.ampelement.cdm.calendar.Cell;
 
-public class EventListFragment extends Fragment implements CalendarView.OnCellTouchListener {
+public class EventListFragment extends SherlockFragment implements CalendarView.OnCellTouchListener {
 
 	private ListView eventListView;
 	private RelativeLayout eventLoadingScreen;

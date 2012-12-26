@@ -1,6 +1,6 @@
 package com.ampelement.cdm;
 
-//import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 //import com.actionbarsherlock.view.Window;
 import com.ampelement.cdm.fragments.EventListFragment;
 import com.ampelement.cdm.fragments.EventListFragment.EventInterface;
@@ -20,7 +20,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.LinearLayout;
 
-public class CDMActivity extends FragmentActivity implements EventInterface, SchoolLoopInterface, InfoInterface {
+public class CDMActivity extends SherlockFragmentActivity implements EventInterface, SchoolLoopInterface, InfoInterface {
 
 	private static final String TAG = "CDMActivity";
 
@@ -32,11 +32,12 @@ public class CDMActivity extends FragmentActivity implements EventInterface, Sch
 		setContentView(R.layout.main);
 
 		if (savedInstanceState != null) {
-			/*if (savedInstanceState.getString("fragment", EventListFragment.TAG).matches(EventListFragment.TAG)) {
-				transitionFragments(new EventListFragment(), EventListFragment.TAG);
-			} else {
-				transitionFragments(new MediaFragment(), MediaFragment.TAG);
-			}*/
+			/*
+			 * if (savedInstanceState.getString("fragment",
+			 * EventListFragment.TAG).matches(EventListFragment.TAG)) { transitionFragments(new
+			 * EventListFragment(), EventListFragment.TAG); } else { transitionFragments(new
+			 * MediaFragment(), MediaFragment.TAG); }
+			 */
 		} else {
 			transitionFragments(new EventListFragment(), EventListFragment.TAG);
 		}
@@ -46,11 +47,11 @@ public class CDMActivity extends FragmentActivity implements EventInterface, Sch
 	protected void onSaveInstanceState(Bundle outState) {
 		// TODO Auto-generated method stub
 		super.onSaveInstanceState(outState);
-		/*String savedFragment = EventListFragment.TAG;
-		if (getSupportFragmentManager().findFragmentByTag(MediaFragment.TAG) != null) {
-			savedFragment = MediaFragment.TAG;
-		}
-		outState.putString("fragment", savedFragment);*/
+		/*
+		 * String savedFragment = EventListFragment.TAG; if
+		 * (getSupportFragmentManager().findFragmentByTag(MediaFragment.TAG) != null) {
+		 * savedFragment = MediaFragment.TAG; } outState.putString("fragment", savedFragment);
+		 */
 	}
 
 	@Override
@@ -81,7 +82,7 @@ public class CDMActivity extends FragmentActivity implements EventInterface, Sch
 			transitionFragments(new SchoolLoopFragment(), SchoolLoopFragment.TAG);
 		}
 	}
-	
+
 	public void OnClickInfo(View view) {
 		if (getSupportFragmentManager().findFragmentByTag(InfoListFragment.TAG) != null) {
 		} else {
