@@ -36,24 +36,18 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
-public class CalendarView extends ImageView {
-	private static int WEEK_TOP_MARGIN = 0;
-	private static int WEEK_LEFT_MARGIN = 45;
+public class CalendarView extends View {
+	private static int WEEK_HEIGHT = 0;
 	private static int CELL_WIDTH = 58;
-	private static int CELL_HEIGH = 53;
-	private static int CELL_MARGIN_TOP = 0;
-	private static int CELL_MARGIN_LEFT = 39;
+	private static int CELL_HEIGHT = 53;
 	private static float CELL_TEXT_SIZE;
 
 	private static final String TAG = "CalendarView";
 	private Calendar mRightNow = null;
-	private Drawable mWeekTitle = null;
-	private Cell mToday = null;
 	private Cell[][] mCells = new Cell[6][7];
 	private OnCellTouchListener mOnCellTouchListener = null;
 	MonthDisplayHelper mHelper;
-	Drawable mDecoration = null;
-	
+
 	int selectedCellDay;
 	int selectedCellMonth;
 
@@ -73,7 +67,6 @@ public class CalendarView extends ImageView {
 
 	public CalendarView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		mDecoration = context.getResources().getDrawable(R.drawable.typeb_calendar_today);
 		initCalendarView();
 	}
 
@@ -81,7 +74,7 @@ public class CalendarView extends ImageView {
 		activeDaysList = days;
 		this.invalidate();
 	}
-	
+
 	public void setSelectedDate(int day, int month) {
 		selectedCellDay = day;
 		selectedCellMonth = month;
@@ -92,22 +85,9 @@ public class CalendarView extends ImageView {
 		mRightNow = Calendar.getInstance();
 		// prepare static vars
 		Resources res = getResources();
-		WEEK_TOP_MARGIN = (int) res.getDimension(R.dimen.week_top_margin);
-		WEEK_LEFT_MARGIN = (int) res.getDimension(R.dimen.week_left_margin);
-
-		CELL_WIDTH = (int) res.getDimension(R.dimen.cell_width);
-		CELL_HEIGH = (int) res.getDimension(R.dimen.cell_heigh);
-		CELL_MARGIN_TOP = (int) res.getDimension(R.dimen.cell_margin_top);
-		CELL_MARGIN_LEFT = (int) res.getDimension(R.dimen.cell_margin_left);
-
+		
 		CELL_TEXT_SIZE = res.getDimension(R.dimen.cell_text_size);
-		// set background
-		setImageResource(R.drawable.background);
-//		setImageResource(R.drawable.actionbar);
-//		setBackgroundResource(R.drawable.actionbar);
-//		getBackground().setBounds(0, 0, 408, 412);
-//		getDrawable().setBounds(0, 0, 408, 412);
-		mWeekTitle = res.getDrawable(R.drawable.calendar_week);
+		WEEK_HEIGHT = (int) (CELL_TEXT_SIZE * 2);
 
 		mHelper = new MonthDisplayHelper(mRightNow.get(Calendar.YEAR), mRightNow.get(Calendar.MONTH));
 
@@ -126,7 +106,8 @@ public class CalendarView extends ImageView {
 			public _calendar(int d) {
 				this(d, false);
 			}
-		};
+		}
+		;
 		_calendar tmp[][] = new _calendar[6][7];
 
 		for (int i = 0; i < tmp.length; i++) {
@@ -142,48 +123,39 @@ public class CalendarView extends ImageView {
 
 		Calendar today = Calendar.getInstance();
 		int thisDay = 0;
-		mToday = null;
 		if (mHelper.getYear() == today.get(Calendar.YEAR) && mHelper.getMonth() == today.get(Calendar.MONTH)) {
 			thisDay = today.get(Calendar.DAY_OF_MONTH);
 		}
 		// build cells
-		Rect Bound = new Rect(CELL_MARGIN_LEFT, CELL_MARGIN_TOP, CELL_WIDTH + CELL_MARGIN_LEFT, CELL_HEIGH + CELL_MARGIN_TOP);
+		Rect Bound = new Rect(getPaddingLeft(), getPaddingTop() + WEEK_HEIGHT, CELL_WIDTH + getPaddingLeft(), CELL_HEIGHT + WEEK_HEIGHT + getPaddingTop());
 		for (int week = 0; week < mCells.length; week++) {
 			for (int day = 0; day < mCells[week].length; day++) {
-				int backgroundColor = Color.BLACK;
+				int backgroundColor = 0xffDDDDDD;
+				int textColor = Color.DKGRAY;
+				/* Calculate the current displayed month, store into int */
 				int cellMonth = tmp[week][day].thisMonth ? mHelper.getMonth() : (tmp[week][day].day > 15) ? mHelper.getMonth() - 1 : mHelper.getMonth() + 1;
+				/* Check if the current cell has events on it. If so then set background color to RED */
 				if (activeDaysList.contains(SchoolLoopAPI.EventMap.toIsoDate(mHelper.getYear(), cellMonth, tmp[week][day].day)))
+					backgroundColor = Color.RED;
+				/* Check if the current cell is today. If so then set the background color to WHITE */
+				if (tmp[week][day].day == thisDay && tmp[week][day].thisMonth)
 					backgroundColor = Color.WHITE;
-				if (tmp[week][day].thisMonth) {
-					if (day == 0 || day == 6)
-						mCells[week][day] = new Cell(tmp[week][day].day, cellMonth, new Rect(Bound), CELL_TEXT_SIZE, false, 0xdddd0000, backgroundColor);
-					else
-						mCells[week][day] = new Cell(tmp[week][day].day, cellMonth, new Rect(Bound), CELL_TEXT_SIZE, false, Color.LTGRAY, backgroundColor);
-				} else {
-					mCells[week][day] = new Cell(tmp[week][day].day, cellMonth, new Rect(Bound), CELL_TEXT_SIZE, false, Color.DKGRAY, backgroundColor);
+				/* Check if the current cell is not in this month. If so then set the text color to LTGRAY */
+				if (!tmp[week][day].thisMonth) {
+					textColor = Color.LTGRAY;
+					backgroundColor = 0xffEEEEEE;
 				}
+
+				mCells[week][day] = new Cell(tmp[week][day].day, cellMonth, new Rect(Bound), CELL_TEXT_SIZE, false, textColor, backgroundColor);
+
 				if (tmp[week][day].day == selectedCellDay && mCells[week][day].getMonth() == selectedCellMonth)
 					mCells[week][day].setSelected();
 				Bound.offset(CELL_WIDTH + 1, 0); // move to next column
-
-				// get today
-				if (tmp[week][day].day == thisDay && tmp[week][day].thisMonth) {
-					mToday = mCells[week][day];
-					mDecoration.setBounds(mToday.getBound());
-				}
 			}
-			Bound.offset(0, CELL_HEIGH + 1); // move to next row and first column
-			Bound.left = CELL_MARGIN_LEFT;
-			Bound.right = CELL_MARGIN_LEFT + CELL_WIDTH;
+			Bound.offset(0, CELL_HEIGHT + 1); // move to next row and first column
+			Bound.left = getPaddingLeft();
+			Bound.right = getPaddingLeft() + CELL_WIDTH;
 		}
-	}
-
-	@Override
-	public void onLayout(boolean changed, int left, int top, int right, int bottom) {
-		WEEK_LEFT_MARGIN = CELL_MARGIN_LEFT = (right - left - 413) / 2;
-		mWeekTitle.setBounds(WEEK_LEFT_MARGIN, WEEK_TOP_MARGIN, WEEK_LEFT_MARGIN + mWeekTitle.getMinimumWidth(), WEEK_TOP_MARGIN + mWeekTitle.getMinimumHeight());
-		initCells();
-		super.onLayout(changed, left, top, right, bottom);
 	}
 
 	public void setTimeInMillis(long milliseconds) {
@@ -199,12 +171,11 @@ public class CalendarView extends ImageView {
 	public int getMonth() {
 		return mHelper.getMonth();
 	}
-	
+
 	public String getMonthString() {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(mHelper.getYear(), mHelper.getMonth(), 1);
-		return calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
-		
+		return "";// calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.US);
 	}
 
 	public void nextMonth() {
@@ -257,21 +228,30 @@ public class CalendarView extends ImageView {
 	}
 
 	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		int width = MeasureSpec.getSize(widthMeasureSpec);
+		int height = MeasureSpec.getSize(heightMeasureSpec);
+		CELL_HEIGHT = (height - WEEK_HEIGHT) / 6 - 1;
+		CELL_WIDTH = width / 7;
+		setMeasuredDimension(width, height);
+	}
+
+	@Override
+	public void onLayout(boolean changed, int left, int top, int right, int bottom) {
+		initCells();
+		super.onLayout(changed, left, top, right, bottom);
+	}
+
+	@Override
 	protected void onDraw(Canvas canvas) {
 		// draw background
 		super.onDraw(canvas);
-		mWeekTitle.draw(canvas);
 
 		// draw cells
 		for (Cell[] week : mCells) {
 			for (Cell day : week) {
 				day.draw(canvas);
 			}
-		}
-
-		// draw today
-		if (mDecoration != null && mToday != null) {
-			mDecoration.draw(canvas);
 		}
 	}
 

@@ -28,9 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="@drawable/button_transparent"
             android:padding="5dp"
-            android:textColor="@color/white_text"
             android:visibility="gone" />
 
         <Button
@@ -38,9 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="@drawable/button_transparent"
             android:padding="5dp"
-            android:textColor="@color/white_text"
             android:visibility="gone" />
     </LinearLayout>
 
@@ -49,9 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_weight="0"
-        android:background="@drawable/button_transparent"
-        android:padding="5dp"
-        android:textColor="@color/white_text" />
+        android:padding="5dp" />
 
     <com.ampelement.cdm.calendar.CalendarView
         android:id="@+id/event_screen_calendar"

@@ -36,7 +36,6 @@ import com.ampelement.cdm.utils.SchoolLoopAPI;
 public class SchoolLoopFragment extends SherlockFragment {
 
 	private RelativeLayout schoolLoopScreen;
-	private SchoolLoopInterface schoolLoopInterface;
 
 	boolean newCredentials = false;
 
@@ -45,27 +44,10 @@ public class SchoolLoopFragment extends SherlockFragment {
 
 	public static final String TAG = "SchoolLoopFragment";
 
-	public interface SchoolLoopInterface {
-		public void setIndicator(int indicatorID);
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		try {
-			schoolLoopInterface = (SchoolLoopInterface) activity;
-		} catch (ClassCastException e) {
-			Log.e(TAG, activity.toString() + " must implement OnUpdateListener");
-			// getActivity().finish();
-		}
-	}
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Loading Screen Handler
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-		// Show Tab Indicator
-		schoolLoopInterface.setIndicator(R.id.main_school_loop_indicator);
 		// Get Screens
 		schoolLoopScreen = (RelativeLayout) inflater.inflate(R.layout.school_loop_screen, container, false);
 		final LinearLayout loginScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_inputs);

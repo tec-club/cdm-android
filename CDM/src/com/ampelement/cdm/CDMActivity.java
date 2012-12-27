@@ -1,62 +1,54 @@
 package com.ampelement.cdm;
 
+import java.util.ArrayList;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.view.View;
+
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
+import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-//import com.actionbarsherlock.view.Window;
 import com.ampelement.cdm.fragments.EventListFragment;
-import com.ampelement.cdm.fragments.EventListFragment.EventInterface;
-import com.ampelement.cdm.fragments.InfoListFragment.InfoInterface;
 import com.ampelement.cdm.fragments.InfoListFragment;
 import com.ampelement.cdm.fragments.SchoolLoopFragment;
-import com.ampelement.cdm.fragments.SchoolLoopFragment.SchoolLoopInterface;
-import com.ampelement.cdm.services.Update_Service;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.view.View;
-import android.widget.LinearLayout;
-
-public class CDMActivity extends SherlockFragmentActivity implements EventInterface, SchoolLoopInterface, InfoInterface {
+public class CDMActivity extends SherlockFragmentActivity {
 
 	private static final String TAG = "CDMActivity";
+
+	ViewPager mViewPager;
+	TabsAdapter mTabsAdapter;
+
+	EventListFragment mFragmentEventList;
+	InfoListFragment mFragmentInfoList;
+	SchoolLoopFragment mFragmentSchoolLoop;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// requestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		if (savedInstanceState != null) {
-			/*
-			 * if (savedInstanceState.getString("fragment",
-			 * EventListFragment.TAG).matches(EventListFragment.TAG)) { transitionFragments(new
-			 * EventListFragment(), EventListFragment.TAG); } else { transitionFragments(new
-			 * MediaFragment(), MediaFragment.TAG); }
-			 */
-		} else {
-			transitionFragments(new EventListFragment(), EventListFragment.TAG);
-		}
-	}
-
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		// TODO Auto-generated method stub
-		super.onSaveInstanceState(outState);
-		/*
-		 * String savedFragment = EventListFragment.TAG; if
-		 * (getSupportFragmentManager().findFragmentByTag(MediaFragment.TAG) != null) {
-		 * savedFragment = MediaFragment.TAG; } outState.putString("fragment", savedFragment);
-		 */
+		mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
+		// This block thanks to http://stackoverflow.com/q/9790279/517561
+		ActionBar bar = getSupportActionBar();
+		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		bar.setDisplayShowTitleEnabled(true);
+		bar.setDisplayShowHomeEnabled(true);
+		//
+		mViewPager.setOffscreenPageLimit(2);
+		mTabsAdapter = new TabsAdapter(this, mViewPager);
+		addTabs();
 	}
 
 	@Override
 	public void onBackPressed() {
-		Fragment fragment = getSupportFragmentManager().findFragmentByTag(SchoolLoopFragment.TAG);
+		SherlockFragment fragment = mTabsAdapter.getCurrentFragment();
 		if (fragment != null && fragment instanceof SchoolLoopFragment) {
 			SchoolLoopFragment schoolLoopFragment = (SchoolLoopFragment) fragment;
 			if (schoolLoopFragment.webView.canGoBack()) {
@@ -69,54 +61,119 @@ public class CDMActivity extends SherlockFragmentActivity implements EventInterf
 		}
 	}
 
-	public void OnClickEvents(View view) {
-		if (getSupportFragmentManager().findFragmentByTag(EventListFragment.TAG) != null) {
-		} else {
-			transitionFragments(new EventListFragment(), EventListFragment.TAG);
+	void addTabs() {
+		mFragmentEventList = new EventListFragment();
+		mFragmentInfoList = new InfoListFragment();
+		mFragmentSchoolLoop = new SchoolLoopFragment();
+		mTabsAdapter.addTab("Events", mFragmentEventList);
+		mTabsAdapter.addTab("Info", mFragmentInfoList);
+		mTabsAdapter.addTab("SchoolLoop", mFragmentSchoolLoop);
+	}
+
+	/**
+	 * This is a helper class that implements the management of tabs and all details of connecting a
+	 * ViewPager with associated TabHost. It relies on a trick. Normally a tab host has a simple API
+	 * for supplying a View or Intent that each tab will show. This is not sufficient for switching
+	 * between pages. So instead we make the content part of the tab host 0dp high (it is not shown)
+	 * and the TabsAdapter supplies its own dummy view to show as the tab content. It listens to
+	 * changes in tabs, and takes care of switch to the correct paged in the ViewPager whenever the
+	 * selected tab changes.
+	 */
+	public static class TabsAdapter extends FragmentPagerAdapter implements ViewPager.OnPageChangeListener, ActionBar.TabListener {
+		private final SherlockFragmentActivity mContext;
+		private final ViewPager mViewPager;
+		private final ArrayList<SherlockFragment> mFragments = new ArrayList<SherlockFragment>();
+
+		static class DummyTabFactory implements android.widget.TabHost.TabContentFactory {
+			private final Context mContext;
+
+			public DummyTabFactory(Context context) {
+				mContext = context;
+			}
+
+			@Override
+			public View createTabContent(String tag) {
+				View v = new View(mContext);
+				v.setMinimumWidth(0);
+				v.setMinimumHeight(0);
+				return v;
+			}
 		}
-	}
 
-	public void OnClickSchoolLoop(View view) {
-		if (getSupportFragmentManager().findFragmentByTag(SchoolLoopFragment.TAG) != null) {
-		} else {
-			transitionFragments(new SchoolLoopFragment(), SchoolLoopFragment.TAG);
+		public TabsAdapter(SherlockFragmentActivity activity, ViewPager pager) {
+			super(activity.getSupportFragmentManager());
+			mContext = activity;
+			mViewPager = pager;
+			mViewPager.setAdapter(this);
+			mViewPager.setOnPageChangeListener(this);
 		}
-	}
 
-	public void OnClickInfo(View view) {
-		if (getSupportFragmentManager().findFragmentByTag(InfoListFragment.TAG) != null) {
-		} else {
-			transitionFragments(new InfoListFragment(), InfoListFragment.TAG);
+		public void addTab(CharSequence label, SherlockFragment fragment) {
+			ActionBar.Tab tab = mContext.getSupportActionBar().newTab();
+			tab.setText(label);
+			tab.setTabListener(this);
+			mContext.getSupportActionBar().addTab(tab);
+			mFragments.add(fragment);
+			notifyDataSetChanged();
 		}
-	}
 
-	public void OnClickFacebook(View view) {
-		Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.facebook.com/pages/You-know-you-go-to-CdM-when/239305217972"));
-		startActivity(i);
-	}
+		@Override
+		public int getCount() {
+			return mFragments.size();
+		}
 
-	public void OnClickHome(View view) {
-		startService(new Intent(getApplicationContext(), Update_Service.class));
-	}
+		@Override
+		public SherlockFragment getItem(int position) {
+			return mFragments.get(position);
+		}
+		
+		public SherlockFragment getCurrentFragment() {
+			return getItem(mViewPager.getCurrentItem());
+		}
 
-	public void setIndicator(int indicatorID) {
-		((LinearLayout) findViewById(R.id.main_events_indicator)).setVisibility(View.GONE);
-		((LinearLayout) findViewById(R.id.main_info_indicator)).setVisibility(View.GONE);
-		((LinearLayout) findViewById(R.id.main_school_loop_indicator)).setVisibility(View.GONE);
-		LinearLayout indicator = (LinearLayout) findViewById(indicatorID);
-		indicator.setVisibility(View.VISIBLE);
-	}
+		@Override
+		public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+		}
 
-	private void transitionFragments(Fragment fragment, String fragmentTag) {
-		// get an instance of FragmentTransaction from your Activity
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-		// add a fragment
-		// if (fragmentToRemove != null) {
-		// fragmentTransaction.remove(fragmentToRemove);
-		// }
-		fragmentTransaction.replace(R.id.main_fragment, fragment, fragmentTag);
-		fragmentTransaction.commit();
+		@Override
+		public void onPageSelected(int position) {
+			mContext.getSupportActionBar().setSelectedNavigationItem(position);
+		}
+
+		@Override
+		public void onPageScrollStateChanged(int state) {
+		}
+
+		/**
+		 * (non-Javadoc)
+		 * 
+		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabSelected(com.actionbarsherlock.app
+		 *      .ActionBar.Tab, android.support.v4.app.FragmentTransaction)
+		 */
+		@Override
+		public void onTabSelected(Tab tab, FragmentTransaction ft) {
+			mViewPager.setCurrentItem(mContext.getSupportActionBar().getSelectedNavigationIndex());
+		}
+
+		/**
+		 * (non-Javadoc)
+		 * 
+		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabUnselected(com.actionbarsherlock
+		 *      .app.ActionBar.Tab, android.support.v4.app.FragmentTransaction)
+		 */
+		@Override
+		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		}
+
+		/**
+		 * (non-Javadoc)
+		 * 
+		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabReselected(com.actionbarsherlock
+		 *      .app.ActionBar.Tab, android.support.v4.app.FragmentTransaction)
+		 */
+		@Override
+		public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		}
 	}
 
 }

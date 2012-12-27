@@ -33,24 +33,7 @@ public class InfoListFragment extends SherlockFragment {
 
 	public WebView mWebView;
 
-	private InfoInterface infoInterface;
-
 	public static final String TAG = "InfoListFragment";
-
-	public interface InfoInterface {
-		public void setIndicator(int indicatorID);
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		try {
-			infoInterface = (InfoInterface) activity;
-		} catch (ClassCastException e) {
-			Log.e(TAG, activity.toString() + " must implement OnUpdateListener");
-			// getActivity().finish();
-		}
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,8 +48,6 @@ public class InfoListFragment extends SherlockFragment {
 		mWebView.getSettings().setBuiltInZoomControls(true);
 		mWebView.getSettings().setUseWideViewPort(true);
 		mWebViewLinearLayout.addView(mWebView);
-
-		infoInterface.setIndicator(R.id.main_info_indicator);
 
 		mInfoGridView.setAdapter(new InfoAdapter(getActivity().getApplicationContext()));
 

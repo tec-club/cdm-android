@@ -16,8 +16,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:gravity="center_horizontal|center_vertical"
-            android:textColor="#D42020" />
+            android:gravity="center_horizontal|center_vertical" />
 
         <EditText
             android:id="@+id/school_loop_username"
@@ -43,7 +42,6 @@
             android:id="@+id/school_loop_submit"
             android:layout_width="match_parent"
             android:layout_height="48dip"
-            android:background="@drawable/button_transparent"
             android:text="@string/submit" />
     </LinearLayout>
 

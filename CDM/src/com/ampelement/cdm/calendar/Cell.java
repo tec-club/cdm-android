@@ -30,41 +30,42 @@ public class Cell {
 	protected int mDayOfMonth = 1; // from 1 to 31
 	int mMonth = 0;
 	protected Paint mTextPaint = new Paint(Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-	protected int borderColor = Color.BLACK;
-	int dx, dy;
+	protected int bgColor = 0xDDDDDD;
+	int charWidth;
+	int dayWidth, dayHeight;
 	boolean selected = false;
 
-	public Cell(int dayOfMon, int month, Rect rect, float textSize, boolean bold, int textColor, int borColor) {
+	public Cell(int dayOfMon, int month, Rect rect, float textSize, boolean bold, int textColor, int bgColor) {
 		mDayOfMonth = dayOfMon;
 		mMonth = month;
 		mBound = rect;
-		mTextPaint.setTextSize(textSize/*26f*/);
+		mTextPaint.setTextSize(textSize/* 26f */);
 		mTextPaint.setColor(textColor);
 		if (bold)
 			mTextPaint.setFakeBoldText(true);
 
-		dx = (int) mTextPaint.measureText(String.valueOf(mDayOfMonth)) / 2;
-		dy = (int) (-mTextPaint.ascent() + mTextPaint.descent()) / 2;
-		borderColor = borColor;
+		charWidth = (int) mTextPaint.measureText("7");
+		dayWidth = (int) mTextPaint.measureText(String.valueOf(mDayOfMonth));
+		dayHeight = (int) (-mTextPaint.ascent() + mTextPaint.descent());
+		this.bgColor = bgColor;
 	}
-	
+
 	public void setSelected() {
 		selected = true;
 	}
 
 	protected void draw(Canvas canvas) {
+		Paint bgPaint = new Paint();
+		bgPaint.setColor(bgColor);
+		bgPaint.setStyle(Paint.Style.FILL);
+		if (selected)
+			bgPaint.setColor(0x000000);
+		canvas.drawRect(mBound, bgPaint);
 		Paint borderPaint = new Paint();
-		borderPaint.setColor(borderColor);
+		borderPaint.setColor(0xffd4d4d4);
 		borderPaint.setStyle(Paint.Style.STROKE);
 		canvas.drawRect(mBound, borderPaint);
-		if (selected) {
-			Paint bgPaint = new Paint();
-			bgPaint.setColor(0x66FFFFFF);
-			bgPaint.setStyle(Paint.Style.FILL);
-			Rect fillRectangle = mBound;
-			canvas.drawRect(fillRectangle, bgPaint);
-		}
-		canvas.drawText(String.valueOf(mDayOfMonth), mBound.centerX() - dx, mBound.centerY() + dy, mTextPaint);
+		canvas.drawText(String.valueOf(mDayOfMonth), mBound.right - (dayWidth + charWidth), mBound.top + dayHeight, mTextPaint);
 	}
 
 	public int getDayOfMonth() {

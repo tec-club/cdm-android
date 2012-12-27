@@ -1,28 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!--
-     Old Sherlock Stuff
-     <style name="Theme.Sherlock.Google.Maps" parent="Theme.Sherlock">
-        <item name="actionBarStyle">@style/Widget.Styled.ActionBar</item>
-        <item name="android:actionBarStyle">@style/Widget.Styled.ActionBar</item>
-    </style>
-
-    <style name="Widget.Styled.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid.Inverse">
-        <item name="background">@drawable/actionbar</item>
-        <item name="android:background">@drawable/actionbar</item>
-        <item name="backgroundSplit">@drawable/actionbar</item>
-        <item name="android:backgroundSplit">@drawable/actionbar</item>
-        <item name="android:textColor">#FFFFFF</item>
-    </style>
-    -->
+    <style name="AppTheme" parent="Theme.Sherlock.Light.DarkActionBar"></style>
 
     <style name="TextEllipsize">
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
         <item name="android:scrollHorizontally">true</item>
     </style>
-
-    <style name="Theme.SupportsHolo" parent="android:Theme.Black.NoTitleBar"></style>
 
 </resources>

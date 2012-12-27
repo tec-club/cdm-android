@@ -41,7 +41,8 @@ public class SchoolLoopAPI {
 	public static final String BASE_URL = "http://cdm.schoolloop.com";
 
 	public static class EventFetcher {
-		public static final String EVENT_RSS_URL = BASE_URL + "/cms/rss?d=x&group_id=1204427108703&types=_assignment__event_&include_subgroups=t";
+		public static final String EVENT_RSS_URL = "http://ampelement.com/cdm/test_rss.xml";
+//		public static final String EVENT_RSS_URL = BASE_URL + "/cms/rss?d=x&group_id=1204427108703&types=_assignment__event_&include_subgroups=t";
 
 		public EventFetcher() {
 		}
@@ -68,6 +69,10 @@ public class SchoolLoopAPI {
 	}
 
 	public static class EventMap implements Serializable {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 116540645L;
 		Map<String, ArrayList<Event>> eventMap;
 		public ArrayList<String> activeDatesArrayList = new ArrayList<String>();
 

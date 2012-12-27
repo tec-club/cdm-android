@@ -44,25 +44,9 @@ public class EventListFragment extends SherlockFragment implements CalendarView.
 	private Button mNextCalendarButton;
 	private Button mMonthButton;
 
-	private EventInterface eventInterface;
 	private EventMap eventsMap;
 
 	public static final String TAG = "EventListFragment";
-
-	public interface EventInterface {
-		public void setIndicator(int indicatorID);
-	}
-
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		try {
-			eventInterface = (EventInterface) activity;
-		} catch (ClassCastException e) {
-			Log.e(TAG, activity.toString() + " must implement OnUpdateListener");
-			// getActivity().finish();
-		}
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,7 +61,6 @@ public class EventListFragment extends SherlockFragment implements CalendarView.
 		setupCalendarButtons(eventScreen);
 
 		new GetEventsTask().execute();
-		eventInterface.setIndicator(R.id.main_events_indicator);
 		return eventScreen;
 	}
 
