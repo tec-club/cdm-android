@@ -56,6 +56,8 @@ public class CDMActivity extends SherlockFragmentActivity {
 			} else {
 				super.onBackPressed();
 			}
+		} else if (fragment != null && fragment instanceof InfoListFragment) {
+			((InfoListFragment) fragment).showInfoItemSelecter();
 		} else {
 			super.onBackPressed();
 		}
@@ -71,13 +73,11 @@ public class CDMActivity extends SherlockFragmentActivity {
 	}
 
 	/**
-	 * This is a helper class that implements the management of tabs and all details of connecting a
-	 * ViewPager with associated TabHost. It relies on a trick. Normally a tab host has a simple API
-	 * for supplying a View or Intent that each tab will show. This is not sufficient for switching
-	 * between pages. So instead we make the content part of the tab host 0dp high (it is not shown)
-	 * and the TabsAdapter supplies its own dummy view to show as the tab content. It listens to
-	 * changes in tabs, and takes care of switch to the correct paged in the ViewPager whenever the
-	 * selected tab changes.
+	 * This is a helper class that implements the management of tabs and all details of connecting a ViewPager with associated TabHost. It relies on a
+	 * trick. Normally a tab host has a simple API for supplying a View or Intent that each tab will show. This is not sufficient for switching
+	 * between pages. So instead we make the content part of the tab host 0dp high (it is not shown) and the TabsAdapter supplies its own dummy view
+	 * to show as the tab content. It listens to changes in tabs, and takes care of switch to the correct paged in the ViewPager whenever the selected
+	 * tab changes.
 	 */
 	public static class TabsAdapter extends FragmentPagerAdapter implements ViewPager.OnPageChangeListener, ActionBar.TabListener {
 		private final SherlockFragmentActivity mContext;
@@ -126,7 +126,7 @@ public class CDMActivity extends SherlockFragmentActivity {
 		public SherlockFragment getItem(int position) {
 			return mFragments.get(position);
 		}
-		
+
 		public SherlockFragment getCurrentFragment() {
 			return getItem(mViewPager.getCurrentItem());
 		}
@@ -147,8 +147,8 @@ public class CDMActivity extends SherlockFragmentActivity {
 		/**
 		 * (non-Javadoc)
 		 * 
-		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabSelected(com.actionbarsherlock.app
-		 *      .ActionBar.Tab, android.support.v4.app.FragmentTransaction)
+		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabSelected(com.actionbarsherlock.app .ActionBar.Tab,
+		 *      android.support.v4.app.FragmentTransaction)
 		 */
 		@Override
 		public void onTabSelected(Tab tab, FragmentTransaction ft) {
@@ -158,8 +158,8 @@ public class CDMActivity extends SherlockFragmentActivity {
 		/**
 		 * (non-Javadoc)
 		 * 
-		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabUnselected(com.actionbarsherlock
-		 *      .app.ActionBar.Tab, android.support.v4.app.FragmentTransaction)
+		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabUnselected(com.actionbarsherlock .app.ActionBar.Tab,
+		 *      android.support.v4.app.FragmentTransaction)
 		 */
 		@Override
 		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
@@ -168,8 +168,8 @@ public class CDMActivity extends SherlockFragmentActivity {
 		/**
 		 * (non-Javadoc)
 		 * 
-		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabReselected(com.actionbarsherlock
-		 *      .app.ActionBar.Tab, android.support.v4.app.FragmentTransaction)
+		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabReselected(com.actionbarsherlock .app.ActionBar.Tab,
+		 *      android.support.v4.app.FragmentTransaction)
 		 */
 		@Override
 		public void onTabReselected(Tab tab, FragmentTransaction ft) {
