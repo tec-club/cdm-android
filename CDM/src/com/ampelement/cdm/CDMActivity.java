@@ -57,7 +57,9 @@ public class CDMActivity extends SherlockFragmentActivity {
 				super.onBackPressed();
 			}
 		} else if (fragment != null && fragment instanceof InfoListFragment) {
-			((InfoListFragment) fragment).showInfoItemSelecter();
+			if (!((InfoListFragment) fragment).showInfoItemSelecter()) {
+				super.onBackPressed();
+			}
 		} else {
 			super.onBackPressed();
 		}
