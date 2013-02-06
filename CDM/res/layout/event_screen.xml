@@ -45,6 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_weight="0"
+        android:visibility="gone"
         android:padding="5dp" />
 
     <com.ampelement.cdm.calendar.CalendarView

@@ -159,8 +159,8 @@ public class EventListFragment extends SherlockFragment implements CalendarView.
 			try {
 				eventLoadingScreen.setVisibility(View.GONE);
 				if (eventsMap != null && !eventsMap.isEmpty()) {
-					mPrevCalendarButton.setVisibility(View.VISIBLE);
-					mNextCalendarButton.setVisibility(View.VISIBLE);
+//					mPrevCalendarButton.setVisibility(View.VISIBLE);
+//					mNextCalendarButton.setVisibility(View.VISIBLE);
 					calendarView.setVisibility(View.VISIBLE);
 					calendarView.setActiveDayList(eventsMap.activeDatesArrayList);
 					Date now = new Date();
