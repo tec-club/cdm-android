@@ -39,12 +39,13 @@ public class InfoListFragment extends SherlockFragment {
 		View infoScreen = inflater.inflate(R.layout.info_screen, container, false);
 		mInfoGridView = (GridView) infoScreen.findViewById(R.id.info_screen_gridView);
 		mWebViewLinearLayout = (LinearLayout) infoScreen.findViewById(R.id.info_screen_webView);
-		mInfoScrollView = (ScrollView)infoScreen.findViewById(R.id.info_screen_scrollView);
+		mInfoScrollView = (ScrollView) infoScreen.findViewById(R.id.info_screen_scrollView);
 
 		mWebView = new WebView(getActivity());
 		mWebView.setWebViewClient(new InfoWebViewClient());
 		mWebView.getSettings().setBuiltInZoomControls(true);
 		mWebView.getSettings().setUseWideViewPort(true);
+		mWebView.getSettings().setLoadWithOverviewMode(true);
 		mWebViewLinearLayout.addView(mWebView);
 
 		mInfoGridView.setAdapter(new InfoAdapter(getActivity().getApplicationContext()));
@@ -63,10 +64,14 @@ public class InfoListFragment extends SherlockFragment {
 			this.url = url;
 		}
 	}
-	
-	public void showInfoItemSelecter() {
-		mInfoScrollView.setVisibility(View.VISIBLE);
-		mWebViewLinearLayout.setVisibility(View.GONE);
+
+	public boolean showInfoItemSelecter() {
+		if (mWebViewLinearLayout.isShown()) {
+			mInfoScrollView.setVisibility(View.VISIBLE);
+			mWebViewLinearLayout.setVisibility(View.GONE);
+			return true;
+		} else
+			return false;
 	}
 
 	private class InfoAdapter extends BaseAdapter {
@@ -127,10 +132,6 @@ public class InfoListFragment extends SherlockFragment {
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			view.loadUrl(url);
 			return true;
-		}
-		@Override
-		public void onPageFinished(WebView view, String url) {
-			Toast.makeText(getActivity(), "", Toast.LENGTH_LONG).show();
 		}
 	}
 
