@@ -19,7 +19,6 @@ package com.ampelement.cdm.calendar;
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Locale;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -29,7 +28,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.MonthDisplayHelper;
 import android.view.MotionEvent;
 import android.view.View;
@@ -47,8 +45,7 @@ public class CalendarView extends View {
 	private Calendar mRightNow = null;
 	private Cell[][] mCells = new Cell[8][7];
 	private OnCellTouchListener mOnCellTouchListener = null;
-	MonthDisplayHelper mHelper;
-	MonthDisplayHelper mDisplayHelper;
+	private CalendarHelper mCalendarHelper;
 
 	private Paint mTextPaint;
 	private Paint mBGPaint;
@@ -58,7 +55,6 @@ public class CalendarView extends View {
 	private boolean isBeingTouched;
 	private boolean isDragged;
 	private float ZERO;
-	private int WEEK_OFFSET;
 
 	String[] mWeekTitles = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 
@@ -103,8 +99,7 @@ public class CalendarView extends View {
 		CELL_TEXT_SIZE = res.getDimension(R.dimen.cell_text_size);
 		WEEK_HEIGHT = (int) (CELL_TEXT_SIZE * 1.3);
 
-		mHelper = new MonthDisplayHelper(mRightNow.get(Calendar.YEAR), mRightNow.get(Calendar.MONTH));
-		mDisplayHelper = new MonthDisplayHelper(mRightNow.get(Calendar.YEAR), mRightNow.get(Calendar.MONTH));
+		mCalendarHelper = new CalendarHelper(Calendar.SUNDAY);
 
 		mTextPaint = new Paint(Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
 		mTextPaint.setTextSize(CELL_TEXT_SIZE/* 26f */);
@@ -140,15 +135,15 @@ public class CalendarView extends View {
 		 */
 		_calendar tmp[][] = new _calendar[8][7];
 		for (int i = 0; i < tmp.length; i++) {
-			int row[] = getWeek(i - 1);
+			CalendarHelper.Day row[] = mCalendarHelper.getWeek((i + 1) - 4);
 			for (int d = 0; d < tmp[i].length; d++) {
-				tmp[i][d] = new _calendar(row[d], getWithinDrawMonth(i - 1, d));
+				tmp[i][d] = new _calendar(row[d].day, row[d].withinCurrentMonth);
 			}
 		}
 
 		Calendar today = Calendar.getInstance();
 		int thisDay = 0;
-		if (mHelper.getYear() == today.get(Calendar.YEAR) && mHelper.getMonth() == today.get(Calendar.MONTH)) {
+		if (mCalendarHelper.getYear() == today.get(Calendar.YEAR) && mCalendarHelper.getMonth() == today.get(Calendar.MONTH)) {
 			thisDay = today.get(Calendar.DAY_OF_MONTH);
 		}
 		// build cells
@@ -159,7 +154,7 @@ public class CalendarView extends View {
 				int columbiaBlue = 0xff9BDDFF;
 				int textColor = Color.LTGRAY;
 				/* Calculate the current displayed month, store into int */
-				int cellMonth = tmp[week][day].thisMonth ? mHelper.getMonth() : (tmp[week][day].day > 15) ? mHelper.getMonth() - 1 : mHelper.getMonth() + 1;
+				int cellMonth = tmp[week][day].thisMonth ? mCalendarHelper.getMonth() : (tmp[week][day].day > 15) ? mCalendarHelper.getMonth() - 1 : mCalendarHelper.getMonth() + 1;
 				/* Check if the current cell is today. If so then set the background color to WHITE */
 				if (tmp[week][day].day == thisDay && tmp[week][day].thisMonth)
 					backgroundColor = Color.WHITE;
@@ -169,7 +164,7 @@ public class CalendarView extends View {
 					backgroundColor = 0xffDDDDDD;
 				}
 				/* Check if the current cell has events on it. If so then set background color to Columbia Blue */
-				if (activeDaysList.contains(SchoolLoopAPI.EventMap.toIsoDate(mHelper.getYear(), cellMonth, tmp[week][day].day)))
+				if (activeDaysList.contains(SchoolLoopAPI.EventMap.toIsoDate(mCalendarHelper.getYear(), cellMonth, tmp[week][day].day)))
 					backgroundColor = columbiaBlue;
 
 				mCells[week][day] = new Cell(tmp[week][day].day, cellMonth, new Rect(Bound), CELL_TEXT_SIZE, false, textColor, backgroundColor);
@@ -182,36 +177,6 @@ public class CalendarView extends View {
 			Bound.left = getPaddingLeft();
 			Bound.right = getPaddingLeft() + CELL_WIDTH;
 		}
-	}
-
-	int[] getWeek(int row) {
-		int adjRow = row + WEEK_OFFSET;
-		if (adjRow >= 0 && adjRow <= 5) {
-			return mDisplayHelper.getDigitsForRow(adjRow);
-		} else if (adjRow < 0) {
-			mDisplayHelper.previousMonth();
-			int[] weekDays = mDisplayHelper.getDigitsForRow(adjRow + 5);
-			mDisplayHelper.nextMonth();
-			return weekDays;
-		} else {
-			mDisplayHelper.nextMonth();
-			int[] weekDays = mDisplayHelper.getDigitsForRow(adjRow - 4);
-			mDisplayHelper.previousMonth();
-			return weekDays;
-		}
-	}
-
-	@SuppressLint("NewApi")
-	boolean getWithinDrawMonth(int row, int column) {
-		if (Math.abs(mHelper.getMonth() - mDisplayHelper.getMonth()) <= 1) {
-			int adjRow = row + WEEK_OFFSET;
-			return mHelper.isWithinCurrentMonth(adjRow, column);
-		}
-		return false;
-	}
-
-	int getRowsInMonth(MonthDisplayHelper helper) {
-		return (int) Math.ceil((helper.getOffset() + helper.getNumberOfDaysInMonth()) / 7.0);
 	}
 
 	@Override
@@ -235,25 +200,20 @@ public class CalendarView extends View {
 			}
 			isBeingTouched = false;
 			isDragged = false;
-			mHelper = new MonthDisplayHelper(mDisplayHelper.getYear(), mDisplayHelper.getMonth());
 			this.requestLayout();
 			this.invalidate();
 			break;
 		case MotionEvent.ACTION_MOVE:
+			isDragged = true;
 			float changeDrag = (event.getRawY() - ogTouchY);
 			ZERO = changeDrag % CELL_HEIGHT;
-			WEEK_OFFSET = WEEK_OFFSET + (int) -((changeDrag - ZERO) / CELL_HEIGHT);
-			if (Math.abs(WEEK_OFFSET) > Math.floor((getRowsInMonth(mDisplayHelper) + .1) / 2)) {
-				if (WEEK_OFFSET > 0)
-					mDisplayHelper.nextMonth();
-				else if (WEEK_OFFSET < 0)
-					mDisplayHelper.previousMonth();
-				WEEK_OFFSET = WEEK_OFFSET % (int) (Math.floor((getRowsInMonth(mDisplayHelper) + .1) / 2));
-				ogTouchY = event.getRawY();
+			int tempChangeWeeks = (int) -((event.getRawY() - touchY) / CELL_HEIGHT);
+			if (Math.abs(tempChangeWeeks) > 0) {
+				touchY = event.getRawY();
+				mCalendarHelper.addWeek(tempChangeWeeks);
 			}
 			this.requestLayout();
 			this.invalidate();
-			touchY = event.getRawY();
 			break;
 		}
 		return true;
@@ -266,41 +226,32 @@ public class CalendarView extends View {
 	}
 
 	public int getYear() {
-		return mHelper.getYear();
+		return mCalendarHelper.getYear();
 	}
 
 	public int getMonth() {
-		return mHelper.getMonth();
+		return mCalendarHelper.getMonth();
 	}
 
 	public String getMonthString() {
-		String monthName = new DateFormatSymbols().getMonths()[mHelper.getMonth()];
+		String monthName = new DateFormatSymbols().getMonths()[mCalendarHelper.getMonth()];
 		return monthName;
 	}
 
 	public void nextMonth() {
-		mHelper.nextMonth();
+		mCalendarHelper.nextMonth();
 		initCells();
 		invalidate();
 	}
 
 	public void previousMonth() {
-		mHelper.previousMonth();
+		mCalendarHelper.previousMonth();
 		initCells();
 		invalidate();
 	}
 
-	public boolean firstDay(int day) {
-		return day == 1;
-	}
-
-	public boolean lastDay(int day) {
-		return mHelper.getNumberOfDaysInMonth() == day;
-	}
-
 	public void goToday() {
-		Calendar cal = Calendar.getInstance();
-		mHelper = new MonthDisplayHelper(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH));
+		mCalendarHelper = new CalendarHelper(Calendar.SUNDAY);
 		initCells();
 		invalidate();
 	}
@@ -345,7 +296,7 @@ public class CalendarView extends View {
 		canvas.drawRect(mMonthBound, mBGPaint);
 		int monthX = (int) mTextPaint.measureText(getMonthString());
 		int monthY = (int) (-mTextPaint.ascent() + mTextPaint.descent());
-		canvas.drawText(getMonthString() + " - " + String.valueOf(mHelper.getYear()), mMonthBound.centerX() - monthX / 2, mMonthBound.top + (WEEK_HEIGHT - (monthY / 4)), mTextPaint);
+		canvas.drawText(getMonthString() + " - " + String.valueOf(mCalendarHelper.getYear()), mMonthBound.centerX() - monthX / 2, mMonthBound.top + (WEEK_HEIGHT - (monthY / 4)), mTextPaint);
 
 		for (String weekTitle : mWeekTitles) {
 			canvas.drawRect(mWeekBound, mBGPaint);
