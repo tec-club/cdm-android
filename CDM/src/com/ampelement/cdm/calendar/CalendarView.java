@@ -103,7 +103,6 @@ public class CalendarView extends View {
 		Resources res = getResources();
 
 		CELL_TEXT_SIZE = res.getDimension(R.dimen.cell_text_size);
-		CELL_TEXT_SIZE = CELL_TEXT_SIZE * .7F;
 		WEEK_HEIGHT = (int) (CELL_TEXT_SIZE * 1.3);
 
 		mCalendarHelper = new CalendarHelper(Calendar.SUNDAY);
