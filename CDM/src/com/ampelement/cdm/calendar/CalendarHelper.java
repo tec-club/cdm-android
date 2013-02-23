@@ -10,9 +10,13 @@ public class CalendarHelper {
 
 	private Calendar mCurrentCalendar;
 
+	private int mDisplayMonth;;
+	private int mDisplayYear;
+
 	public CalendarHelper(int firstDayOfWeek) {
 		mCurrentCalendar = Calendar.getInstance();
 		mFisrtDayOfWeek = firstDayOfWeek;
+		setDisplayMonth(getMonth(), getYear());
 	}
 
 	String[] getWeekTitles() {
@@ -28,7 +32,7 @@ public class CalendarHelper {
 		Calendar calendar = getCalendarRelativeToCurrent(offset);
 		calendar.set(Calendar.DAY_OF_WEEK, mFisrtDayOfWeek);
 		for (int dayWeek = 0; dayWeek < 7; dayWeek++) {
-			days[dayWeek] = new Day(calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), sameMonth(calendar), dayWeek);
+			days[dayWeek] = new Day(calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), withinDisplayMonth(calendar), dayWeek);
 			calendar.add(Calendar.DATE, 1);
 		}
 		return days;
@@ -42,9 +46,18 @@ public class CalendarHelper {
 		mCurrentCalendar.add(Calendar.MONTH, -1);
 	}
 
-	boolean sameMonth(Calendar calendar) {
-		if (calendar.get(Calendar.MONTH) == mCurrentCalendar.get(Calendar.MONTH))
-			if (calendar.get(Calendar.YEAR) == mCurrentCalendar.get(Calendar.YEAR))
+	void setDisplayMonthCurrent() {
+		setDisplayMonth(getMonth(), getYear());
+	}
+
+	void setDisplayMonth(int month, int year) {
+		mDisplayMonth = month;
+		mDisplayYear = year;
+	}
+
+	boolean withinDisplayMonth(Calendar calendar) {
+		if (calendar.get(Calendar.MONTH) == mDisplayMonth)
+			if (calendar.get(Calendar.YEAR) == mDisplayYear)
 				return true;
 
 		return false;
@@ -66,7 +79,8 @@ public class CalendarHelper {
 
 	Calendar getCopyCurrentCalendar() {
 		Calendar calendar = Calendar.getInstance();
-		calendar.set(mCurrentCalendar.get(Calendar.YEAR), mCurrentCalendar.get(Calendar.MONTH), mCurrentCalendar.get(Calendar.DAY_OF_MONTH), mCurrentCalendar.get(Calendar.HOUR_OF_DAY), mCurrentCalendar.get(Calendar.MINUTE), mCurrentCalendar.get(Calendar.SECOND));
+		calendar.setTimeInMillis(mCurrentCalendar.getTimeInMillis());
+//		calendar.set(mCurrentCalendar.get(Calendar.YEAR), mCurrentCalendar.get(Calendar.MONTH), mCurrentCalendar.get(Calendar.DAY_OF_MONTH), mCurrentCalendar.get(Calendar.HOUR_OF_DAY), mCurrentCalendar.get(Calendar.MINUTE), mCurrentCalendar.get(Calendar.SECOND));
 		return calendar;
 	}
 

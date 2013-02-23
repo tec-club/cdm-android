@@ -30,6 +30,8 @@ public class Cell {
 	protected int mDayOfMonth = 1; // from 1 to 31
 	int mMonth = 0;
 	protected Paint mTextPaint = new Paint(Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+	protected Paint mBGPaint;
+	protected Paint mBorderPaint;
 	protected int bgColor = 0xDDDDDD;
 	int charWidth;
 	int dayWidth, dayHeight;
@@ -48,6 +50,15 @@ public class Cell {
 		dayWidth = (int) mTextPaint.measureText(String.valueOf(mDayOfMonth));
 		dayHeight = (int) (-mTextPaint.ascent() + mTextPaint.descent());
 		this.bgColor = bgColor;
+
+		mBGPaint = new Paint();
+		mBGPaint.setColor(bgColor);
+		mBGPaint.setStyle(Paint.Style.FILL);
+		if (selected)
+			mBGPaint.setColor(0x000000);
+		mBorderPaint = new Paint();
+		mBorderPaint.setColor(0xffd4d4d4);
+		mBorderPaint.setStyle(Paint.Style.STROKE);
 	}
 
 	public void setSelected() {
@@ -55,16 +66,10 @@ public class Cell {
 	}
 
 	protected void draw(Canvas canvas) {
-		Paint bgPaint = new Paint();
-		bgPaint.setColor(bgColor);
-		bgPaint.setStyle(Paint.Style.FILL);
 		if (selected)
-			bgPaint.setColor(0x000000);
-		canvas.drawRect(mBound, bgPaint);
-		Paint borderPaint = new Paint();
-		borderPaint.setColor(0xffd4d4d4);
-		borderPaint.setStyle(Paint.Style.STROKE);
-		canvas.drawRect(mBound, borderPaint);
+			mBGPaint.setColor(0x000000);
+		canvas.drawRect(mBound, mBGPaint);
+		canvas.drawRect(mBound, mBorderPaint);
 		canvas.drawText(String.valueOf(mDayOfMonth), mBound.right - (dayWidth + charWidth), mBound.top + dayHeight, mTextPaint);
 	}
 
