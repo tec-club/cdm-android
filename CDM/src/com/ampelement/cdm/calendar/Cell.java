@@ -17,60 +17,56 @@
 package com.ampelement.cdm.calendar;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
+import android.text.TextPaint;
 
 public class Cell {
 	private static final String TAG = "Cell";
 	protected Rect mBound = null;
 	protected int mDayOfMonth = 1; // from 1 to 31
 	int mMonth = 0;
-	protected Paint mTextPaint = new Paint(Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
-	protected Paint mBGPaint;
-	protected Paint mBorderPaint;
-	protected int bgColor = 0xDDDDDD;
-	int charWidth;
-	int dayWidth, dayHeight;
+	protected int mBGColor = 0xDDDDDD;
+	protected float mTextSize;
+	protected int mTextColor;
+	protected boolean mBoldText;
+	
 	boolean selected = false;
 
 	public Cell(int dayOfMon, int month, Rect rect, float textSize, boolean bold, int textColor, int bgColor) {
 		mDayOfMonth = dayOfMon;
 		mMonth = month;
 		mBound = rect;
-		mTextPaint.setTextSize(textSize/* 26f */);
-		mTextPaint.setColor(textColor);
-		if (bold)
-			mTextPaint.setFakeBoldText(true);
-
-		charWidth = (int) mTextPaint.measureText("7");
-		dayWidth = (int) mTextPaint.measureText(String.valueOf(mDayOfMonth));
-		dayHeight = (int) (-mTextPaint.ascent() + mTextPaint.descent());
-		this.bgColor = bgColor;
-
-		mBGPaint = new Paint();
-		mBGPaint.setColor(bgColor);
-		mBGPaint.setStyle(Paint.Style.FILL);
-		if (selected)
-			mBGPaint.setColor(0x000000);
-		mBorderPaint = new Paint();
-		mBorderPaint.setColor(0xffd4d4d4);
-		mBorderPaint.setStyle(Paint.Style.STROKE);
+		mTextSize = textSize;
+		mTextColor = textColor;
+		mBoldText = bold;
+		mBGColor = bgColor;
 	}
 
 	public void setSelected() {
 		selected = true;
+		mBGColor = 0x000000;
 	}
 
-	protected void draw(Canvas canvas) {
-		if (selected)
-			mBGPaint.setColor(0x000000);
-		canvas.drawRect(mBound, mBGPaint);
-		canvas.drawRect(mBound, mBorderPaint);
-		canvas.drawText(String.valueOf(mDayOfMonth), mBound.right - (dayWidth + charWidth), mBound.top + dayHeight, mTextPaint);
+	protected void draw(Canvas canvas, Paint backgroundPaint, Paint borderPaint, TextPaint textPaint) {
+		// Setup for drawing
+		textPaint.setTextSize(mTextSize/* 26f */);
+		textPaint.setColor(mTextColor);
+		textPaint.setFakeBoldText(mBoldText);
+		
+		backgroundPaint.setColor(mBGColor);
+		backgroundPaint.setStyle(Paint.Style.FILL);
+		borderPaint.setColor(0xffd4d4d4);
+		borderPaint.setStyle(Paint.Style.STROKE);
+
+		int charWidth = (int) textPaint.measureText("7");
+		int dayWidth = (int) textPaint.measureText(String.valueOf(mDayOfMonth));
+		int dayHeight = (int) (-textPaint.ascent() + textPaint.descent());
+		
+		// Actual draw calls
+		canvas.drawRect(mBound, backgroundPaint);
+		canvas.drawRect(mBound, borderPaint);
+		canvas.drawText(String.valueOf(mDayOfMonth), mBound.right - (dayWidth + charWidth), mBound.top + dayHeight, textPaint);
 	}
 
 	public int getDayOfMonth() {
@@ -94,3 +90,4 @@ public class Cell {
 	}
 
 }
+
