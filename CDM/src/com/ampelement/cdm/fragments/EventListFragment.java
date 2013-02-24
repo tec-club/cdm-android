@@ -7,13 +7,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,12 +29,13 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.calendar.CalendarView;
+import com.ampelement.cdm.calendar.CalendarView.OnCellTouchListener;
 import com.ampelement.cdm.calendar.Cell;
 import com.ampelement.cdm.utils.SchoolLoopAPI.Event;
 import com.ampelement.cdm.utils.SchoolLoopAPI.EventFetcher;
 import com.ampelement.cdm.utils.SchoolLoopAPI.EventMap;
 
-public class EventListFragment extends SherlockFragment implements CalendarView.OnCellTouchListener {
+public class EventListFragment extends SherlockFragment {
 
 	private ListView eventListView;
 	private RelativeLayout eventLoadingScreen;
@@ -56,7 +56,7 @@ public class EventListFragment extends SherlockFragment implements CalendarView.
 		eventLoadingScreen = (RelativeLayout) eventScreen.findViewById(R.id.event_screen_loading);
 
 		calendarView = (CalendarView) eventScreen.findViewById(R.id.event_screen_calendar);
-		calendarView.setOnCellTouchListener(this);
+		calendarView.setOnCellTouchListener(mOnCellTouchListener);
 
 		setupCalendarButtons(eventScreen);
 
@@ -144,6 +144,30 @@ public class EventListFragment extends SherlockFragment implements CalendarView.
 			}
 		});
 	}
+	
+	private OnCellTouchListener mOnCellTouchListener = new OnCellTouchListener() {
+		@Override
+		public void onTouch(Cell cell) {
+			ArrayList<Event> events = eventsMap.get(calendarView.getYear(), cell.getMonth(), cell.getDayOfMonth());
+			Event event = events.get(0);
+			AlertDialog.Builder adBuilder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.Theme_Sherlock_Light_Dialog));
+			if (event.description.matches("")) {
+				adBuilder.setTitle("Event " + event.isoDate);
+				adBuilder.setMessage(event.title);
+			} else {
+				adBuilder.setTitle(event.title);
+				adBuilder.setMessage(event.description);
+			}
+			adBuilder.setCancelable(true);
+			adBuilder.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+			adBuilder.create().show();
+		}
+	};
 
 	private class GetEventsTask extends AsyncTask<Void, String, EventMap> {
 
@@ -216,13 +240,13 @@ public class EventListFragment extends SherlockFragment implements CalendarView.
 		}
 	}
 
-	@Override
+	/*@Override
 	public void onTouch(Cell cell) {
 		EventListAdapter adapter = new EventListAdapter(eventsMap.get(calendarView.getYear(), cell.getMonth(), cell.getDayOfMonth()), getActivity().getApplicationContext());
 		if (!adapter.eventList.isEmpty()) {
 			eventListView.setAdapter(adapter);
 			calendarView.setSelectedDate(cell.getDayOfMonth(), cell.getMonth());
 		}
-	}
+	}*/
 
 }
