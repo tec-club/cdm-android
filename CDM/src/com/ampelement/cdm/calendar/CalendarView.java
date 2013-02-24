@@ -26,6 +26,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -49,6 +50,9 @@ public class CalendarView extends View {
 	private Rect mCellBound;
 	private Paint mTextPaint;
 	private Paint mBGPaint;
+	private TextPaint mCellTextPaint;
+	private Paint mCellBGPaint;
+	private Paint mCellBorderPaint;
 	private Rect mMonthBound;
 	private Rect mWeekBound;
 	private float mTouchY;
@@ -111,6 +115,12 @@ public class CalendarView extends View {
 		mBGPaint.setColor(0xffEEEEEE);
 		mBGPaint.setStyle(Paint.Style.FILL);
 		mCellBound = new Rect(getPaddingLeft(), (int) (getPaddingTop() + WEEK_HEIGHT * 2 - CELL_HEIGHT), CELL_WIDTH + getPaddingLeft(), (int) (WEEK_HEIGHT * 2 + getPaddingTop()));
+
+		mCellTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG | TextPaint.SUBPIXEL_TEXT_FLAG);
+		mCellBGPaint = new Paint();
+		mCellBGPaint.setStyle(Paint.Style.FILL);
+		mCellBorderPaint = new Paint();
+		mCellBorderPaint.setStyle(Paint.Style.STROKE);
 	}
 
 	private void initCells() {
@@ -135,7 +145,8 @@ public class CalendarView extends View {
 		Log.d(TAG + " 2", String.valueOf((System.nanoTime() - startTime) / 1000000));
 		// build cells
 		mCellBound.set(getPaddingLeft(), (int) (getPaddingTop() + WEEK_HEIGHT * 2 + mVerticalOffset - CELL_HEIGHT), CELL_WIDTH + getPaddingLeft(), (int) (WEEK_HEIGHT * 2 + getPaddingTop() + mVerticalOffset));
-		Log.d(TAG + " 3", String.valueOf((System.nanoTime() - startTime) / 1000000));for (int week = 0; week < mCells.length; week++) {
+		Log.d(TAG + " 3", String.valueOf((System.nanoTime() - startTime) / 1000000));
+		for (int week = 0; week < mCells.length; week++) {
 			for (int day = 0; day < mCells[week].length; day++) {
 				int backgroundColor = 0xffEEEEEE;
 				int columbiaBlue = 0xff9BDDFF;
@@ -149,7 +160,7 @@ public class CalendarView extends View {
 				if (activeDaysList.contains(SchoolLoopAPI.EventMap.toIsoDate(mCalendarHelper.getYear(), tmp[week][day].month, tmp[week][day].day)))
 					backgroundColor = columbiaBlue;
 				/* Check if the current cell is today. If so then set the background color to WHITE */
-				if (tmp[week][day].day == thisDay && tmp[week][day].withinCurrentMonth)
+				if (tmp[week][day].day == thisDay && tmp[week][day].month == mRightNow.get(Calendar.MONTH))
 					backgroundColor = Color.WHITE;
 
 				mCells[week][day] = new Cell(tmp[week][day].day, tmp[week][day].month, new Rect(mCellBound), CELL_TEXT_SIZE, false, textColor, backgroundColor);
@@ -175,11 +186,12 @@ public class CalendarView extends View {
 			//			OVERFLOWED_ZERO = false;
 			break;
 		case MotionEvent.ACTION_MOVE:
-			isDragged = true;
-
 			float currentTouchY = event.getRawY();
-
 			float differenceSinceAdjustedTouch = currentTouchY - mAdjustedTouchY;
+
+			if (isDragged || differenceSinceAdjustedTouch > 5)
+				isDragged = true;
+
 			mVerticalOffset = differenceSinceAdjustedTouch % CELL_HEIGHT;
 			if (Math.abs(differenceSinceAdjustedTouch / CELL_HEIGHT) >= 1) {
 				mAdjustedTouchY = currentTouchY;
@@ -202,6 +214,7 @@ public class CalendarView extends View {
 						for (Cell day : week) {
 							if (day.hitTest((int) event.getX(), (int) event.getY())) {
 								mOnCellTouchListener.onTouch(day);
+								break;
 							}
 						}
 					}
@@ -288,12 +301,12 @@ public class CalendarView extends View {
 		// draw cells
 		for (Cell[] week : mCells) {
 			for (Cell day : week) {
-				day.draw(canvas);
+				day.draw(canvas, mCellBGPaint, mCellBorderPaint, mCellTextPaint);
 			}
 		}
 
 		canvas.drawRect(mMonthBound, mBGPaint);
-		int monthX = (int) mTextPaint.measureText(getMonthString());
+		int monthX = (int) mTextPaint.measureText(getMonthString() + " - " + String.valueOf(mCalendarHelper.getYear()));
 		int monthY = (int) (-mTextPaint.ascent() + mTextPaint.descent());
 		canvas.drawText(getMonthString() + " - " + String.valueOf(mCalendarHelper.getYear()), mMonthBound.centerX() - monthX / 2, mMonthBound.top + (WEEK_HEIGHT - (monthY / 4)), mTextPaint);
 
