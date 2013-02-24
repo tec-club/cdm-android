@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:background="#eeeeee" >
 
     <LinearLayout
         android:id="@+id/school_loop_inputs"
@@ -10,13 +11,6 @@
         android:gravity="center_vertical|center_horizontal"
         android:orientation="vertical"
         android:visibility="gone" >
-
-        <TextView
-            android:id="@+id/school_loop_error"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:gravity="center_horizontal|center_vertical" />
 
         <EditText
             android:id="@+id/school_loop_username"
@@ -40,10 +34,18 @@
 
         <Button
             android:id="@+id/school_loop_submit"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="48dip"
             android:text="@string/submit" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/school_loop_error"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/school_loop_inputs"
+        android:layout_margin="10dp"
+        android:gravity="center_horizontal|center_vertical" />
 
     <RelativeLayout
         android:id="@+id/school_loop_loading"
