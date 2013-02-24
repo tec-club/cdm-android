@@ -1,6 +1,9 @@
 package com.ampelement.cdm.calendar;
 
 import java.util.Calendar;
+import java.util.Date;
+
+import android.util.Log;
 
 public class CalendarHelper {
 
@@ -28,13 +31,18 @@ public class CalendarHelper {
 	}
 
 	Day[] getWeek(int offset) {
+		long startTime = System.nanoTime();
 		Day[] days = new Day[7];
+		Log.d("a", String.valueOf(System.nanoTime() - startTime));
 		Calendar calendar = getCalendarRelativeToCurrent(offset);
+		Log.d("b", String.valueOf(System.nanoTime() - startTime));
 		calendar.set(Calendar.DAY_OF_WEEK, mFisrtDayOfWeek);
+		Log.d("c", String.valueOf(System.nanoTime() - startTime));
 		for (int dayWeek = 0; dayWeek < 7; dayWeek++) {
 			days[dayWeek] = new Day(calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), withinDisplayMonth(calendar), dayWeek);
 			calendar.add(Calendar.DATE, 1);
 		}
+		Log.d("d", String.valueOf(System.nanoTime() - startTime));
 		return days;
 	}
 
