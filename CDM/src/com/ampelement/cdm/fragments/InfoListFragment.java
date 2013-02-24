@@ -82,6 +82,7 @@ public class InfoListFragment extends SherlockFragment {
 			infoList = new ArrayList<InfoItem>();
 			infoList.add(new InfoItem("Handbook", R.drawable.info_handbook, BASE_URL + "/handbook"));
 			infoList.add(new InfoItem("Bell Schedule", R.drawable.info_bell_schedule, BASE_URL + "/bell_schedule"));
+			infoList.add(new InfoItem("Year Schedule", R.drawable.info_bell_schedule, "http://cdm.schoolloop.com/file/1211914146706/1229223566913/7406136305481272074.pdf"));
 		}
 
 		@Override
