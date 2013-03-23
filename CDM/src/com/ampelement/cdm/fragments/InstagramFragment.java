@@ -22,21 +22,16 @@ import com.ampelement.cdm.R;
 
 public class InstagramFragment extends SherlockFragment {
 
-	private static final String BASE_URL = "http://www.ampelement.com/cdm";
+	private GridView mInstagramGridView;
+	private ScrollView mInstagramScrollView;
 
-	private GridView mInfoGridView;
-	private LinearLayout mWebViewLinearLayout;
-	private ScrollView mInfoScrollView;
+	public static final String TAG = "InstagramListFragment";
 
-	public WebView mWebView;
-
-	public static final String TAG = "InfoListFragment";
-
-	@Override
+	/*@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View infoScreen = inflater.inflate(R.layout.info_screen, container, false);
-		mInfoGridView = (GridView) infoScreen.findViewById(R.id.info_screen_gridView);
+		mInstagramGridView = (GridView) infoScreen.findViewById(R.id.info_screen_gridView);
 		mWebViewLinearLayout = (LinearLayout) infoScreen.findViewById(R.id.info_screen_webView);
 		mInfoScrollView = (ScrollView) infoScreen.findViewById(R.id.info_screen_scrollView);
 
@@ -133,6 +128,6 @@ public class InstagramFragment extends SherlockFragment {
 			view.loadUrl(url);
 			return true;
 		}
-	}
+	}*/
 
 }
