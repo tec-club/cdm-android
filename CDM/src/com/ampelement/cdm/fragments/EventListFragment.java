@@ -31,9 +31,10 @@ import com.ampelement.cdm.R;
 import com.ampelement.cdm.calendar.CalendarView;
 import com.ampelement.cdm.calendar.CalendarView.OnCellTouchListener;
 import com.ampelement.cdm.calendar.Cell;
-import com.ampelement.cdm.utils.SchoolLoopAPI.Event;
+import com.ampelement.cdm.utils.SchoolLoopEvent;
 import com.ampelement.cdm.utils.SchoolLoopAPI.EventFetcher;
-import com.ampelement.cdm.utils.SchoolLoopAPI.EventMap;
+import com.ampelement.cdm.utils.SchoolLoopEventMap;
+import com.ampelement.cdm.utils.SchoolLoopEvents;
 
 public class EventListFragment extends SherlockFragment {
 
@@ -44,7 +45,7 @@ public class EventListFragment extends SherlockFragment {
 	private Button mNextCalendarButton;
 	private Button mMonthButton;
 
-	private EventMap eventsMap;
+	private SchoolLoopEventMap eventsMap;
 
 	public static final String TAG = "EventListFragment";
 
@@ -112,7 +113,7 @@ public class EventListFragment extends SherlockFragment {
 				}
 				int i = 0;
 				final CharSequence[] displayNames = new CharSequence[displayDateMap.size()];
-				for (String key:displayDateMap.keySet()) {
+				for (String key : displayDateMap.keySet()) {
 					displayNames[i] = key;
 					i++;
 				}
@@ -121,21 +122,21 @@ public class EventListFragment extends SherlockFragment {
 					public void onClick(DialogInterface dialog, int which) {
 						boolean incrementUp = true;
 						int monthsAway = 0;
-						
+
 						int[] monthYearPair = displayDateMap.get(displayNames[which]);
 						int month = monthYearPair[0];
 						int year = monthYearPair[1];
-						
+
 						monthsAway = (year + 1900 - calendarView.getYear()) * 12;
 						monthsAway = monthsAway + (month - calendarView.getMonth());
 						incrementUp = monthsAway < 0 ? false : true;
 						int i = 0;
-						while(i != monthsAway) {
+						while (i != monthsAway) {
 							if (incrementUp)
 								calendarView.nextMonth();
 							else
 								calendarView.previousMonth();
-							i = incrementUp ? i+1 : i-1;
+							i = incrementUp ? i + 1 : i - 1;
 						}
 						mMonthButton.setText(calendarView.getMonthString());
 					}
@@ -144,12 +145,12 @@ public class EventListFragment extends SherlockFragment {
 			}
 		});
 	}
-	
+
 	private OnCellTouchListener mOnCellTouchListener = new OnCellTouchListener() {
 		@Override
 		public void onTouch(Cell cell) {
-			ArrayList<Event> events = eventsMap.get(calendarView.getYear(), cell.getMonth(), cell.getDayOfMonth());
-			Event event = events.get(0);
+			ArrayList<SchoolLoopEvent> events = eventsMap.get(calendarView.getYear(), cell.getMonth(), cell.getDayOfMonth());
+			SchoolLoopEvent event = events.get(0);
 			AlertDialog.Builder adBuilder = new AlertDialog.Builder(new ContextThemeWrapper(getActivity(), R.style.Theme_Sherlock_Light_Dialog));
 			if (event.description.matches("")) {
 				adBuilder.setTitle("Event " + event.isoDate);
@@ -169,24 +170,24 @@ public class EventListFragment extends SherlockFragment {
 		}
 	};
 
-	private class GetEventsTask extends AsyncTask<Void, String, EventMap> {
+	private class GetEventsTask extends AsyncTask<Void, String, SchoolLoopEventMap> {
 
 		@Override
-		protected EventMap doInBackground(Void... params) {
+		protected SchoolLoopEventMap doInBackground(Void... params) {
 			EventFetcher eventFetcher = new EventFetcher();
 			return eventFetcher.fetchEvents();
 		}
 
 		@Override
-		protected void onPostExecute(EventMap result) {
+		protected void onPostExecute(SchoolLoopEventMap result) {
 			eventsMap = result;
 			try {
 				eventLoadingScreen.setVisibility(View.GONE);
 				if (eventsMap != null && !eventsMap.isEmpty()) {
-//					mPrevCalendarButton.setVisibility(View.VISIBLE);
-//					mNextCalendarButton.setVisibility(View.VISIBLE);
+					//					mPrevCalendarButton.setVisibility(View.VISIBLE);
+					//					mNextCalendarButton.setVisibility(View.VISIBLE);
 					calendarView.setVisibility(View.VISIBLE);
-					calendarView.setActiveDayList(eventsMap.activeDatesArrayList);
+					calendarView.setCalendarEvents(new SchoolLoopEvents(eventsMap));
 					Date now = new Date();
 					EventListAdapter adapter = new EventListAdapter(eventsMap.get(now.getYear(), now.getMonth(), now.getDate()), getActivity().getApplicationContext());
 					eventListView.setAdapter(adapter);
@@ -202,10 +203,10 @@ public class EventListFragment extends SherlockFragment {
 	}
 
 	private class EventListAdapter extends BaseAdapter {
-		private ArrayList<Event> eventList;
+		private ArrayList<SchoolLoopEvent> eventList;
 		private Context CONTEXT;
 
-		public EventListAdapter(ArrayList<Event> _eventList, Context _context) {
+		public EventListAdapter(ArrayList<SchoolLoopEvent> _eventList, Context _context) {
 			this.eventList = _eventList;
 			this.CONTEXT = _context;
 		}
@@ -214,7 +215,7 @@ public class EventListFragment extends SherlockFragment {
 			return eventList.size();
 		}
 
-		public Event getItem(int position) {
+		public SchoolLoopEvent getItem(int position) {
 			return eventList.get(position);
 		}
 
@@ -225,7 +226,7 @@ public class EventListFragment extends SherlockFragment {
 
 		public View getView(int position, View convertView, ViewGroup parent) {
 			LinearLayout itemLayout;
-			final Event event = eventList.get(position);
+			final SchoolLoopEvent event = eventList.get(position);
 			itemLayout = (LinearLayout) LayoutInflater.from(CONTEXT).inflate(R.layout.rss_row_view, parent, false);
 
 			TextView tvTitle = (TextView) itemLayout.findViewById(R.id.rss_row_view_title);
