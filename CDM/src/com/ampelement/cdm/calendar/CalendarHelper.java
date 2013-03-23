@@ -20,6 +20,7 @@ public class CalendarHelper {
 
 	public CalendarHelper(int firstDayOfWeek) {
 		mCurrentDateTime = new MutableDateTime();
+		mTimeToMessWith = new MutableDateTime();
 		mFisrtDayOfWeek = firstDayOfWeek;
 		setDisplayMonth(getMonth(), getYear());
 	}
@@ -29,20 +30,20 @@ public class CalendarHelper {
 	}
 
 	void addWeek(int value) {
-		mCurrentDateTime.addWeeks(1);
+		mCurrentDateTime.addWeeks(value);
 	}
 
 	Day[] getWeek(int offset) {
 		long startTime = System.nanoTime();
 		Day[] days = new Day[7];
-		Log.d("a", String.valueOf(System.nanoTime() - startTime));
+		Log.d("a", String.valueOf((System.nanoTime() - startTime) / 1000000));
 		setTimeToMessWith(offset);
-		Log.d("c", String.valueOf(System.nanoTime() - startTime));
+		Log.d("c", String.valueOf((System.nanoTime() - startTime) / 1000000));
 		for (int dayWeek = 0; dayWeek < 7; dayWeek++) {
 			days[dayWeek] = new Day(mTimeToMessWith.getDayOfMonth(), mTimeToMessWith.getMonthOfYear(), mTimeToMessWith.getYear(), getWithinDisplayMonth(), dayWeek);
 			mTimeToMessWith.addDays(1);
 		}
-		Log.d("d", String.valueOf(System.nanoTime() - startTime));
+		Log.d("d", String.valueOf((System.nanoTime() - startTime) / 1000000));
 		return days;
 	}
 

@@ -17,8 +17,11 @@
 package com.ampelement.cdm.calendar;
 
 import java.text.DateFormatSymbols;
-import java.util.ArrayList;
 import java.util.Calendar;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.MutableDateTime;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -33,7 +36,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.utils.SchoolLoopAPI;
+import com.ampelement.cdm.utils.SchoolLoopEventMap;
 
 public class CalendarView extends View {
 	private static int WEEK_HEIGHT = 0;
@@ -42,7 +45,7 @@ public class CalendarView extends View {
 	private static float CELL_TEXT_SIZE;
 
 	private static final String TAG = "CalendarView";
-	private Calendar mRightNow = null;
+	private MutableDateTime mRightNow = null;
 	private Cell[][] mCells = new Cell[8][7];
 	private OnCellTouchListener mOnCellTouchListener = null;
 	private CalendarHelper mCalendarHelper;
@@ -66,7 +69,7 @@ public class CalendarView extends View {
 	int selectedCellDay;
 	int selectedCellMonth;
 
-	private ArrayList<String> activeDaysList = new ArrayList<String>(0);
+	private CalendarEvents mCalendarEvents;
 
 	public interface OnCellTouchListener {
 		public void onTouch(Cell cell);
@@ -85,8 +88,8 @@ public class CalendarView extends View {
 		initCalendarView();
 	}
 
-	public void setActiveDayList(ArrayList<String> days) {
-		activeDaysList = days;
+	public void setCalendarEvents(CalendarEvents calendarEvents) {
+		this.mCalendarEvents = calendarEvents;
 		this.invalidate();
 	}
 
@@ -97,14 +100,14 @@ public class CalendarView extends View {
 	}
 
 	private void initCalendarView() {
-		mRightNow = Calendar.getInstance();
+		mRightNow = new MutableDateTime();
 		// prepare static vars
 		Resources res = getResources();
 
 		CELL_TEXT_SIZE = res.getDimension(R.dimen.cell_text_size);
 		WEEK_HEIGHT = (int) (CELL_TEXT_SIZE * 1.3);
 
-		mCalendarHelper = new CalendarHelper(Calendar.SUNDAY);
+		mCalendarHelper = new CalendarHelper(DateTimeConstants.SUNDAY);
 
 		mTextPaint = new Paint(Paint.SUBPIXEL_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
 		mTextPaint.setTextSize(CELL_TEXT_SIZE/* 26f */);
@@ -139,15 +142,17 @@ public class CalendarView extends View {
 		Log.d(TAG + " 1", String.valueOf((System.nanoTime() - startTime) / 1000000));
 
 		int thisDay = 0;
-		if (mCalendarHelper.getYear() == mRightNow.get(Calendar.YEAR) && mCalendarHelper.getMonth() == mRightNow.get(Calendar.MONTH)) {
-			thisDay = mRightNow.get(Calendar.DAY_OF_MONTH);
+		if (mCalendarHelper.getYear() == mRightNow.getYear() && mCalendarHelper.getMonth() == mRightNow.getMonthOfYear()) {
+			thisDay = mRightNow.getDayOfMonth();
 		}
 		Log.d(TAG + " 2", String.valueOf((System.nanoTime() - startTime) / 1000000));
 		// build cells
 		mCellBound.set(getPaddingLeft(), (int) (getPaddingTop() + WEEK_HEIGHT * 2 + mVerticalOffset - CELL_HEIGHT), CELL_WIDTH + getPaddingLeft(), (int) (WEEK_HEIGHT * 2 + getPaddingTop() + mVerticalOffset));
 		Log.d(TAG + " 3", String.valueOf((System.nanoTime() - startTime) / 1000000));
+		boolean run = true;
 		for (int week = 0; week < mCells.length; week++) {
 			for (int day = 0; day < mCells[week].length; day++) {
+				long startTimeInner = System.currentTimeMillis();
 				int backgroundColor = 0xffEEEEEE;
 				int columbiaBlue = 0xff9BDDFF;
 				int textColor = Color.LTGRAY;
@@ -156,18 +161,31 @@ public class CalendarView extends View {
 					textColor = Color.DKGRAY;
 					backgroundColor = 0xffDDDDDD;
 				}
+				if (run)
+					Log.d(TAG + "I 1" , String.valueOf(System.currentTimeMillis() - startTimeInner));
 				/* Check if the current cell has events on it. If so then set background color to Columbia Blue */
-				if (activeDaysList.contains(SchoolLoopAPI.EventMap.toIsoDate(mCalendarHelper.getYear(), tmp[week][day].month, tmp[week][day].day)))
+				if (mCalendarEvents.contains(SchoolLoopEventMap.toIsoDate(mCalendarHelper.getYear(), tmp[week][day].month, tmp[week][day].day)))
 					backgroundColor = columbiaBlue;
+				if (run)
+					Log.d(TAG + "I 2" , String.valueOf(System.currentTimeMillis() - startTimeInner));
 				/* Check if the current cell is today. If so then set the background color to WHITE */
-				if (tmp[week][day].day == thisDay && tmp[week][day].month == mRightNow.get(Calendar.MONTH))
+				if (tmp[week][day].day == thisDay && tmp[week][day].month == mRightNow.getMonthOfYear())
 					backgroundColor = Color.WHITE;
+				if (run)
+					Log.d(TAG + "I 3" , String.valueOf(System.currentTimeMillis() - startTimeInner));
 
 				mCells[week][day] = new Cell(tmp[week][day].day, tmp[week][day].month, new Rect(mCellBound), CELL_TEXT_SIZE, false, textColor, backgroundColor);
+				if (run)
+					Log.d(TAG + "I 4" , String.valueOf(System.currentTimeMillis() - startTimeInner));
 
 				if (tmp[week][day].day == selectedCellDay && mCells[week][day].getMonth() == selectedCellMonth)
 					mCells[week][day].setSelected();
+				if (run)
+					Log.d(TAG + "I 5" , String.valueOf(System.currentTimeMillis() - startTimeInner));
 				mCellBound.offset(CELL_WIDTH + 1, 0); // move to next column
+				if (run)
+					Log.d(TAG + "I 6" , String.valueOf(System.currentTimeMillis() - startTimeInner));
+				run = false;
 			}
 			mCellBound.offset(0, CELL_HEIGHT + 1); // move to next row and first column
 			mCellBound.left = getPaddingLeft();
@@ -232,8 +250,8 @@ public class CalendarView extends View {
 		return true;
 	}
 
-	public void setTimeInMillis(long milliseconds) {
-		mRightNow.setTimeInMillis(milliseconds);
+	public void setDate(long milliseconds) {
+		mRightNow.setDate(milliseconds);
 		initCells();
 		this.invalidate();
 	}
@@ -269,8 +287,12 @@ public class CalendarView extends View {
 		invalidate();
 	}
 
-	public Calendar getDate() {
-		return mRightNow;
+	public DateTime getDateTime() {
+		return mRightNow.toDateTime();
+	}
+	
+	public MutableDateTime getMutableDateTime() {
+		return mRightNow.copy();
 	}
 
 	public void setOnCellTouchListener(OnCellTouchListener p) {
