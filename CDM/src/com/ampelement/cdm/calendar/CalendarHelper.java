@@ -1,11 +1,14 @@
 package com.ampelement.cdm.calendar;
 
 import org.joda.time.DateTimeConstants;
+import org.joda.time.Days;
 import org.joda.time.MutableDateTime;
 
 import android.util.Log;
 
 public class CalendarHelper {
+	
+	private static final int DAY_CACHE_SIZE = 52;
 
 	String[] mWeekTitles = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 
@@ -23,6 +26,8 @@ public class CalendarHelper {
 		mTimeToMessWith = new MutableDateTime();
 		mFisrtDayOfWeek = firstDayOfWeek;
 		setDisplayMonth(getMonth(), getYear());
+		dayCacheStartingWeek = mCurrentDateTime.getWeekOfWeekyear();
+		dayCacheStartingYear = mCurrentDateTime.getYear();
 	}
 
 	String[] getWeekTitles() {
@@ -32,19 +37,40 @@ public class CalendarHelper {
 	void addWeek(int value) {
 		mCurrentDateTime.addWeeks(value);
 	}
-
-	Day[] getWeek(int offset) {
-		long startTime = System.nanoTime();
-		Day[] days = new Day[7];
-		Log.d("a", String.valueOf((System.nanoTime() - startTime) / 1000000));
+	
+	private Day[][] dayCache = new Day[DAY_CACHE_SIZE][7];
+	private int dayCacheStartingWeek;
+	private int dayCacheStartingYear;
+	
+	Day[] getWeekByOffset(int offset) {
 		setTimeToMessWith(offset);
-		Log.d("c", String.valueOf((System.nanoTime() - startTime) / 1000000));
-		for (int dayWeek = 0; dayWeek < 7; dayWeek++) {
-			days[dayWeek] = new Day(mTimeToMessWith.getDayOfMonth(), mTimeToMessWith.getMonthOfYear(), mTimeToMessWith.getYear(), getWithinDisplayMonth(), dayWeek);
-			mTimeToMessWith.addDays(1);
+		return getWeek(mTimeToMessWith.getWeekOfWeekyear(), mTimeToMessWith.getYear());
+	}
+	
+	Day[] getWeek(int weekOfYear, int year) {
+		int index = weekToCacheIndex(weekOfYear, year);
+		if(index < 0 || index >= DAY_CACHE_SIZE)
+			buildDayCache();
+		return dayCache[weekToCacheIndex(weekOfYear, year)];
+	}
+	
+	int weekToCacheIndex(int weekOfYear, int year) {
+		int index = weekOfYear - dayCacheStartingWeek;
+		int yearAdjustment = year - dayCacheStartingYear;
+		int indexItem = index + (52 * yearAdjustment);
+		return indexItem - 1;
+	}
+	
+	void buildDayCache() {
+		setTimeToMessWith(DAY_CACHE_SIZE / -2);
+		dayCacheStartingWeek = mTimeToMessWith.getWeekOfWeekyear();
+		dayCacheStartingYear = mTimeToMessWith.getYear();
+		for (int i = 0; i < DAY_CACHE_SIZE; i++) {
+			for (int dayWeek = 0; dayWeek < 7; dayWeek++) {
+				dayCache[i][dayWeek] = new Day(mTimeToMessWith.getDayOfMonth(), mTimeToMessWith.getMonthOfYear(), mTimeToMessWith.getYear(), getWithinDisplayMonth(), dayWeek);
+				mTimeToMessWith.addDays(1);
+			}
 		}
-		Log.d("d", String.valueOf((System.nanoTime() - startTime) / 1000000));
-		return days;
 	}
 
 	void setTimeToMessWith(int weekOffset) {

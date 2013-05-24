@@ -5,23 +5,18 @@
     android:background="#eeeeee"
     android:orientation="vertical" >
 
-    <ScrollView
-        android:id="@+id/info_screen_scrollView"
+    <ListView
+        android:id="@+id/info_screen_gridView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-        <GridView
-            android:id="@+id/info_screen_gridView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:numColumns="2" >
-        </GridView>
-    </ScrollView>
+        android:layout_height="wrap_content"
+        android:divider="@color/transparent" >
+    </ListView>
 
     <LinearLayout
         android:id="@+id/info_screen_webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="horizontal"
         android:visibility="gone" />
 
 </LinearLayout>

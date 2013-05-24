@@ -1,138 +1,201 @@
 package com.ampelement.cdm.fragments;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-
+import android.widget.*;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.ampelement.cdm.R;
 
+import java.util.ArrayList;
+
 public class InfoListFragment extends SherlockFragment {
 
-	private static final String BASE_URL = "http://www.ampelement.com/cdm";
+    private static final String BASE_URL = "http://www.ampelement.com/cdm";
 
-	private GridView mInfoGridView;
-	private LinearLayout mWebViewLinearLayout;
-	private ScrollView mInfoScrollView;
+    private ListView mInfoListView;
+    private LinearLayout mWebViewLinearLayout;
 
-	public WebView mWebView;
+    public WebView mWebView;
 
-	public static final String TAG = "InfoListFragment";
+    public static final String TAG = "InfoListFragment";
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-		View infoScreen = inflater.inflate(R.layout.info_screen, container, false);
-		mInfoGridView = (GridView) infoScreen.findViewById(R.id.info_screen_gridView);
-		mWebViewLinearLayout = (LinearLayout) infoScreen.findViewById(R.id.info_screen_webView);
-		mInfoScrollView = (ScrollView) infoScreen.findViewById(R.id.info_screen_scrollView);
+        View infoScreen = inflater.inflate(R.layout.info_screen, container,
+                false);
+        mInfoListView = (ListView) infoScreen
+                .findViewById(R.id.info_screen_gridView);
+        mWebViewLinearLayout = (LinearLayout) infoScreen
+                .findViewById(R.id.info_screen_webView);
 
-		mWebView = new WebView(getActivity());
-		mWebView.setWebViewClient(new InfoWebViewClient());
-		mWebView.getSettings().setBuiltInZoomControls(true);
-		mWebView.getSettings().setUseWideViewPort(true);
-		mWebView.getSettings().setLoadWithOverviewMode(true);
-		mWebViewLinearLayout.addView(mWebView);
+        mWebView = new WebView(getSherlockActivity());
+        mWebView.setWebViewClient(new InfoWebViewClient());
+        mWebView.getSettings().setBuiltInZoomControls(true);
+        mWebView.getSettings().setUseWideViewPort(true);
+        mWebView.getSettings().setLoadWithOverviewMode(true);
+        mWebViewLinearLayout.addView(mWebView);
 
-		mInfoGridView.setAdapter(new InfoAdapter(getActivity().getApplicationContext()));
+        mInfoListView.setAdapter(new InfoAdapter(geSherlocktActivity()
+                .getApplicationContext()));
 
-		return infoScreen;
-	}
+        mInfoListView.setLayoutAnimation(new LayoutAnimationController(
+                AnimationUtils.loadAnimation(getSherlockActivity(),
+                        android.R.anim.slide_in_left), .5f));
 
-	private class InfoItem {
-		String name;
-		int thumbnailRes;
-		String url;
+        return infoScreen;
+    }
 
-		public InfoItem(String name, int thumbnailRes, String url) {
-			this.name = name;
-			this.thumbnailRes = thumbnailRes;
-			this.url = url;
-		}
-	}
+    private class InfoItem {
+        String name;
+        String description;
+        int thumbnailRes;
+        String url;
 
-	public boolean showInfoItemSelecter() {
-		if (mWebViewLinearLayout.isShown()) {
-			mInfoScrollView.setVisibility(View.VISIBLE);
-			mWebViewLinearLayout.setVisibility(View.GONE);
-			return true;
-		} else
-			return false;
-	}
+        public InfoItem(String name, int thumbnailRes, String url,
+                        String description) {
+            this.name = name;
+            this.thumbnailRes = thumbnailRes;
+            this.url = url;
+            this.description = description;
+        }
+    }
 
-	private class InfoAdapter extends BaseAdapter {
-		ArrayList<InfoItem> infoList;
-		LayoutInflater layoutInflater;
+    public boolean showInfoItemSelecter() {
+        if (mWebViewLinearLayout.isShown()) {
+            // mInfoScrollView.setVisibility(View.VISIBLE);
+            mWebViewLinearLayout.setVisibility(View.GONE);
+            return true;
+        } else
+            return false;
+    }
 
-		public InfoAdapter(Context context) {
-			layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			infoList = new ArrayList<InfoItem>();
-			infoList.add(new InfoItem("Handbook", R.drawable.info_handbook, BASE_URL + "/handbook"));
-			infoList.add(new InfoItem("Bell Schedule", R.drawable.info_bell_schedule, BASE_URL + "/bell_schedule"));
-			infoList.add(new InfoItem("Year Schedule", R.drawable.info_bell_schedule, "http://cdm.schoolloop.com/file/1211914146706/1229223566913/7406136305481272074.pdf"));
-		}
+    private class InfoAdapter extends BaseAdapter {
+        ArrayList<InfoItem> infoList;
+        LayoutInflater layoutInflater;
 
-		@Override
-		public int getCount() {
-			return infoList.size();
-		}
+        public InfoAdapter(Context context) {
+            layoutInflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            infoList = new ArrayList<InfoItem>();
+            infoList.add(new InfoItem(
+                    "Handbook",
+                    R.drawable.info_handbook,
+                    BASE_URL + "/handbook",
+                    "The school handbook. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum malesuada purus quis lacus adipiscing elementum."));
+            infoList.add(new InfoItem(
+                    "Bell Schedule",
+                    R.drawable.info_bell_schedule,
+                    BASE_URL + "/bell_schedule",
+                    "The school bell schedule. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum malesuada purus quis lacus adipiscing elementum."));
+            infoList.add(new InfoItem(
+                    "Year Schedule",
+                    R.drawable.info_bell_schedule,
+                    "http://cdm.schoolloop.com/file/1211914146706/1229223566913/7406136305481272074.pdf",
+                    "The yearly schedule. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum malesuada purus quis lacus adipiscing elementum."));
+        }
 
-		@Override
-		public Object getItem(int position) {
-			return null;
-		}
+        @Override
+        public int getCount() {
+            return infoList.size();
+        }
 
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
+        @Override
+        public Object getItem(int position) {
+            return infoList.get(position);
+        }
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			// Get InfoItem information
-			final String name = infoList.get(position).name;
-			final int thumbnailRes = infoList.get(position).thumbnailRes;
-			final String url = infoList.get(position).url;
-			// Create view elements
-			LinearLayout itemLayout = (LinearLayout) layoutInflater.inflate(R.layout.info_item_view, null);
-			ImageView itemThumbnail = (ImageView) itemLayout.findViewById(R.id.info_item_imageView);
-			TextView itemTitle = (TextView) itemLayout.findViewById(R.id.info_item_textView);
-			// Set view items to corresponding InfoItem information
-			itemThumbnail.setImageResource(thumbnailRes);
-			itemTitle.setText(name);
-			// Set webView to load page on InfoItem click
-			itemThumbnail.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					mWebView.loadUrl(url);
-					mInfoScrollView.setVisibility(View.GONE);
-					mWebViewLinearLayout.setVisibility(View.VISIBLE);
-				}
-			});
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
 
-			return itemLayout;
-		}
-	}
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            // Get InfoItem information
+            final String name = infoList.get(position).name;
+            final int thumbnailRes = infoList.get(position).thumbnailRes;
+            final String url = infoList.get(position).url;
+            final String description = infoList.get(position).description;
 
-	private class InfoWebViewClient extends WebViewClient {
-		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			view.loadUrl(url);
-			return true;
-		}
-	}
+            final boolean isViewRight = position % 2 == 0;
+
+            ViewHolder holder = convertView != null ? (ViewHolder) convertView
+                    .getTag() : null;
+
+            // If the convertView exists and is for the proper ViewHolder
+            // (either Right or Left)
+            if ((holder != null)
+                    && ((isViewRight && holder instanceof ViewHolderRight) || (!isViewRight && holder instanceof ViewHolderLeft))) {
+                Log.d(TAG, "Wow, isn't scrolling so smooth?");
+            } else {
+                Log.d(TAG, "Darn. We have to create objects all the time.");
+                holder = isViewRight ? new ViewHolderRight()
+                        : new ViewHolderLeft();
+                // Create view elements
+                int resMain = isViewRight ? R.layout.info_item_r_view
+                        : R.layout.info_item_l_view;
+                convertView = (LinearLayout) layoutInflater.inflate(resMain,
+                        null);
+                int resImg = isViewRight ? R.id.info_item_r_imageView
+                        : R.id.info_item_l_imageView;
+                holder.thumbnail = (ImageView) convertView.findViewById(resImg);
+                int resTitle = isViewRight ? R.id.info_item_r_textView_title
+                        : R.id.info_item_l_textView_title;
+                holder.title = (TextView) convertView.findViewById(resTitle);
+                int resDesc = isViewRight ? R.id.info_item_r_textView_description
+                        : R.id.info_item_l_textView_description;
+                holder.description = (TextView) convertView
+                        .findViewById(resDesc);
+                convertView.setTag(holder);
+            }
+
+            // Set view items to corresponding InfoItem information
+            holder.thumbnail.setImageResource(thumbnailRes);
+            holder.title.setText(name);
+            holder.description.setText(description);
+            // Set webView to load page on InfoItem click
+            holder.thumbnail.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mWebView.loadUrl(url);
+                    // mInfoScrollView.setVisibility(View.GONE);
+                    mWebViewLinearLayout.setVisibility(View.VISIBLE);
+                }
+            });
+
+            return convertView;
+        }
+    }
+
+    static class ViewHolder {
+        ImageView thumbnail;
+        TextView title;
+        TextView description;
+    }
+
+    static class ViewHolderRight extends ViewHolder {
+    }
+
+    static class ViewHolderLeft extends ViewHolder {
+    }
+
+    private class InfoWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+            return true;
+        }
+    }
 
 }

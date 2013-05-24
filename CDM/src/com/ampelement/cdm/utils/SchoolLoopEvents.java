@@ -4,7 +4,7 @@ import com.ampelement.cdm.calendar.CalendarEvents;
 
 public class SchoolLoopEvents extends CalendarEvents {
 	
-	private SchoolLoopEventMap mSchoolLoopEventMap;
+	public SchoolLoopEventMap mSchoolLoopEventMap;
 	
 	public SchoolLoopEvents(SchoolLoopEventMap schoolLoopEventMap) {
 		this.mSchoolLoopEventMap = schoolLoopEventMap;

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -18,22 +20,26 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.util.Log;
+
+import com.ampelement.cdm.utils.SchoolLoopEvent.SchoolLoopEventBuilder;
+
 public class SchoolLoopAPI {
+	public final static String TAG = "SchoolLoopAPI";
 	public static final String BASE_URL_SECURE = "https://cdm.schoolloop.com";
 	public static final String BASE_URL = "http://cdm.schoolloop.com";
 
 	public static class EventFetcher {
 		public static final String EVENT_RSS_URL = "http://ampelement.com/cdm/test_rss.xml";
-//		public static final String EVENT_RSS_URL = BASE_URL + "/cms/rss?d=x&group_id=1204427108703&types=_assignment__event_&include_subgroups=t";
+
+		// public static final String EVENT_RSS_URL = BASE_URL +
+		// "/cms/rss?d=x&group_id=1204427108703&types=_assignment__event_&include_subgroups=t";
 
 		public EventFetcher() {
 		}
@@ -50,10 +56,11 @@ public class SchoolLoopAPI {
 				xmlReader.parse(new InputSource(url.openStream()));
 				// Add final item which isn't added due to their not being a
 				// start element ("item") after it
-				eventParser.eventMap.add(eventParser.currentEvent);
+				eventParser.eventMap.addEvent(eventParser.currentEventBuilder.isoDate, eventParser.currentEventBuilder.build());
 				// Return Results
 				return eventParser.eventMap;
 			} catch (Exception e) {
+				Log.e(TAG, e.getLocalizedMessage(), e);
 				return null;
 			}
 		}
@@ -62,21 +69,23 @@ public class SchoolLoopAPI {
 	private static class EventParser extends DefaultHandler {
 		StringBuilder content = null;
 		Boolean elementOn = false;
-		SchoolLoopEvent currentEvent = null;
+		SchoolLoopEventBuilder currentEventBuilder = null;
 		SchoolLoopEventMap eventMap = new SchoolLoopEventMap();
 
 		/**
 		 * This will be called when the tags of the XML starts.
 		 **/
 		@Override
-		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		public void startElement(String uri, String localName, String qName,
+				Attributes attributes) throws SAXException {
 			elementOn = true;
 			content = new StringBuilder();
 			if (localName.equals("item")) {
-				if (currentEvent != null) {
-					eventMap.add(currentEvent);
+				if (currentEventBuilder != null) {
+					eventMap.addEvent(currentEventBuilder.isoDate,
+							currentEventBuilder.build());
 				}
-				currentEvent = new SchoolLoopEvent();
+				currentEventBuilder = new SchoolLoopEventBuilder();
 			}
 		}
 
@@ -84,24 +93,25 @@ public class SchoolLoopAPI {
 		 * This will be called when the tags of the XML end.
 		 **/
 		@Override
-		public void endElement(String uri, String localName, String qName) throws SAXException {
+		public void endElement(String uri, String localName, String qName)
+				throws SAXException {
 			elementOn = false;
 			String elementValue = content.toString();
-			if (currentEvent != null) {
+			if (currentEventBuilder != null) {
 				if (localName.equalsIgnoreCase("title")) {
-					currentEvent.title = elementValue;
+					currentEventBuilder.setTitle(elementValue);
 				} else if (localName.equalsIgnoreCase("location")) {
-					currentEvent.location = elementValue;
+					currentEventBuilder.setLocation(elementValue);
 				} else if (localName.equalsIgnoreCase("isodate")) {
-					currentEvent.isoDate = elementValue;
+					currentEventBuilder.setDate(elementValue);
 				} else if (localName.equalsIgnoreCase("allday")) {
-					currentEvent.allDay = elementValue;
+					currentEventBuilder.setAllDay(elementValue);
 				} else if (localName.equalsIgnoreCase("starttime")) {
-					currentEvent.startTime = elementValue;
+					currentEventBuilder.setStartTime(elementValue);
 				} else if (localName.equalsIgnoreCase("endtime")) {
-					currentEvent.endTime = elementValue;
+					currentEventBuilder.setEndTime(elementValue);
 				} else if (localName.equalsIgnoreCase("additionalDesc")) {
-					currentEvent.description = elementValue.trim();
+					currentEventBuilder.setDescription(elementValue.trim());
 				}
 			}
 		}
@@ -110,41 +120,65 @@ public class SchoolLoopAPI {
 		 * This is called to get the tags value
 		 **/
 		@Override
-		public void characters(char[] ch, int start, int length) throws SAXException {
+		public void characters(char[] ch, int start, int length)
+				throws SAXException {
 			content.append(ch, start, length);
 		}
 	}
 
-	public static CookieStore loginToSchoolloop(DefaultHttpClient httpclient, String pUserName, String pPassword, boolean checkLogin) throws ClientProtocolException, IOException {
+	public static CookieStore loginToSchoolloop(DefaultHttpClient httpclient,
+			String pUserName, String pPassword, boolean checkLogin)
+			throws ClientProtocolException, IOException {
 		HttpResponse schoolloopLoginGetResponse = null;
 		HttpGet schoolloopLoginHttpGet = new HttpGet(BASE_URL + "/portal/login");
 		schoolloopLoginGetResponse = httpclient.execute(schoolloopLoginHttpGet);
 
-		Document schoolloopLoginGetDocument = Jsoup.parse(EntityUtils.toString(schoolloopLoginGetResponse.getEntity()));
-		Element formDataIDElement = schoolloopLoginGetDocument.getElementById("form_data_id");
-		String formDataIDString = formDataIDElement.attr("value").toString();
+		String schoolLoopString = EntityUtils
+				.toString(schoolloopLoginGetResponse.getEntity());
+		Pattern p = Pattern
+				.compile("<input\\b[^>]+\\bname=\"form_data_id\"[^>]+\\bvalue=\"([0-9]*)\"");
+		Matcher m = p.matcher(schoolLoopString);
+		if (m.find()) {
+			String formDataIDString = m.group(1);
 
-		HttpPost schoolloopLoginHttpPost = new HttpPost(BASE_URL + "/portal/login?etarget=login_form");
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		nameValuePairs.add(new BasicNameValuePair("login_name", pUserName));
-		nameValuePairs.add(new BasicNameValuePair("password", pPassword));
-		nameValuePairs.add(new BasicNameValuePair("form_data_id", formDataIDString));
-		nameValuePairs.add(new BasicNameValuePair("event_override", "login"));
-		String[] blankFields = { "reverse", "sort", "login_form_reverse", "login_form_page_index", "login_form)page_item_count", "login_form_sort", "return_url", "forward", "redirect", "login_form_letter", "login_form_filter" };
-		populateNVListWithBlank(nameValuePairs, blankFields);
-		schoolloopLoginHttpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpPost schoolloopLoginHttpPost = new HttpPost(BASE_URL
+					+ "/portal/login?etarget=login_form");
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("login_name", pUserName));
+			nameValuePairs.add(new BasicNameValuePair("password", pPassword));
+			nameValuePairs.add(new BasicNameValuePair("form_data_id",
+					formDataIDString));
+			nameValuePairs
+					.add(new BasicNameValuePair("event_override", "login"));
+			String[] blankFields = { "reverse", "sort", "login_form_reverse",
+					"login_form_page_index", "login_form_page_item_count",
+					"login_form_sort", "return_url", "forward", "redirect",
+					"login_form_letter", "login_form_filter" };
+			populateNVListWithBlank(nameValuePairs, blankFields);
+			schoolloopLoginHttpPost.setEntity(new UrlEncodedFormEntity(
+					nameValuePairs));
 
-		// Execute HTTP Post Request
-		HttpResponse schoolloopLoginPostResponse = httpclient.execute(schoolloopLoginHttpPost);
-		if (checkLogin) {
-			if (EntityUtils.toString(schoolloopLoginPostResponse.getEntity()).contains("form_data_id")) {
-				return null;
+			// Execute HTTP Post Request
+			HttpResponse schoolloopLoginPostResponse = httpclient
+					.execute(schoolloopLoginHttpPost);
+			if (checkLogin) {
+				if (EntityUtils.toString(
+						schoolloopLoginPostResponse.getEntity()).contains(
+						"form_data_id")) {
+					return null;
+				} else {
+					return httpclient.getCookieStore();
+				}
 			} else {
 				return httpclient.getCookieStore();
 			}
 		} else {
-			return httpclient.getCookieStore();
+			return null;
 		}
+		// String[] split =
+		// schoolLoopString.split("<input\b.+\bname=\"form_data_id\".+\bvalue=\"",
+		// 1);
+		// String formDataIDString = split[1].split("\"", 1)[0];
 	}
 
 	static void populateNVListWithBlank(List<NameValuePair> list, String[] array) {
