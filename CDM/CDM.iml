@@ -2,7 +2,14 @@
 <module type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="android" name="Android">
-      <configuration />
+      <configuration>
+        <notImportedProperties>
+          <property>MANIFEST_FILE_PATH</property>
+          <property>RESOURCES_DIR_PATH</property>
+          <property>ASSETS_DIR_PATH</property>
+          <property>NATIVE_LIBS_DIR_PATH</property>
+        </notImportedProperties>
+      </configuration>
     </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
@@ -14,7 +21,10 @@
     <orderEntry type="jdk" jdkName="Android 4.2.2" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="libs" level="project" />
-    <orderEntry type="module" module-name="actionbarsherlock" />
+    <orderEntry type="library" exported="" name="joda-time-2.2" level="project" />
+    <orderEntry type="library" exported="" name="android-support-v4 (2)" level="project" />
+    <orderEntry type="library" exported="" name="com.haarman.listviewanimations-1.9" level="project" />
+    <orderEntry type="library" exported="" name="actionbarsherlock" level="project" />
   </component>
 </module>
 
