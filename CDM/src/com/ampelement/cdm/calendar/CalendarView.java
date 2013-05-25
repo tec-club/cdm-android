@@ -81,6 +81,7 @@ public class CalendarView extends View {
 
 	public CalendarView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
+		System.setProperty("org.joda.time.DateTimeZone.Provider", "org.joda.time.tz.UTCProvider");
 		initCalendarView(context);
 	}
 
@@ -226,7 +227,7 @@ public class CalendarView extends View {
 			// Begins the animation
 			mScroller.fling(
 			// Current scroll position
-					0, 0, 0, (int) velocityY / 2,
+					0, 0, 0, (int) velocityY / 1,
 					/*
 					 * Minimum and maximum scroll positions. The minimum scroll
 					 * position is generally zero and the maximum scroll
@@ -235,7 +236,7 @@ public class CalendarView extends View {
 					 * screen width is 200 pixels, the maximum scroll offset
 					 * should be 800 pixels.
 					 */
-					0, 0, -CELL_HEIGHT * 8, CELL_HEIGHT * 8);
+					0, 0, -CELL_HEIGHT * 16, CELL_HEIGHT * 16);
 			// mAdjustedTouchY = mScroller.getStartY() - mVerticalOffset;
 			mLastFlingY = mScroller.getStartY();
 			// mLastFlingY = mTouchY + mVerticalOffset;
