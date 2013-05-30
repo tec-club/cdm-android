@@ -49,20 +49,23 @@ public class CDMActivity extends SherlockFragmentActivity {
 	@Override
 	public void onBackPressed() {
 		SherlockFragment fragment = mTabsAdapter.getCurrentFragment();
-		if (fragment != null && fragment instanceof SchoolLoopFragment) {
-			SchoolLoopFragment schoolLoopFragment = (SchoolLoopFragment) fragment;
-			if (schoolLoopFragment.webView.canGoBack()) {
-				schoolLoopFragment.webView.goBack();
+		if (fragment != null) {
+			if (fragment != null && fragment instanceof SchoolLoopFragment) {
+				SchoolLoopFragment schoolLoopFragment = (SchoolLoopFragment) fragment;
+				if (schoolLoopFragment.webView.canGoBack()) {
+					schoolLoopFragment.webView.goBack();
+				} else {
+					super.onBackPressed();
+				}
+			} else if (fragment != null && fragment instanceof InfoListFragment) {
+				if (!((InfoListFragment) fragment).isVisible()) {
+					super.onBackPressed();
+				}
 			} else {
 				super.onBackPressed();
 			}
-		} else if (fragment != null && fragment instanceof InfoListFragment) {
-			if (!((InfoListFragment) fragment).showInfoItemSelecter()) {
-				super.onBackPressed();
-			}
-		} else {
+		} else
 			super.onBackPressed();
-		}
 	}
 
 	void addTabs() {
@@ -75,18 +78,24 @@ public class CDMActivity extends SherlockFragmentActivity {
 	}
 
 	/**
-	 * This is a helper class that implements the management of tabs and all details of connecting a ViewPager with associated TabHost. It relies on a
-	 * trick. Normally a tab host has a simple API for supplying a View or Intent that each tab will show. This is not sufficient for switching
-	 * between pages. So instead we make the content part of the tab host 0dp high (it is not shown) and the TabsAdapter supplies its own dummy view
-	 * to show as the tab content. It listens to changes in tabs, and takes care of switch to the correct paged in the ViewPager whenever the selected
-	 * tab changes.
+	 * This is a helper class that implements the management of tabs and all
+	 * details of connecting a ViewPager with associated TabHost. It relies on a
+	 * trick. Normally a tab host has a simple API for supplying a View or
+	 * Intent that each tab will show. This is not sufficient for switching
+	 * between pages. So instead we make the content part of the tab host 0dp
+	 * high (it is not shown) and the TabsAdapter supplies its own dummy view to
+	 * show as the tab content. It listens to changes in tabs, and takes care of
+	 * switch to the correct paged in the ViewPager whenever the selected tab
+	 * changes.
 	 */
-	public static class TabsAdapter extends FragmentPagerAdapter implements ViewPager.OnPageChangeListener, ActionBar.TabListener {
+	public static class TabsAdapter extends FragmentPagerAdapter implements
+			ViewPager.OnPageChangeListener, ActionBar.TabListener {
 		private final SherlockFragmentActivity mContext;
 		private final ViewPager mViewPager;
 		private final ArrayList<SherlockFragment> mFragments = new ArrayList<SherlockFragment>();
 
-		static class DummyTabFactory implements android.widget.TabHost.TabContentFactory {
+		static class DummyTabFactory implements
+				android.widget.TabHost.TabContentFactory {
 			private final Context mContext;
 
 			public DummyTabFactory(Context context) {
@@ -134,7 +143,8 @@ public class CDMActivity extends SherlockFragmentActivity {
 		}
 
 		@Override
-		public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+		public void onPageScrolled(int position, float positionOffset,
+				int positionOffsetPixels) {
 		}
 
 		@Override
@@ -149,19 +159,20 @@ public class CDMActivity extends SherlockFragmentActivity {
 		/**
 		 * (non-Javadoc)
 		 * 
-		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabSelected(com.actionbarsherlock.app .ActionBar.Tab,
-		 *      android.support.v4.app.FragmentTransaction)
+		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabSelected(com.actionbarsherlock.app
+		 *      .ActionBar.Tab, android.support.v4.app.FragmentTransaction)
 		 */
 		@Override
 		public void onTabSelected(Tab tab, FragmentTransaction ft) {
-			mViewPager.setCurrentItem(mContext.getSupportActionBar().getSelectedNavigationIndex());
+			mViewPager.setCurrentItem(mContext.getSupportActionBar()
+					.getSelectedNavigationIndex());
 		}
 
 		/**
 		 * (non-Javadoc)
 		 * 
-		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabUnselected(com.actionbarsherlock .app.ActionBar.Tab,
-		 *      android.support.v4.app.FragmentTransaction)
+		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabUnselected(com.actionbarsherlock
+		 *      .app.ActionBar.Tab, android.support.v4.app.FragmentTransaction)
 		 */
 		@Override
 		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
@@ -170,8 +181,8 @@ public class CDMActivity extends SherlockFragmentActivity {
 		/**
 		 * (non-Javadoc)
 		 * 
-		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabReselected(com.actionbarsherlock .app.ActionBar.Tab,
-		 *      android.support.v4.app.FragmentTransaction)
+		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabReselected(com.actionbarsherlock
+		 *      .app.ActionBar.Tab, android.support.v4.app.FragmentTransaction)
 		 */
 		@Override
 		public void onTabReselected(Tab tab, FragmentTransaction ft) {

@@ -26,9 +26,7 @@ public class InfoListFragment extends SherlockFragment {
 
 	public static final String TAG = "InfoListFragment";
 	private static final String BASE_URL = "http://www.ampelement.com/cdm";
-	public WebView mWebView;
 	private ListView mInfoListView;
-	private LinearLayout mWebViewLinearLayout;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,40 +36,37 @@ public class InfoListFragment extends SherlockFragment {
 				false);
 		mInfoListView = (ListView) infoScreen
 				.findViewById(R.id.info_screen_gridView);
-		mWebViewLinearLayout = (LinearLayout) infoScreen
-				.findViewById(R.id.info_screen_webView);
 
-		mWebView = new WebView(getSherlockActivity());
-		mWebView.setWebViewClient(new InfoWebViewClient());
-		mWebView.getSettings().setBuiltInZoomControls(true);
-		mWebView.getSettings().setUseWideViewPort(true);
-		mWebView.getSettings().setLoadWithOverviewMode(true);
-		mWebViewLinearLayout.addView(mWebView);
-
-//		ScaleInAnimationAdapter testAdapter = new ScaleInAnimationAdapter(
-//				new InfoAdapter(getSherlockActivity().getApplicationContext()));
-
+		// ScaleInAnimationAdapter testAdapter = new ScaleInAnimationAdapter(
+		// new InfoAdapter(getSherlockActivity().getApplicationContext()));
+		//
 		// SwingBottomInAnimationAdapter swingBottomRightInAnimationAdapter =
 		// new SwingBottomInAnimationAdapter(
 		// new InfoAdapter(getSherlockActivity().getApplicationContext()));
-
-//		testAdapter.setListView(mInfoListView);
+		//
+		// testAdapter.setListView(mInfoListView);
+		// mInfoListView.setAdapter(swingBottomRightInAnimationAdapter);
 		mInfoListView.setAdapter(new InfoAdapter(getSherlockActivity()));
-
+		mInfoListView.setVisibility(View.INVISIBLE);
 		mInfoListView.setLayoutAnimation(new LayoutAnimationController(
 				AnimationUtils.loadAnimation(getSherlockActivity(),
-						android.R.anim.fade_in), .5f));
-
+						R.anim.slide_up), .5f));
 		return infoScreen;
 	}
 
-	public boolean showInfoItemSelecter() {
-		if (mWebViewLinearLayout.isShown()) {
-			// mInfoScrollView.setVisibility(View.VISIBLE);
-			mWebViewLinearLayout.setVisibility(View.GONE);
-			return true;
-		} else
-			return false;
+	boolean shownAnimation = false;
+
+	@Override
+	public void setUserVisibleHint(boolean isVisibleToUser) {
+		super.setUserVisibleHint(isVisibleToUser);
+		if (isVisibleToUser) {
+			if (!shownAnimation) {
+				mInfoListView.setVisibility(View.VISIBLE);
+				shownAnimation = true;
+			}
+		} else {
+		}
+
 	}
 
 	static class ViewHolder {
@@ -189,9 +184,9 @@ public class InfoListFragment extends SherlockFragment {
 			holder.thumbnail.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					mWebView.loadUrl(url);
-					// mInfoScrollView.setVisibility(View.GONE);
-					mWebViewLinearLayout.setVisibility(View.VISIBLE);
+					WebViewDialogFragment.newInstance(url, false).show(
+							getSherlockActivity().getSupportFragmentManager(),
+							name);
 				}
 			});
 
