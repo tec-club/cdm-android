@@ -36,16 +36,7 @@ public class InfoListFragment extends SherlockFragment {
 				false);
 		mInfoListView = (ListView) infoScreen
 				.findViewById(R.id.info_screen_gridView);
-
-		// ScaleInAnimationAdapter testAdapter = new ScaleInAnimationAdapter(
-		// new InfoAdapter(getSherlockActivity().getApplicationContext()));
-		//
-		// SwingBottomInAnimationAdapter swingBottomRightInAnimationAdapter =
-		// new SwingBottomInAnimationAdapter(
-		// new InfoAdapter(getSherlockActivity().getApplicationContext()));
-		//
-		// testAdapter.setListView(mInfoListView);
-		// mInfoListView.setAdapter(swingBottomRightInAnimationAdapter);
+		
 		mInfoListView.setAdapter(new InfoAdapter(getSherlockActivity()));
 		mInfoListView.setVisibility(View.INVISIBLE);
 		mInfoListView.setLayoutAnimation(new LayoutAnimationController(

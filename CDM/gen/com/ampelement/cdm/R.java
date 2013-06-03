@@ -13,6 +13,7 @@ public final class R {
         public static final int fade_out=0x7f040001;
         public static final int left_to_right=0x7f040002;
         public static final int list_view_slide_in_controller=0x7f040003;
+        public static final int slide_up=0x7f040004;
     }
     public static final class attr {
         /**  Custom divider drawable to use for elements in the action bar. 
@@ -1058,6 +1059,7 @@ containing a value of this type.
         public static final int showTitle=0x7f050007;
         public static final int tabMode=0x7f050003;
         public static final int useLogo=0x7f050004;
+        public static final int webview_loading=0x7f050055;
         public static final int wrap_content=0x7f050000;
     }
     public static final class integer {
@@ -1099,6 +1101,7 @@ containing a value of this type.
         public static final int school_loop_screen=0x7f030020;
         public static final int sherlock_spinner_dropdown_item=0x7f030021;
         public static final int sherlock_spinner_item=0x7f030022;
+        public static final int webview=0x7f030023;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
