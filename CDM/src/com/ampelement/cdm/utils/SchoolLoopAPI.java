@@ -53,8 +53,7 @@ public class SchoolLoopAPI {
 		public SchoolLoopEventMap fetchEvents() {
 			try {
 				// SetUp Parser
-				SAXParserFactory saxParserFactory = SAXParserFactory
-						.newInstance();
+				SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
 				SAXParser saxParser = saxParserFactory.newSAXParser();
 				XMLReader xmlReader = saxParser.getXMLReader();
 				URL url = new URL(EVENT_RSS_URL);
@@ -63,9 +62,7 @@ public class SchoolLoopAPI {
 				xmlReader.parse(new InputSource(url.openStream()));
 				// Add final item which isn't added due to their not being a
 				// start element ("item") after it
-				eventParser.eventMap.addEvent(
-						eventParser.currentEventBuilder.isoDate,
-						eventParser.currentEventBuilder.build());
+				eventParser.eventMap.addEvent(eventParser.currentEventBuilder.isoDate, eventParser.currentEventBuilder.build());
 				// Return Results
 				return eventParser.eventMap;
 			} catch (Exception e) {
@@ -85,14 +82,12 @@ public class SchoolLoopAPI {
 		 * This will be called when the tags of the XML starts.
 		 **/
 		@Override
-		public void startElement(String uri, String localName, String qName,
-				Attributes attributes) throws SAXException {
+		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			elementOn = true;
 			content = new StringBuilder();
 			if (localName.equals("item")) {
 				if (currentEventBuilder != null) {
-					eventMap.addEvent(currentEventBuilder.isoDate,
-							currentEventBuilder.build());
+					eventMap.addEvent(currentEventBuilder.isoDate, currentEventBuilder.build());
 				}
 				currentEventBuilder = new SchoolLoopEventBuilder();
 			}
@@ -102,8 +97,7 @@ public class SchoolLoopAPI {
 		 * This will be called when the tags of the XML end.
 		 **/
 		@Override
-		public void endElement(String uri, String localName, String qName)
-				throws SAXException {
+		public void endElement(String uri, String localName, String qName) throws SAXException {
 			elementOn = false;
 			String elementValue = content.toString();
 			if (currentEventBuilder != null) {
@@ -129,51 +123,38 @@ public class SchoolLoopAPI {
 		 * This is called to get the tags value
 		 **/
 		@Override
-		public void characters(char[] ch, int start, int length)
-				throws SAXException {
+		public void characters(char[] ch, int start, int length) throws SAXException {
 			content.append(ch, start, length);
 		}
 	}
 
-	public static CookieStore loginToSchoolloop(DefaultHttpClient httpclient,
-			String pUserName, String pPassword, boolean checkLogin)
+	public static CookieStore loginToSchoolloop(DefaultHttpClient httpclient, String pUserName, String pPassword, boolean checkLogin)
 			throws ClientProtocolException, IOException {
 		HttpResponse schoolloopLoginGetResponse = null;
 		HttpGet schoolloopLoginHttpGet = new HttpGet(BASE_URL + "/portal/login");
 		schoolloopLoginGetResponse = httpclient.execute(schoolloopLoginHttpGet);
 
-		String schoolLoopString = EntityUtils
-				.toString(schoolloopLoginGetResponse.getEntity());
-		Pattern p = Pattern
-				.compile("<input\\b[^>]+\\bname=\"form_data_id\"[^>]+\\bvalue=\"([0-9]*)\"");
+		String schoolLoopString = EntityUtils.toString(schoolloopLoginGetResponse.getEntity());
+		Pattern p = Pattern.compile("<input\\b[^>]+\\bname=\"form_data_id\"[^>]+\\bvalue=\"([0-9]*)\"");
 		Matcher m = p.matcher(schoolLoopString);
 		if (m.find()) {
 			String formDataIDString = m.group(1);
 
-			HttpPost schoolloopLoginHttpPost = new HttpPost(BASE_URL
-					+ "/portal/login?etarget=login_form");
+			HttpPost schoolloopLoginHttpPost = new HttpPost(BASE_URL + "/portal/login?etarget=login_form");
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("login_name", pUserName));
 			nameValuePairs.add(new BasicNameValuePair("password", pPassword));
-			nameValuePairs.add(new BasicNameValuePair("form_data_id",
-					formDataIDString));
-			nameValuePairs
-					.add(new BasicNameValuePair("event_override", "login"));
-			String[] blankFields = { "reverse", "sort", "login_form_reverse",
-					"login_form_page_index", "login_form_page_item_count",
-					"login_form_sort", "return_url", "forward", "redirect",
-					"login_form_letter", "login_form_filter" };
+			nameValuePairs.add(new BasicNameValuePair("form_data_id", formDataIDString));
+			nameValuePairs.add(new BasicNameValuePair("event_override", "login"));
+			String[] blankFields = { "reverse", "sort", "login_form_reverse", "login_form_page_index", "login_form_page_item_count", "login_form_sort",
+					"return_url", "forward", "redirect", "login_form_letter", "login_form_filter" };
 			populateNVListWithBlank(nameValuePairs, blankFields);
-			schoolloopLoginHttpPost.setEntity(new UrlEncodedFormEntity(
-					nameValuePairs));
+			schoolloopLoginHttpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 			// Execute HTTP Post Request
-			HttpResponse schoolloopLoginPostResponse = httpclient
-					.execute(schoolloopLoginHttpPost);
+			HttpResponse schoolloopLoginPostResponse = httpclient.execute(schoolloopLoginHttpPost);
 			if (checkLogin) {
-				if (EntityUtils.toString(
-						schoolloopLoginPostResponse.getEntity()).contains(
-						"form_data_id")) {
+				if (EntityUtils.toString(schoolloopLoginPostResponse.getEntity()).contains("form_data_id")) {
 					return null;
 				} else {
 					return httpclient.getCookieStore();
@@ -186,36 +167,50 @@ public class SchoolLoopAPI {
 		}
 	}
 
-	static void populateNVListWithBlank(List<NameValuePair> list, String[] array) {
+	private static void populateNVListWithBlank(List<NameValuePair> list, String[] array) {
 		for (String name : array) {
 			list.add(new BasicNameValuePair(name, ""));
 		}
 	}
 
-	void migrateCookieStore2WebView(CookieStore orig, WebView webView,
-			SharedPreferences.Editor prefEditor) {
-		CookieSyncManager syncManager = CookieSyncManager
-				.createInstance(webView.getContext());
-		CookieManager cookieManager = CookieManager.getInstance();
-		for (Cookie cookie : orig.getCookies()) {
-			cookieManager.setCookie((cookie.isSecure() ? "https" : "http")
-					+ "://" + cookie.getDomain() + cookie.getPath(),
-					cookie.getName() + "=" + cookie.getValue());
-			// For saving the cookie values to Preferences
-			// TODO This is dirty and I don't like it - Alex Wendland
-			if (prefEditor != null) {
-				if (cookie.getName().matches("slid")) {
-					prefEditor.putString(Preferences.SCHOOL_LOOP_SLID,
-							cookie.getValue());
-					prefEditor.commit();
-				} else if (cookie.getName().matches("JSESSIONID")) {
-					prefEditor.putString(Preferences.SCHOOL_LOOP_JSESSIONID,
-							cookie.getValue());
-					prefEditor.commit();
+	public static class Dirty {
+
+		public static void loadLoginDataToWebView(SharedPreferences sharedPref, WebView webView) {
+			CookieSyncManager syncManager = CookieSyncManager.createInstance(webView.getContext());
+			CookieManager cookieManager = CookieManager.getInstance();
+			loadLoginDataToCookieManager(sharedPref, cookieManager);
+			CookieSyncManager.getInstance().sync();
+		}
+
+		public static void loadLoginDataToCookieManager(SharedPreferences sharedPref, CookieManager dest) {
+			dest.setCookie("http://cdm.schoolloop.com/", "JSESSIONID=" + sharedPref.getString(Preferences.SCHOOL_LOOP_JSESSIONID, ""));
+			dest.setCookie("http://cdm.schoolloop.com/", "slid=" + sharedPref.getString(Preferences.SCHOOL_LOOP_SLID, ""));
+		}
+
+		public static void migrateCookieStore2CookieManager(CookieStore orig, CookieManager dest, SharedPreferences.Editor prefEditor) {
+			for (Cookie cookie : orig.getCookies()) {
+				dest.setCookie((cookie.isSecure() ? "https" : "http") + "://" + cookie.getDomain() + cookie.getPath(),
+						cookie.getName() + "=" + cookie.getValue());
+				// For saving the cookie values to Preferences
+				// TODO This is dirty and I don't like it - Alex Wendland
+				if (prefEditor != null) {
+					if (cookie.getName().matches("slid")) {
+						prefEditor.putString(Preferences.SCHOOL_LOOP_SLID, cookie.getValue());
+						prefEditor.commit();
+					} else if (cookie.getName().matches("JSESSIONID")) {
+						prefEditor.putString(Preferences.SCHOOL_LOOP_JSESSIONID, cookie.getValue());
+						prefEditor.commit();
+					}
 				}
 			}
 		}
-		CookieSyncManager.getInstance().sync();
+
+		public static void migrateCookieStore2WebView(CookieStore orig, WebView webView, SharedPreferences.Editor prefEditor) {
+			CookieSyncManager syncManager = CookieSyncManager.createInstance(webView.getContext());
+			CookieManager cookieManager = CookieManager.getInstance();
+			migrateCookieStore2CookieManager(orig, cookieManager, prefEditor);
+			CookieSyncManager.getInstance().sync();
+		}
 	}
 
 }
