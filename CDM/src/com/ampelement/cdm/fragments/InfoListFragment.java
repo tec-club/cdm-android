@@ -172,7 +172,7 @@ public class InfoListFragment extends SherlockFragment {
 			holder.title.setText(name);
 			holder.description.setText(description);
 			// Set webView to load page on InfoItem click
-			holder.thumbnail.setOnClickListener(new OnClickListener() {
+			convertView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					WebViewDialogFragment.newInstance(url, false).show(
