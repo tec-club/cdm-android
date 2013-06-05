@@ -1,18 +1,17 @@
 package com.ampelement.cdm.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
-import com.ampelement.cdm.fragments.WebViewDialogFragment.DialogWebViewClient.OnPageLoaded;
-
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.ampelement.cdm.R;
+import com.ampelement.cdm.fragments.WebViewDialogFragment.DialogWebViewClient.OnPageLoaded;
 
 public class WebViewDialogFragment extends SherlockDialogFragment {
 
@@ -42,6 +41,7 @@ public class WebViewDialogFragment extends SherlockDialogFragment {
 		setStyle(STYLE_NO_TITLE, 0);
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -69,6 +69,10 @@ public class WebViewDialogFragment extends SherlockDialogFragment {
 		});
 		webView.setWebViewClient(dwvClient);
 		webView.getSettings().setBuiltInZoomControls(false);
+		webView.getSettings().setSupportZoom(true);
+		webView.getSettings().setBuiltInZoomControls(true);
+		if (android.os.Build.VERSION.SDK_INT >= 11)
+			webView.getSettings().setDisplayZoomControls(false); // @SuppressLint("NewApi")
 		webView.setVisibility(View.GONE);
 		webView.loadUrl(url);
 		webView.setInitialScale(100);
