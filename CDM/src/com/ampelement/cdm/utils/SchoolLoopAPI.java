@@ -17,6 +17,7 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -26,8 +27,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.content.SharedPreferences;
 import android.util.Log;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.WebView;
 
+import com.ampelement.cdm.objects.Preferences;
 import com.ampelement.cdm.utils.SchoolLoopEvent.SchoolLoopEventBuilder;
 
 public class SchoolLoopAPI {
@@ -47,7 +53,8 @@ public class SchoolLoopAPI {
 		public SchoolLoopEventMap fetchEvents() {
 			try {
 				// SetUp Parser
-				SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+				SAXParserFactory saxParserFactory = SAXParserFactory
+						.newInstance();
 				SAXParser saxParser = saxParserFactory.newSAXParser();
 				XMLReader xmlReader = saxParser.getXMLReader();
 				URL url = new URL(EVENT_RSS_URL);
@@ -56,7 +63,9 @@ public class SchoolLoopAPI {
 				xmlReader.parse(new InputSource(url.openStream()));
 				// Add final item which isn't added due to their not being a
 				// start element ("item") after it
-				eventParser.eventMap.addEvent(eventParser.currentEventBuilder.isoDate, eventParser.currentEventBuilder.build());
+				eventParser.eventMap.addEvent(
+						eventParser.currentEventBuilder.isoDate,
+						eventParser.currentEventBuilder.build());
 				// Return Results
 				return eventParser.eventMap;
 			} catch (Exception e) {
@@ -175,16 +184,38 @@ public class SchoolLoopAPI {
 		} else {
 			return null;
 		}
-		// String[] split =
-		// schoolLoopString.split("<input\b.+\bname=\"form_data_id\".+\bvalue=\"",
-		// 1);
-		// String formDataIDString = split[1].split("\"", 1)[0];
 	}
 
 	static void populateNVListWithBlank(List<NameValuePair> list, String[] array) {
 		for (String name : array) {
 			list.add(new BasicNameValuePair(name, ""));
 		}
+	}
+
+	void migrateCookieStore2WebView(CookieStore orig, WebView webView,
+			SharedPreferences.Editor prefEditor) {
+		CookieSyncManager syncManager = CookieSyncManager
+				.createInstance(webView.getContext());
+		CookieManager cookieManager = CookieManager.getInstance();
+		for (Cookie cookie : orig.getCookies()) {
+			cookieManager.setCookie((cookie.isSecure() ? "https" : "http")
+					+ "://" + cookie.getDomain() + cookie.getPath(),
+					cookie.getName() + "=" + cookie.getValue());
+			// For saving the cookie values to Preferences
+			// TODO This is dirty and I don't like it - Alex Wendland
+			if (prefEditor != null) {
+				if (cookie.getName().matches("slid")) {
+					prefEditor.putString(Preferences.SCHOOL_LOOP_SLID,
+							cookie.getValue());
+					prefEditor.commit();
+				} else if (cookie.getName().matches("JSESSIONID")) {
+					prefEditor.putString(Preferences.SCHOOL_LOOP_JSESSIONID,
+							cookie.getValue());
+					prefEditor.commit();
+				}
+			}
+		}
+		CookieSyncManager.getInstance().sync();
 	}
 
 }

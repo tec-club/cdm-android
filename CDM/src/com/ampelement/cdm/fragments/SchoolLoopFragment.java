@@ -55,8 +55,7 @@ public class SchoolLoopFragment extends SherlockFragment {
 			pass = password;
 		}
 
-		public Login() {
-			// TODO Auto-generated constructor stub
+		Login() {
 		}
 
 		boolean blank() {
@@ -183,31 +182,6 @@ public class SchoolLoopFragment extends SherlockFragment {
 								.loginToSchoolloop(new DefaultHttpClient(),
 										login.user, login.pass, true);
 						if (loginCookieStore != null) {
-							CookieSyncManager syncManager = CookieSyncManager
-									.createInstance(webView.getContext());
-							CookieManager cookieManager = CookieManager
-									.getInstance();
-							for (Cookie cookie : loginCookieStore.getCookies()) {
-								cookieManager.setCookie(
-										(cookie.isSecure() ? "https" : "http")
-												+ "://" + cookie.getDomain()
-												+ cookie.getPath(),
-										cookie.getName() + "="
-												+ cookie.getValue());
-								if (cookie.getName().matches("slid")) {
-									sharedPrefEditor.putString(
-											Preferences.SCHOOL_LOOP_SLID,
-											cookie.getValue());
-									sharedPrefEditor.commit();
-								} else if (cookie.getName().matches(
-										"JSESSIONID")) {
-									sharedPrefEditor.putString(
-											Preferences.SCHOOL_LOOP_JSESSIONID,
-											cookie.getValue());
-									sharedPrefEditor.commit();
-								}
-							}
-							CookieSyncManager.getInstance().sync();
 							updateCredentials(newCredentials ? login.user
 									: null, newCredentials ? login.pass : null,
 									System.currentTimeMillis());
