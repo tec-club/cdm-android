@@ -2,29 +2,35 @@ package com.ampelement.cdm;
 
 import java.util.ArrayList;
 
-import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.view.View;
+import android.text.Html;
 
-import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.ampelement.cdm.fragments.EventListFragment;
+import com.ampelement.cdm.constants.CDMColors;
+import com.ampelement.cdm.fragments.CalendarFragment;
 import com.ampelement.cdm.fragments.InfoListFragment;
 import com.ampelement.cdm.fragments.SchoolLoopFragment;
+import com.ampelement.cdm.helper.DefaultViewPagerOnChangeListener;
+import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 
 public class CDMActivity extends SherlockFragmentActivity {
 
 	private static final String TAG = "CDMActivity";
 
 	ViewPager mViewPager;
-	TabsAdapter mTabsAdapter;
+	PagerSlidingTabStrip mPagerSlidingTabs;
+	CDMTabsAdapter mCDMTabsAdapter;
 
-	EventListFragment mFragmentEventList;
+	CalendarFragment mFragmentCalendar;
 	InfoListFragment mFragmentInfoList;
 	SchoolLoopFragment mFragmentSchoolLoop;
 
@@ -33,22 +39,93 @@ public class CDMActivity extends SherlockFragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		getSupportActionBar().setLogo(R.drawable.crown);
+		getSupportActionBar().setDisplayUseLogoEnabled(true);
+//		getSupportActionBar().setTitle("Corona del Mar");
+		getSupportActionBar().setTitle(Html.fromHtml("<b><font color='#ffffff'>Corona del Mar</font></b>"));
 
 		mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
-		// This block thanks to http://stackoverflow.com/q/9790279/517561
-		ActionBar bar = getSupportActionBar();
-		bar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-		bar.setDisplayShowTitleEnabled(true);
-		bar.setDisplayShowHomeEnabled(true);
-		//
-		mViewPager.setOffscreenPageLimit(2);
-		mTabsAdapter = new TabsAdapter(this, mViewPager);
-		addTabs();
+		mPagerSlidingTabs = (PagerSlidingTabStrip) findViewById(R.id.main_tabs);
+
+		mCDMTabsAdapter = new CDMTabsAdapter(getSupportFragmentManager());
+		setupTabs();
 	}
+
+	void setupTabs() {
+		mFragmentCalendar = new CalendarFragment();
+		mFragmentSchoolLoop = new SchoolLoopFragment();
+		mFragmentInfoList = new InfoListFragment();
+		mCDMTabsAdapter.addTab(new TitledFragment("Events", mFragmentCalendar, CDMColors.BLUE));
+		mCDMTabsAdapter.addTab(new TitledFragment("SchoolLoop", mFragmentSchoolLoop, CDMColors.GREEN));
+		mCDMTabsAdapter.addTab(new TitledFragment("Info", mFragmentInfoList, CDMColors.ORANGE));
+
+		mViewPager.setAdapter(mCDMTabsAdapter);
+		mPagerSlidingTabs.setViewPager(mViewPager);
+		
+		mPagerSlidingTabs.setOnPageChangeListener(new DefaultViewPagerOnChangeListener() {
+			
+			@Override
+			public void onPageScrollStateChanged(int position) {
+				changeActionBarColor(mCDMTabsAdapter.getCurrentItem().color);
+			}
+		});
+
+		changeActionBarColor(mCDMTabsAdapter.getCurrentItem().color);
+
+		mViewPager.setOffscreenPageLimit(2);
+	}
+	
+	Drawable oldActionBar = null;
+	
+	public void changeActionBarColor(int color) {
+		mPagerSlidingTabs.setIndicatorColor(mCDMTabsAdapter.getCurrentItem().color);
+		
+		Drawable colorDrawable = new ColorDrawable(color);
+		Drawable bottomDrawable = getResources().getDrawable(R.drawable.actionbar_bottom);
+		LayerDrawable ld = new LayerDrawable(new Drawable[] { colorDrawable, bottomDrawable });
+//		getSupportActionBar().setBackgroundDrawable(ld);
+//		getSupportActionBar().setDisplayShowTitleEnabled(false);
+//		getSupportActionBar().setDisplayShowTitleEnabled(true);
+		
+		if (oldActionBar != null) {
+			TransitionDrawable td = new TransitionDrawable(new Drawable[] { oldActionBar, ld });
+			getSupportActionBar().setBackgroundDrawable(td);
+//			td.setCallback(drawableCallback);
+			td.startTransition(200);
+			oldActionBar = td;
+		} else {
+			getSupportActionBar().setBackgroundDrawable(ld);
+			oldActionBar = ld;
+		}
+		
+		getSupportActionBar().setDisplayShowTitleEnabled(false);
+		getSupportActionBar().setDisplayShowTitleEnabled(true);
+		
+	}
+	
+	private Handler handler = new Handler();
+	
+	private Drawable.Callback drawableCallback = new Drawable.Callback() {
+		@Override
+		public void invalidateDrawable(Drawable who) {
+			getSupportActionBar().setBackgroundDrawable(who);
+		}
+
+		@Override
+		public void scheduleDrawable(Drawable who, Runnable what, long when) {
+			handler.postAtTime(what, when);
+		}
+
+		@Override
+		public void unscheduleDrawable(Drawable who, Runnable what) {
+			handler.removeCallbacks(what);
+		}
+	};
 
 	@Override
 	public void onBackPressed() {
-		SherlockFragment fragment = mTabsAdapter.getCurrentFragment();
+		SherlockFragment fragment = mCDMTabsAdapter.getCurrentFragment();
 		if (fragment != null) {
 			if (fragment != null && fragment instanceof SchoolLoopFragment) {
 				SchoolLoopFragment schoolLoopFragment = (SchoolLoopFragment) fragment;
@@ -68,63 +145,32 @@ public class CDMActivity extends SherlockFragmentActivity {
 			super.onBackPressed();
 	}
 
-	void addTabs() {
-		mFragmentEventList = new EventListFragment();
-		mFragmentInfoList = new InfoListFragment();
-		mFragmentSchoolLoop = new SchoolLoopFragment();
-		mTabsAdapter.addTab("Events", mFragmentEventList);
-		mTabsAdapter.addTab("Info", mFragmentInfoList);
-		mTabsAdapter.addTab("SchoolLoop", mFragmentSchoolLoop);
+	private static class TitledFragment {
+		SherlockFragment fragment;
+		String title;
+		int color;
+
+		TitledFragment(String title, SherlockFragment fragment, int color) {
+			this.fragment = fragment;
+			this.title = title;
+			this.color = color;
+		}
 	}
 
-	/**
-	 * This is a helper class that implements the management of tabs and all
-	 * details of connecting a ViewPager with associated TabHost. It relies on a
-	 * trick. Normally a tab host has a simple API for supplying a View or
-	 * Intent that each tab will show. This is not sufficient for switching
-	 * between pages. So instead we make the content part of the tab host 0dp
-	 * high (it is not shown) and the TabsAdapter supplies its own dummy view to
-	 * show as the tab content. It listens to changes in tabs, and takes care of
-	 * switch to the correct paged in the ViewPager whenever the selected tab
-	 * changes.
-	 */
-	public static class TabsAdapter extends FragmentPagerAdapter implements
-			ViewPager.OnPageChangeListener, ActionBar.TabListener {
-		private final SherlockFragmentActivity mContext;
-		private final ViewPager mViewPager;
-		private final ArrayList<SherlockFragment> mFragments = new ArrayList<SherlockFragment>();
+	public class CDMTabsAdapter extends FragmentPagerAdapter {
+		private final ArrayList<TitledFragment> mFragments = new ArrayList<TitledFragment>();
 
-		static class DummyTabFactory implements
-				android.widget.TabHost.TabContentFactory {
-			private final Context mContext;
-
-			public DummyTabFactory(Context context) {
-				mContext = context;
-			}
-
-			@Override
-			public View createTabContent(String tag) {
-				View v = new View(mContext);
-				v.setMinimumWidth(0);
-				v.setMinimumHeight(0);
-				return v;
-			}
+		public CDMTabsAdapter(FragmentManager fm) {
+			super(fm);
 		}
 
-		public TabsAdapter(SherlockFragmentActivity activity, ViewPager pager) {
-			super(activity.getSupportFragmentManager());
-			mContext = activity;
-			mViewPager = pager;
-			mViewPager.setAdapter(this);
-			mViewPager.setOnPageChangeListener(this);
+		@Override
+		public CharSequence getPageTitle(int position) {
+			return mFragments.get(position).title;
 		}
 
-		public void addTab(CharSequence label, SherlockFragment fragment) {
-			ActionBar.Tab tab = mContext.getSupportActionBar().newTab();
-			tab.setText(label);
-			tab.setTabListener(this);
-			mContext.getSupportActionBar().addTab(tab);
-			mFragments.add(fragment);
+		public void addTab(TitledFragment frag) {
+			mFragments.add(frag);
 			notifyDataSetChanged();
 		}
 
@@ -135,57 +181,15 @@ public class CDMActivity extends SherlockFragmentActivity {
 
 		@Override
 		public SherlockFragment getItem(int position) {
-			return mFragments.get(position);
+			return mFragments.get(position).fragment;
+		}
+
+		public TitledFragment getCurrentItem() {
+			return mFragments.get(mViewPager.getCurrentItem());
 		}
 
 		public SherlockFragment getCurrentFragment() {
 			return getItem(mViewPager.getCurrentItem());
-		}
-
-		@Override
-		public void onPageScrolled(int position, float positionOffset,
-				int positionOffsetPixels) {
-		}
-
-		@Override
-		public void onPageSelected(int position) {
-			mContext.getSupportActionBar().setSelectedNavigationItem(position);
-		}
-
-		@Override
-		public void onPageScrollStateChanged(int state) {
-		}
-
-		/**
-		 * (non-Javadoc)
-		 * 
-		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabSelected(com.actionbarsherlock.app
-		 *      .ActionBar.Tab, android.support.v4.app.FragmentTransaction)
-		 */
-		@Override
-		public void onTabSelected(Tab tab, FragmentTransaction ft) {
-			mViewPager.setCurrentItem(mContext.getSupportActionBar()
-					.getSelectedNavigationIndex());
-		}
-
-		/**
-		 * (non-Javadoc)
-		 * 
-		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabUnselected(com.actionbarsherlock
-		 *      .app.ActionBar.Tab, android.support.v4.app.FragmentTransaction)
-		 */
-		@Override
-		public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-		}
-
-		/**
-		 * (non-Javadoc)
-		 * 
-		 * @see com.actionbarsherlock.app.ActionBar.TabListener#onTabReselected(com.actionbarsherlock
-		 *      .app.ActionBar.Tab, android.support.v4.app.FragmentTransaction)
-		 */
-		@Override
-		public void onTabReselected(Tab tab, FragmentTransaction ft) {
 		}
 	}
 

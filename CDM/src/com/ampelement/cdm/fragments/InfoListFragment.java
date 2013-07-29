@@ -29,19 +29,14 @@ public class InfoListFragment extends SherlockFragment {
 	private ListView mInfoListView;
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		View infoScreen = inflater.inflate(R.layout.info_screen, container,
-				false);
-		mInfoListView = (ListView) infoScreen
-				.findViewById(R.id.info_screen_gridView);
-		
+		View infoScreen = inflater.inflate(R.layout.info_screen, container, false);
+		mInfoListView = (ListView) infoScreen.findViewById(R.id.info_screen_gridView);
+
 		mInfoListView.setAdapter(new InfoAdapter(getSherlockActivity()));
 		mInfoListView.setVisibility(View.INVISIBLE);
-		mInfoListView.setLayoutAnimation(new LayoutAnimationController(
-				AnimationUtils.loadAnimation(getSherlockActivity(),
-						R.anim.slide_up), .5f));
+		mInfoListView.setLayoutAnimation(new LayoutAnimationController(AnimationUtils.loadAnimation(getSherlockActivity(), R.anim.slide_up), .5f));
 		return infoScreen;
 	}
 
@@ -77,13 +72,14 @@ public class InfoListFragment extends SherlockFragment {
 		String description;
 		int thumbnailRes;
 		String url;
+		boolean initialScaleFull;
 
-		public InfoItem(String name, int thumbnailRes, String url,
-				String description) {
+		public InfoItem(String name, int thumbnailRes, String url, String description, boolean initialScaleFull) {
 			this.name = name;
 			this.thumbnailRes = thumbnailRes;
 			this.url = url;
 			this.description = description;
+			this.initialScaleFull = initialScaleFull;
 		}
 	}
 
@@ -92,24 +88,26 @@ public class InfoListFragment extends SherlockFragment {
 		LayoutInflater layoutInflater;
 
 		public InfoAdapter(Context context) {
-			layoutInflater = (LayoutInflater) context
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			infoList = new ArrayList<InfoItem>();
 			infoList.add(new InfoItem(
 					"Handbook",
 					R.drawable.info_handbook,
 					BASE_URL + "/handbook",
-					"The school handbook. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum malesuada purus quis lacus adipiscing elementum."));
+					"The school handbook. Contains information about dresscode policy, pick-up and drop-off, school contact info, graaduation requirements, and more...",
+					true));
 			infoList.add(new InfoItem(
 					"Bell Schedule",
 					R.drawable.info_bell_schedule,
 					BASE_URL + "/bell_schedule",
-					"The school bell schedule. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum malesuada purus quis lacus adipiscing elementum."));
-			infoList.add(new InfoItem(
+					"The school bell schedule. Contains time information for Late Starts, Minimum Days, Regular Days, Final Exams, Assmebly/Rally Schedule, CST Exams and Senior Projects.",
+					false));
+			/*infoList.add(new InfoItem(
 					"Year Schedule",
 					R.drawable.info_bell_schedule,
 					"http://cdm.schoolloop.com/file/1211914146706/1229223566913/7406136305481272074.pdf",
-					"The yearly schedule. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum malesuada purus quis lacus adipiscing elementum."));
+					"The yearly schedule. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum malesuada purus quis lacus adipiscing elementum.",
+					false));*/
 		}
 
 		@Override
@@ -134,36 +132,26 @@ public class InfoListFragment extends SherlockFragment {
 			final int thumbnailRes = infoList.get(position).thumbnailRes;
 			final String url = infoList.get(position).url;
 			final String description = infoList.get(position).description;
+			final boolean initialScale = infoList.get(position).initialScaleFull;
 
 			final boolean isViewRight = position % 2 == 0;
 
-			ViewHolder holder = convertView != null ? (ViewHolder) convertView
-					.getTag() : null;
+			ViewHolder holder = convertView != null ? (ViewHolder) convertView.getTag() : null;
 
 			// If the convertView exists and is for the proper ViewHolder
 			// (either Right or Left)
-			if ((holder != null)
-					&& ((isViewRight && holder instanceof ViewHolderRight) || (!isViewRight && holder instanceof ViewHolderLeft))) {
-				Log.d(TAG, "Wow, isn't scrolling so smooth?");
+			if ((holder != null) && ((isViewRight && holder instanceof ViewHolderRight) || (!isViewRight && holder instanceof ViewHolderLeft))) {
 			} else {
-				Log.d(TAG, "Darn. We have to create objects all the time.");
-				holder = isViewRight ? new ViewHolderRight()
-						: new ViewHolderLeft();
+				holder = isViewRight ? new ViewHolderRight() : new ViewHolderLeft();
 				// Create view elements
-				int resMain = isViewRight ? R.layout.info_item_r_view
-						: R.layout.info_item_l_view;
-				convertView = (LinearLayout) layoutInflater.inflate(resMain,
-						null);
-				int resImg = isViewRight ? R.id.info_item_r_imageView
-						: R.id.info_item_l_imageView;
+				int resMain = isViewRight ? R.layout.info_item_r_view : R.layout.info_item_l_view;
+				convertView = (LinearLayout) layoutInflater.inflate(resMain, null);
+				int resImg = isViewRight ? R.id.info_item_r_imageView : R.id.info_item_l_imageView;
 				holder.thumbnail = (ImageView) convertView.findViewById(resImg);
-				int resTitle = isViewRight ? R.id.info_item_r_textView_title
-						: R.id.info_item_l_textView_title;
+				int resTitle = isViewRight ? R.id.info_item_r_textView_title : R.id.info_item_l_textView_title;
 				holder.title = (TextView) convertView.findViewById(resTitle);
-				int resDesc = isViewRight ? R.id.info_item_r_textView_description
-						: R.id.info_item_l_textView_description;
-				holder.description = (TextView) convertView
-						.findViewById(resDesc);
+				int resDesc = isViewRight ? R.id.info_item_r_textView_description : R.id.info_item_l_textView_description;
+				holder.description = (TextView) convertView.findViewById(resDesc);
 				convertView.setTag(holder);
 			}
 
@@ -175,9 +163,7 @@ public class InfoListFragment extends SherlockFragment {
 			convertView.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					WebViewDialogFragment.newInstance(url, false).show(
-							getSherlockActivity().getSupportFragmentManager(),
-							name);
+					WebViewDialogFragment.newInstance(url, false, initialScale).show(getSherlockActivity().getSupportFragmentManager(), name);
 				}
 			});
 

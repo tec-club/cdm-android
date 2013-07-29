@@ -17,8 +17,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.text.format.DateFormat;
-
 public class WebAPI {
 	
 	public static final String ISO_DATE_FORMAT = "yyyy-MM-dd";

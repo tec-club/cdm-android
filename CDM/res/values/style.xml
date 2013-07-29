@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="Theme.Sherlock.Light"></style>
+
+    <style name="AppTheme" parent="Theme.Sherlock.Light"></style>
 
     <style name="TextEllipsize">
         <item name="android:ellipsize">end</item>

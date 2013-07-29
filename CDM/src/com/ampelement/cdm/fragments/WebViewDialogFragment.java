@@ -26,11 +26,12 @@ public class WebViewDialogFragment extends SherlockDialogFragment {
 	 *            - If hyperlinks should be followed in the WebView
 	 * @return The Dialog Fragment to be shown
 	 */
-	public static WebViewDialogFragment newInstance(String url, boolean allowNav) {
+	public static WebViewDialogFragment newInstance(String url, boolean allowNav, boolean setInitialScaleFull) {
 		WebViewDialogFragment f = new WebViewDialogFragment();
 		Bundle b = new Bundle();
 		b.putString("url", url);
 		b.putBoolean("allownav", allowNav);
+		b.putBoolean("initialScaleFull", setInitialScaleFull);
 		f.setArguments(b);
 		return f;
 	}
@@ -43,19 +44,19 @@ public class WebViewDialogFragment extends SherlockDialogFragment {
 
 	@SuppressLint("NewApi")
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		LinearLayout v = (LinearLayout) inflater.inflate(R.layout.webview,
-				container);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		LinearLayout v = (LinearLayout) inflater.inflate(R.layout.webview, container);
 		final View progressView = v.findViewById(R.id.webview_loading);
 
 		String url = "";
 		boolean allowURLLoading = false;
+		boolean setInitialScaleFull = false;
 
 		Bundle args = getArguments();
 		if (args != null) {
 			url = args.getString("url");
 			allowURLLoading = args.getBoolean("allownav");
+			setInitialScaleFull = args.getBoolean("initialScaleFull");
 		}
 
 		final WebView webView = new WebView(getActivity());
@@ -73,9 +74,10 @@ public class WebViewDialogFragment extends SherlockDialogFragment {
 		webView.getSettings().setBuiltInZoomControls(true);
 		if (android.os.Build.VERSION.SDK_INT >= 11)
 			webView.getSettings().setDisplayZoomControls(false); // @SuppressLint("NewApi")
+		if (setInitialScaleFull)
+			webView.setInitialScale(100);
 		webView.setVisibility(View.GONE);
 		webView.loadUrl(url);
-		webView.setInitialScale(100);
 		v.addView(webView);
 
 		return v;

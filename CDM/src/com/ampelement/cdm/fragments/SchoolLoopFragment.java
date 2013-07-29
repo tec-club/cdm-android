@@ -7,17 +7,21 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.DownloadListener;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -26,6 +30,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.ampelement.cdm.R;
@@ -35,6 +40,10 @@ import com.ampelement.cdm.utils.SchoolLoopAPI;
 public class SchoolLoopFragment extends SherlockFragment {
 
 	private RelativeLayout schoolLoopScreen;
+	private LinearLayout mLoginScreen;
+	private RelativeLayout mLoadingScreen;
+	private EditText mUsernameInput;
+	private EditText mPasswordInput;
 
 	boolean newCredentials = false;
 
@@ -55,7 +64,7 @@ public class SchoolLoopFragment extends SherlockFragment {
 		Login() {
 		}
 
-		boolean blank() {
+		boolean isBlank() {
 			return user.matches("") || pass.matches("");
 		}
 	}
@@ -66,56 +75,77 @@ public class SchoolLoopFragment extends SherlockFragment {
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 		// Get Screens
 		schoolLoopScreen = (RelativeLayout) inflater.inflate(R.layout.school_loop_screen, container, false);
-		final LinearLayout loginScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_inputs);
-		final RelativeLayout loadingScreen = (RelativeLayout) schoolLoopScreen.findViewById(R.id.school_loop_loading);
+		mLoginScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_inputs);
+		mLoadingScreen = (RelativeLayout) schoolLoopScreen.findViewById(R.id.school_loop_loading);
+		mUsernameInput = (EditText) schoolLoopScreen.findViewById(R.id.school_loop_username);
+		mPasswordInput = (EditText) schoolLoopScreen.findViewById(R.id.school_loop_password);
 
 		// Attempt to retrieve stored credentials
 		Login login = new Login(sharedPreferences.getString(Preferences.SCHOOL_LOOP_USERNAME, ""), sharedPreferences.getString(
 				Preferences.SCHOOL_LOOP_PASSWORD, ""));
 
-		// If credentials don't exist then show login screen
+		// Setup WebView
 		webView = new WebView(getActivity().getApplicationContext());
 		((LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_webview_screen)).addView(webView);
-
-		if (login.blank()) {
-			// Show Login Screen
-			loginScreen.setVisibility(View.VISIBLE);
-			final EditText usernameInput = (EditText) schoolLoopScreen.findViewById(R.id.school_loop_username);
-			final EditText passwordInput = (EditText) schoolLoopScreen.findViewById(R.id.school_loop_password);
-			final Button submitButton = (Button) schoolLoopScreen.findViewById(R.id.school_loop_submit);
-			submitButton.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					// Get Login Credentials
-					Login newLogin = new Login();
-					newLogin.user = usernameInput.getEditableText().toString();
-					newLogin.pass = passwordInput.getEditableText().toString();
-					// Check for blank credentials
-					if (newLogin.blank()) {
-						String errorMessage = "";
-						if (newLogin.user.matches(""))
-							errorMessage = "Username";
-						if (newLogin.user.matches("")) {
-							if (!errorMessage.matches(""))
-								errorMessage = errorMessage + " and ";
-							errorMessage = errorMessage + "Password";
-						}
-						errorMessage = errorMessage + (errorMessage.contains("and") ? " are" : " is") + " Blank";
-						loginScreenWithErrorMessage(errorMessage);
-					} else {
-						// Attempt Login
-						transitionViews(loginScreen, loadingScreen);
-						newCredentials = true;
-						new SchoolLoopLoginTask().execute(newLogin);
-					}
+		/* Setup Login View */
+		// Setup Submit button
+		final Button submitButton = (Button) schoolLoopScreen.findViewById(R.id.school_loop_submit);
+		submitButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				submitLogin(v);
+			}
+		});
+		// Setup EditText enter click
+		mPasswordInput.setOnEditorActionListener(new OnEditorActionListener() {
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_GO && (event == null || event.getAction() == KeyEvent.ACTION_DOWN)) {
+					submitLogin(v);
 				}
-			});
+				return true;
+			}
+		});
+
+		// Load appropriate view
+		if (login.isBlank()) {
+			// Show Login Screen
+			mLoginScreen.setVisibility(View.VISIBLE);
 		} else {
 			// Load School Loop Mobile page
-			transitionViews(loginScreen, loadingScreen);
+			transitionViews(mLoginScreen, mLoadingScreen);
 			new SchoolLoopLoginTask().execute(login);
 		}
 		return schoolLoopScreen;
+	}
+
+	void submitLogin(View v) {
+		// Hide keyboard
+		InputMethodManager inputManager = (InputMethodManager) getSherlockActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+		// Create Login object
+		Login newLogin = new Login();
+		// Get credentials from EditTexts
+		newLogin.user = mUsernameInput.getEditableText().toString();
+		newLogin.pass = mPasswordInput.getEditableText().toString();
+		// Check for blank credentials
+		if (newLogin.isBlank()) {
+			String errorMessage = "";
+			if (newLogin.user.matches(""))
+				errorMessage = "Username";
+			if (newLogin.user.matches("")) {
+				if (!errorMessage.matches(""))
+					errorMessage = errorMessage + " and ";
+				errorMessage = errorMessage + "Password";
+			}
+			errorMessage = errorMessage + (errorMessage.contains("and") ? " are" : " is") + " Blank";
+			loginScreenWithErrorMessage(errorMessage);
+		} else {
+			// Attempt Login
+			transitionViews(mLoginScreen, mLoadingScreen);
+			newCredentials = true;
+			new SchoolLoopLoginTask().execute(newLogin);
+		}
 	}
 
 	void transitionViews(View one, View two) {
@@ -128,13 +158,12 @@ public class SchoolLoopFragment extends SherlockFragment {
 
 	private class SchoolLoopLoginTask extends AsyncTask<Login, Void, Boolean> {
 
-		@SuppressLint("CommitPrefEdits")
 		@Override
 		protected Boolean doInBackground(Login... logins) {
 			if (logins.length > 0) {
 				Login login = logins[0];
 				long lastActiveTime = sharedPreferences.getLong(Preferences.SCHOOL_LOOP_TIME, 0);
-				SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit(); // @SuppressLint("CommitPrefEdits")
+				SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
 				// Calculated as still logged in. Timeout is around 15 min
 				if (lastActiveTime != 0 && (System.currentTimeMillis() - lastActiveTime) < 900000) {
 					SchoolLoopAPI.Dirty.loadLoginDataToWebView(sharedPreferences, webView);
@@ -216,6 +245,8 @@ public class SchoolLoopFragment extends SherlockFragment {
 					((RelativeLayout) schoolLoopScreen.findViewById(R.id.school_loop_loading)).setVisibility(View.GONE);
 					((LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_webview_screen)).setVisibility(View.GONE);
 					LinearLayout loginScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_inputs);
+					((EditText) schoolLoopScreen.findViewById(R.id.school_loop_username)).setText("");
+					((EditText) schoolLoopScreen.findViewById(R.id.school_loop_password)).setText("");
 					loginScreen.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), android.R.anim.fade_in));
 					loginScreen.setVisibility(View.VISIBLE);
 				} else {

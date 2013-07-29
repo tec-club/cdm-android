@@ -18,53 +18,53 @@
         </ProgressBar>
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/event_screen_error_loading"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="0"
+        android:visibility="gone" >
+
+        <com.ampelement.cdm.widgets.TextViewRBI
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="No Events Found"
+            android:textColor="#ffcdcdcd"
+            android:textSize="25sp" />
+    </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0"
         android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/event_screen_prev_button"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:visibility="gone" />
+        <com.ampelement.cdm.widgets.TextViewRBI
+            android:id="@+id/event_screen_month"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:textColor="#ff4d4d4d"
+            android:textSize="40sp" />
 
-        <Button
-            android:id="@+id/event_screen_next_button"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:padding="5dp"
-            android:visibility="gone" />
+        <com.ampelement.cdm.widgets.TextViewRCB
+            android:id="@+id/event_screen_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:textColor="#ff4d4d4d"
+            android:textSize="20sp" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/event_screen_month_button"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_weight="0"
-        android:visibility="gone"
-        android:padding="5dp" />
 
     <com.ampelement.cdm.calendar.CalendarView
         android:id="@+id/event_screen_calendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_weight="0"
         android:visibility="gone" />
-
-    <ListView
-        android:id="@+id/event_screen_list"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginTop="20dp"
-        android:layout_weight="1"
-        android:divider="#00000000"
-        android:dividerHeight="5dp"
-        android:scrollingCache="false" >
-    </ListView>
 
 </LinearLayout>
