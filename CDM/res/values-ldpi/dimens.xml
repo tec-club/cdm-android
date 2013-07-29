@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<dimen name="cell_text_size">10px</dimen>
+<dimen name="cell_text_size">12.5px</dimen>
 </resources>
