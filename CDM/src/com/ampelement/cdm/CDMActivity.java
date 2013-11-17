@@ -134,10 +134,6 @@ public class CDMActivity extends SherlockFragmentActivity {
 				} else {
 					super.onBackPressed();
 				}
-			} else if (fragment != null && fragment instanceof InfoListFragment) {
-				if (!((InfoListFragment) fragment).isVisible()) {
-					super.onBackPressed();
-				}
 			} else {
 				super.onBackPressed();
 			}
