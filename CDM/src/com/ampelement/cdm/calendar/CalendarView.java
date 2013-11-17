@@ -265,7 +265,7 @@ public class CalendarView extends View {
 					 * screen width is 200 pixels, the maximum scroll offset
 					 * should be 800 pixels.
 					 */
-					0, 0, (int) -CELL_HEIGHT * 16, (int) CELL_HEIGHT * 16);
+					0, 0, (int) -CELL_HEIGHT * 32, (int) CELL_HEIGHT * 32);
 			// mAdjustedTouchY = mScroller.getStartY() - mVerticalOffset;
 			mLastFlingY = mScroller.getStartY();
 			// mLastFlingY = mTouchY + mVerticalOffset;
@@ -400,8 +400,8 @@ public class CalendarView extends View {
 				 * the text color to DKGRAY
 				 */
 
-				if (day.withinCurrentMonth)
-					textColor = Color.DKGRAY;
+				/*if (day.withinCurrentMonth)
+					textColor = Color.DKGRAY;*/
 				if (day.month % 2 == 0) {
 					textColor = Color.DKGRAY;
 					backgroundColor = 0xffE1E1E1;
@@ -412,8 +412,10 @@ public class CalendarView extends View {
 				 * background color to WHITE
 				 */
 
-				if (day.day == thisDay && day.month == thisMonth && day.year == thisYear)
-					boldText = true;
+				if (day.day == thisDay && day.month == thisMonth && day.year == thisYear) {
+					underlineText = true;
+					backgroundColor = 0xffFFFFFF;
+				}
 
 				if (day.day == selectedCellDay && day.month == selectedCellMonth && day.year == selectedCellYear)
 					backgroundColor = 0xffFCFCFC;
