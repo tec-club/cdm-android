@@ -8,7 +8,7 @@
     android:paddingTop="10dp" >
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/background_card"
         android:orientation="horizontal"
@@ -17,11 +17,12 @@
         <ImageView
             android:id="@+id/club_item_imageView"
             android:layout_width="60dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/info_bell_schedule" />
+            android:layout_height="60dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/seaking_bw" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:orientation="vertical" >
