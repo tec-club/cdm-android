@@ -1,4 +1,4 @@
-package com.ampelement.cdm.utils;
+package com.ampelement.cdm.eb;
 
 public class ElectronicBookDB {
 

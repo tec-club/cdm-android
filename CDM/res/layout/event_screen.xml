@@ -57,7 +57,7 @@
             android:textSize="20sp" />
     </LinearLayout>
 
-    <com.ampelement.cdm.calendar.CalendarView
+    <com.ampelement.cdm.calendar.library.CalendarView
         android:id="@+id/event_screen_calendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

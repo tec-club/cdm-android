@@ -1,4 +1,4 @@
-package com.ampelement.cdm.calendar;
+package com.ampelement.cdm.calendar.library;
 
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Days;

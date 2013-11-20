@@ -1,4 +1,4 @@
-package com.ampelement.cdm.fragments;
+package com.ampelement.cdm.eb;
 
 import android.os.AsyncTask;
 import android.os.Bundle;

@@ -1,4 +1,4 @@
-package com.ampelement.cdm.fragments;
+package com.ampelement.cdm.infoscreen;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.fragments.WebViewDialogFragment.DialogWebViewClient.OnPageLoaded;
+import com.ampelement.cdm.infoscreen.WebViewDialogFragment.DialogWebViewClient.OnPageLoaded;
 
 public class WebViewDialogFragment extends SherlockDialogFragment {
 

@@ -1,4 +1,4 @@
-package com.ampelement.cdm.calendar;
+package com.ampelement.cdm.calendar.library;
 
 import java.text.DateFormatSymbols;
 
@@ -23,10 +23,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Scroller;
 
+import com.ampelement.cdm.CDMColors;
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.calendar.CalendarHelper.Day;
-import com.ampelement.cdm.constants.CDMColors;
-import com.ampelement.cdm.utils.SchoolLoopEventMap;
+import com.ampelement.cdm.calendar.library.CalendarHelper.Day;
+import com.ampelement.cdm.schoolloop.SchoolLoopEventMap;
 
 public class CalendarView extends View {
 	private float WEEK_HEIGHT = 0;

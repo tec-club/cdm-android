@@ -19,11 +19,10 @@ import android.text.Html;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.ampelement.cdm.constants.CDMColors;
-import com.ampelement.cdm.fragments.CalendarFragment;
-import com.ampelement.cdm.fragments.InfoListFragment;
-import com.ampelement.cdm.fragments.SchoolLoopFragment;
+import com.ampelement.cdm.calendar.CalendarFragment;
 import com.ampelement.cdm.helper.DefaultViewPagerOnChangeListener;
+import com.ampelement.cdm.infoscreen.InfoListFragment;
+import com.ampelement.cdm.schoolloop.SchoolLoopFragment;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 
 public class CDMActivity extends SherlockFragmentActivity {
@@ -134,6 +133,12 @@ public class CDMActivity extends SherlockFragmentActivity {
 			if (fragment != null) {
 				if (fragment != null && fragment instanceof SchoolLoopFragment) {
 					SchoolLoopFragment schoolLoopFragment = (SchoolLoopFragment) fragment;
+					if (schoolLoopFragment.webView == null) {
+						String url = "http://www.example.com";
+						Intent i = new Intent(Intent.ACTION_VIEW);
+						i.setData(Uri.parse(url));
+						startActivity(i);
+					}
 					if (schoolLoopFragment.webView.canGoBack()) {
 						schoolLoopFragment.webView.goBack();
 					} else {
@@ -149,8 +154,7 @@ public class CDMActivity extends SherlockFragmentActivity {
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
 			Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "me@alexwendland.com", null));
-			emailIntent.putExtra(Intent.EXTRA_SUBJECT, e.getMessage());
-			emailIntent.putExtra(Intent.EXTRA_TEXT, sw.toString());
+			emailIntent.putExtra(Intent.EXTRA_TEXT, e.getMessage() + "\n" + sw.toString());
 			startActivity(Intent.createChooser(emailIntent, "Send email..."));
 		}
 	}

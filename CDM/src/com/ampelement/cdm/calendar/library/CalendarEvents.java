@@ -1,4 +1,4 @@
-package com.ampelement.cdm.calendar;
+package com.ampelement.cdm.calendar.library;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;

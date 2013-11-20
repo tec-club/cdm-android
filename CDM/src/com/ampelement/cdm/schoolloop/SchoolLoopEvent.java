@@ -1,4 +1,4 @@
-package com.ampelement.cdm.utils;
+package com.ampelement.cdm.schoolloop;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -7,7 +7,7 @@ import org.joda.time.format.DateTimeFormat;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.ampelement.cdm.calendar.CalendarEvent;
+import com.ampelement.cdm.calendar.library.CalendarEvent;
 
 public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 

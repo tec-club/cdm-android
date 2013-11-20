@@ -1,4 +1,4 @@
-package com.ampelement.cdm.fragments;
+package com.ampelement.cdm.calendar;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,12 +11,12 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.calendar.CalendarView;
-import com.ampelement.cdm.calendar.CalendarView.OnCellTouchListener;
-import com.ampelement.cdm.calendar.CalendarView.OnMonthChangeListener;
-import com.ampelement.cdm.utils.SchoolLoopAPI.EventFetcher;
-import com.ampelement.cdm.utils.SchoolLoopEvent;
-import com.ampelement.cdm.utils.SchoolLoopEventMap;
+import com.ampelement.cdm.calendar.library.CalendarView;
+import com.ampelement.cdm.calendar.library.CalendarView.OnCellTouchListener;
+import com.ampelement.cdm.calendar.library.CalendarView.OnMonthChangeListener;
+import com.ampelement.cdm.schoolloop.SchoolLoopEvent;
+import com.ampelement.cdm.schoolloop.SchoolLoopEventMap;
+import com.ampelement.cdm.schoolloop.SchoolLoopAPI.EventFetcher;
 
 public class CalendarFragment extends SherlockFragment {
 

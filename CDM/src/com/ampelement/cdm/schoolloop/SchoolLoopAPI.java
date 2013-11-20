@@ -1,4 +1,4 @@
-package com.ampelement.cdm.utils;
+package com.ampelement.cdm.schoolloop;
 
 import java.io.IOException;
 import java.net.URL;
@@ -33,8 +33,8 @@ import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 
-import com.ampelement.cdm.objects.Preferences;
-import com.ampelement.cdm.utils.SchoolLoopEvent.SchoolLoopEventBuilder;
+import com.ampelement.cdm.Preferences;
+import com.ampelement.cdm.schoolloop.SchoolLoopEvent.SchoolLoopEventBuilder;
 
 public class SchoolLoopAPI {
 	public final static String TAG = "SchoolLoopAPI";

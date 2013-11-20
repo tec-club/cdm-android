@@ -1,4 +1,4 @@
-package com.ampelement.cdm.fragments;
+package com.ampelement.cdm.infoscreen;
 
 import java.util.ArrayList;
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.ampelement.cdm.calendar;
+package com.ampelement.cdm.calendar.library;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;

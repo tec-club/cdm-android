@@ -1,4 +1,4 @@
-package com.ampelement.cdm.constants;
+package com.ampelement.cdm;
 
 public class CDMColors {
 

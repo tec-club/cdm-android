@@ -1,4 +1,4 @@
-package com.ampelement.cdm.fragments;
+package com.ampelement.cdm.schoolloop;
 
 import java.io.IOException;
 
@@ -33,9 +33,8 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.actionbarsherlock.app.SherlockFragment;
+import com.ampelement.cdm.Preferences;
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.objects.Preferences;
-import com.ampelement.cdm.utils.SchoolLoopAPI;
 
 public class SchoolLoopFragment extends SherlockFragment {
 

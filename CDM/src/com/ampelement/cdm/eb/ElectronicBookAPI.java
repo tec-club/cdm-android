@@ -1,4 +1,4 @@
-package com.ampelement.cdm.utils;
+package com.ampelement.cdm.eb;
 
 import java.io.BufferedInputStream;
 import java.io.FileOutputStream;

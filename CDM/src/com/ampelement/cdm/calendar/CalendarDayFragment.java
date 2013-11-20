@@ -1,4 +1,4 @@
-package com.ampelement.cdm.fragments;
+package com.ampelement.cdm.calendar;
 
 import java.text.DateFormatSymbols;
 
@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.utils.SchoolLoopEvent;
+import com.ampelement.cdm.schoolloop.SchoolLoopEvent;
 
 public class CalendarDayFragment extends SherlockDialogFragment {
 
