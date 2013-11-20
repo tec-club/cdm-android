@@ -20,6 +20,7 @@ import android.text.Html;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.ampelement.cdm.calendar.CalendarFragment;
+import com.ampelement.cdm.clubs.ClubsFragment;
 import com.ampelement.cdm.helper.DefaultViewPagerOnChangeListener;
 import com.ampelement.cdm.infoscreen.InfoListFragment;
 import com.ampelement.cdm.schoolloop.SchoolLoopFragment;
@@ -36,6 +37,7 @@ public class CDMActivity extends SherlockFragmentActivity {
 	CalendarFragment mFragmentCalendar;
 	InfoListFragment mFragmentInfoList;
 	SchoolLoopFragment mFragmentSchoolLoop;
+	ClubsFragment mFragmentClubs;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -59,9 +61,11 @@ public class CDMActivity extends SherlockFragmentActivity {
 		mFragmentCalendar = new CalendarFragment();
 		mFragmentSchoolLoop = new SchoolLoopFragment();
 		mFragmentInfoList = new InfoListFragment();
+		mFragmentClubs = new ClubsFragment();
 		mCDMTabsAdapter.addTab(new TitledFragment("Events", mFragmentCalendar, CDMColors.BLUE));
 		mCDMTabsAdapter.addTab(new TitledFragment("SchoolLoop", mFragmentSchoolLoop, CDMColors.GREEN));
 		mCDMTabsAdapter.addTab(new TitledFragment("Info", mFragmentInfoList, CDMColors.ORANGE));
+		mCDMTabsAdapter.addTab(new TitledFragment("Clubs", mFragmentClubs, CDMColors.PURPLE));
 
 		mViewPager.setAdapter(mCDMTabsAdapter);
 		mPagerSlidingTabs.setViewPager(mViewPager);
