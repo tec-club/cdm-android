@@ -29,3 +29,5 @@ proguard/
 *.iws
 .idea/
 
+# Windows files
+Thumbs.db
