@@ -2,6 +2,7 @@ package com.ampelement.cdm.clubs;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -18,7 +19,9 @@ import com.ampelement.cdm.Preferences;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.clubs.GetClubsTask.OnUpdateComplete;
 import com.ampelement.cdm.utils.Utils;
+import com.ampelement.cdm.utils.picasso.CircleTransform;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 public class ClubsFragment extends SherlockFragment {
 
@@ -69,6 +72,8 @@ public class ClubsFragment extends SherlockFragment {
 		private final Context context;
 		private final LayoutInflater inflater;
 		private ClubData[] clubData;
+		
+		CircleTransform picassoCircleTransform = new CircleTransform();
 
 		public ClubListAdapter(Context context, ClubData[] values) {
 			this.context = context;
@@ -98,7 +103,7 @@ public class ClubsFragment extends SherlockFragment {
 				viewHolder.viewDesc.setText(club.description);
 				// viewTimes.setText(Utils.combine(club.meetingTimes, "\n"));
 				viewHolder.viewTimes.setText(club.president);
-//				Picasso.with(getActivity()).load(club.getLogoUrl()).into(viewLogo);
+				Picasso.with(getActivity()).load(club.getLogoUrl()).transform(picassoCircleTransform).into(viewHolder.viewLogo);
 			} catch (Exception e) {
 
 			}

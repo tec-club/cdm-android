@@ -109,13 +109,15 @@ public class GetClubsTask extends AsyncTask<Void, Void, ClubData[]> {
 					JSONObject jClub = jsonClubsArr.getJSONObject(i);
 
 					club.name = jClub.getString("name");
-					club.description = jClub.getString("desc");
-					club.logoURL = jClub.getString("logo");
+					club.description = jClub.getString("description");
+					/*club.logoURL = jClub.getString("logo");
 					JSONArray meetingTimes = jClub.getJSONArray("meetingTimes");
 					club.meetingTimes = new String[meetingTimes.length()];
 					for (int k = 0; k < meetingTimes.length(); k++) {
 						club.meetingTimes[k] = meetingTimes.getString(k);
-					}
+					}*/
+					club.president = jClub.getString("president");
+					club.advisor = jClub.getString("advisor");
 
 					clubs[i] = club;
 				} catch (Exception e) {

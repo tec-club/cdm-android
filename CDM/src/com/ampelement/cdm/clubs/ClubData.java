@@ -5,7 +5,8 @@ import android.net.Uri;
 public class ClubData {
 
 	public String name;
-	public String logoURL;// = "http://thecatapi.com/api/images/get?format=src&type=jpg&ran=" + Integer.toHexString((int) (Math.random() * 10000));
+//	public String logoURL;
+	public String logoURL = "http://dummyimage.com/256/" + Integer.toHexString((int) (Math.random() * 255)) + Integer.toHexString((int) (Math.random() * 255)) + Integer.toHexString((int) (Math.random() * 255));
 	public String description;
 	public String[] meetingTimes;
 	public String president;
