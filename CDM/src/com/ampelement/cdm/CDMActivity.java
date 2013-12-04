@@ -45,13 +45,15 @@ public class CDMActivity extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		getSupportActionBar().setLogo(R.drawable.crown);
+		/*getSupportActionBar().setLogo(R.drawable.crown);
 		getSupportActionBar().setDisplayUseLogoEnabled(true);
 		// getSupportActionBar().setTitle("Corona del Mar");
-		getSupportActionBar().setTitle(Html.fromHtml("<b><font color='#ffffff'>Corona del Mar</font></b>"));
+		getSupportActionBar().setTitle(Html.fromHtml("<b><font color='#ffffff'>Corona del Mar</font></b>"));*/
 
 		mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
 		mPagerSlidingTabs = (PagerSlidingTabStrip) findViewById(R.id.main_tabs);
+		
+		mPagerSlidingTabs.setIndicatorColor(CDMColors.BLUE);
 
 		mCDMTabsAdapter = new CDMTabsAdapter(getSupportFragmentManager());
 		setupTabs();
@@ -80,13 +82,13 @@ public class CDMActivity extends SherlockFragmentActivity {
 
 		changeActionBarColor(mCDMTabsAdapter.getCurrentItem().color);
 
-		mViewPager.setOffscreenPageLimit(2);
+		mViewPager.setOffscreenPageLimit(mCDMTabsAdapter.getCount() - 1);
 	}
 
 	Drawable oldActionBar = null;
 
 	public void changeActionBarColor(int color) {
-		mPagerSlidingTabs.setIndicatorColor(mCDMTabsAdapter.getCurrentItem().color);
+		/*mPagerSlidingTabs.setIndicatorColor(mCDMTabsAdapter.getCurrentItem().color);
 
 		Drawable colorDrawable = new ColorDrawable(color);
 		Drawable bottomDrawable = getResources().getDrawable(R.drawable.actionbar_bottom);
@@ -107,7 +109,7 @@ public class CDMActivity extends SherlockFragmentActivity {
 		}
 
 		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		getSupportActionBar().setDisplayShowTitleEnabled(true);
+		getSupportActionBar().setDisplayShowTitleEnabled(true);*/
 
 	}
 
