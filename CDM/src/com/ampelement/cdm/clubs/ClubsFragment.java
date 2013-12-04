@@ -81,19 +81,27 @@ public class ClubsFragment extends SherlockFragment {
 			// Setup row view
 			if (convertView == null)
 				convertView = inflater.inflate(R.layout.club_item_view, parent, false);
-			TextView viewName = (TextView) convertView.findViewById(R.id.club_item_title_textView);
-			TextView viewDesc = (TextView) convertView.findViewById(R.id.club_item_description_textView);
-			TextView viewTimes = (TextView) convertView.findViewById(R.id.club_item_meeting_times_textView);
-			ImageView viewLogo = (ImageView) convertView.findViewById(R.id.club_item_imageView);
+			
+			ViewHolder viewHolder = (ViewHolder) convertView.getTag();
+			
+			if (viewHolder == null) {
+				viewHolder = new ViewHolder(convertView);
+				convertView.setTag(viewHolder);
+			}
 
-			// Get current row item
-			ClubData club = clubData[position];
+			try {
+				// Get current row item
+				ClubData club = clubData[position];
 
-			// Populate view
-			viewName.setText(club.name);
-			viewDesc.setText(club.description);
-			viewTimes.setText(Utils.combine(club.meetingTimes, "\n"));
-			Picasso.with(getActivity()).load(club.getLogoUrl()).into(viewLogo);
+				// Populate view
+				viewHolder.viewName.setText(club.name);
+				viewHolder.viewDesc.setText(club.description);
+				// viewTimes.setText(Utils.combine(club.meetingTimes, "\n"));
+				viewHolder.viewTimes.setText(club.president);
+//				Picasso.with(getActivity()).load(club.getLogoUrl()).into(viewLogo);
+			} catch (Exception e) {
+
+			}
 
 			return convertView;
 		}
@@ -111,6 +119,20 @@ public class ClubsFragment extends SherlockFragment {
 		@Override
 		public long getItemId(int pos) {
 			return pos;
+		}
+	}
+	
+	static class ViewHolder {
+		TextView viewName;
+		TextView viewDesc;
+		TextView viewTimes;
+		ImageView viewLogo;
+		
+		public ViewHolder(View rowRootView) {
+			viewName = (TextView) rowRootView.findViewById(R.id.club_item_title_textView);
+			viewDesc = (TextView) rowRootView.findViewById(R.id.club_item_description_textView);
+			viewTimes = (TextView) rowRootView.findViewById(R.id.club_item_meeting_times_textView);
+			viewLogo = (ImageView) rowRootView.findViewById(R.id.club_item_imageView);
 		}
 	}
 
