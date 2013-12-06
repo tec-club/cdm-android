@@ -8,6 +8,7 @@
     <RelativeLayout
         android:id="@+id/event_screen_loading"
         android:layout_width="fill_parent"
+        android:visibility="gone"
         android:layout_height="fill_parent"
         android:layout_weight="0" >
 

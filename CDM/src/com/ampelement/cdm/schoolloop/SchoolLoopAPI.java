@@ -1,6 +1,7 @@
 package com.ampelement.cdm.schoolloop;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,7 @@ import android.webkit.WebView;
 
 import com.ampelement.cdm.Preferences;
 import com.ampelement.cdm.schoolloop.SchoolLoopEvent.SchoolLoopEventBuilder;
+import com.ampelement.cdm.utils.Utils;
 
 public class SchoolLoopAPI {
 	public final static String TAG = "SchoolLoopAPI";
@@ -50,16 +52,49 @@ public class SchoolLoopAPI {
 		public EventFetcher() {
 		}
 
-		public SchoolLoopEventMap fetchEvents() {
+		/**
+		 * Download latest XML String data from {@link #EVENT_RSS_URL}
+		 * 
+		 * @return a XML String of the latest calendar event data
+		 */
+		public String fetchEventXML() {
+			try {
+				URL url = new URL(EVENT_RSS_URL);
+				return Utils.getURL(url);
+			} catch (Exception e) {
+				Log.e(TAG, e.getLocalizedMessage(), e);
+				return null;
+			}
+		}
+
+		/**
+		 * Load school calendar events into a SchoolLoopEventMap from a provided
+		 * XML String.
+		 * 
+		 * @param xmlString
+		 *            String to load the events from
+		 * @return a SchoolLoopEventMap of the XML String OR null if there was
+		 *         an error
+		 */
+		public SchoolLoopEventMap loadEvents(String xmlString) {
+			try {
+				return loadEvents(new InputSource(new StringReader(xmlString)));
+			} catch (Exception e) {
+				Log.e(TAG, e.getLocalizedMessage(), e);
+				return null;
+			}
+		}
+
+		public SchoolLoopEventMap loadEvents(InputSource eventXMLInputSource) {
 			try {
 				// SetUp Parser
 				SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
 				SAXParser saxParser = saxParserFactory.newSAXParser();
+				Log.d("Parsing", String.valueOf(saxParser.isValidating()));
 				XMLReader xmlReader = saxParser.getXMLReader();
-				URL url = new URL(EVENT_RSS_URL);
 				EventParser eventParser = new EventParser();
 				xmlReader.setContentHandler(eventParser);
-				xmlReader.parse(new InputSource(url.openStream()));
+				xmlReader.parse(eventXMLInputSource);
 				// Add final item which isn't added due to their not being a
 				// start element ("item") after it
 				eventParser.eventMap.addEvent(eventParser.currentEventBuilder.isoDate, eventParser.currentEventBuilder.build());
@@ -73,7 +108,7 @@ public class SchoolLoopAPI {
 	}
 
 	private static class EventParser extends DefaultHandler {
-		StringBuilder content = null;
+		StringBuilder content = new StringBuilder();
 		Boolean elementOn = false;
 		SchoolLoopEventBuilder currentEventBuilder = null;
 		SchoolLoopEventMap eventMap = new SchoolLoopEventMap();
@@ -84,7 +119,7 @@ public class SchoolLoopAPI {
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			elementOn = true;
-			content = new StringBuilder();
+			content.setLength(0);
 			if (localName.equals("item")) {
 				if (currentEventBuilder != null) {
 					eventMap.addEvent(currentEventBuilder.isoDate, currentEventBuilder.build());

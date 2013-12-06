@@ -1,15 +1,20 @@
 package com.ampelement.cdm.calendar;
 
-import android.os.AsyncTask;
+import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.ampelement.cdm.Preferences;
 import com.ampelement.cdm.R;
+import com.ampelement.cdm.calendar.GetEventsTask.OnUpdateComplete;
 import com.ampelement.cdm.calendar.library.CalendarView;
 import com.ampelement.cdm.calendar.library.CalendarView.OnCellTouchListener;
 import com.ampelement.cdm.calendar.library.CalendarView.OnMonthChangeListener;
@@ -26,6 +31,8 @@ public class CalendarFragment extends TitledSherlockFragment {
 	private TextView mMonthTextView;
 	private TextView mYearTextView;
 
+	private GetEventsTask mGetEventsTask;
+	private SharedPreferences mSharedPref;
 	private SchoolLoopEventMap mEventsMap;
 
 	public static final String TAG = "CalendarFragment";
@@ -33,6 +40,29 @@ public class CalendarFragment extends TitledSherlockFragment {
 	@Override
 	public String getTitle() {
 		return "Calendar";
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+
+		mSharedPref = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity());
+		String cachedXMLData = mSharedPref.getString(Preferences.CALENDAR_CACHED_DATA, null);
+
+		mGetEventsTask = new GetEventsTask(mSharedPref, cachedXMLData, new OnUpdateComplete() {
+
+			@Override
+			public void onComplete(SchoolLoopEventMap eventsMap) {
+				if (eventsMap != null) {
+					mEventsMap = eventsMap;
+					mCalendarView.setCalendarEvents(mEventsMap);
+				}
+			}
+		});
+		mGetEventsTask.execute();
+
+		if (cachedXMLData != null)
+			mEventsMap = new EventFetcher().loadEvents(cachedXMLData);
 	}
 
 	@Override
@@ -49,8 +79,27 @@ public class CalendarFragment extends TitledSherlockFragment {
 		mCalendarView.setOnMonthChangeListener(mOnMonthChangeListener);
 		mCalendarView.setShowMonth(false);
 
-		new GetEventsTask().execute();
+		// If data exists then show it
+		if (mEventsMap != null) {
+			mCalendarView.setCalendarEvents(mEventsMap);
+			mCalendarView.setVisibility(View.VISIBLE);
+		} else {// If no data exists
+			if (mGetEventsTask.isFinished()) // and the update task finished
+				// then show an error loading data screen
+				mEventErrorLoadingScreen.setVisibility(View.VISIBLE);
+			else
+				// otherwise show a loading screen
+				mEventLoadingScreen.setVisibility(View.VISIBLE);
+		}
+
 		return eventScreen;
+	}
+	
+	@Override
+	public void onDestroy() {
+		mGetEventsTask.setOnUpdateCompleteListener(null);
+		
+		super.onDestroy();
 	}
 
 	private OnCellTouchListener mOnCellTouchListener = new OnCellTouchListener() {
@@ -74,30 +123,6 @@ public class CalendarFragment extends TitledSherlockFragment {
 		FragmentManager fm = getSherlockActivity().getSupportFragmentManager();
 		CalendarDayFragment calendarDayDialogFragment = CalendarDayFragment.newInstance(events);
 		calendarDayDialogFragment.show(fm, "calendar_day_fragment");
-	}
-
-	private class GetEventsTask extends AsyncTask<Void, String, SchoolLoopEventMap> {
-
-		@Override
-		protected SchoolLoopEventMap doInBackground(Void... params) {
-			EventFetcher eventFetcher = new EventFetcher();
-			return eventFetcher.fetchEvents();
-		}
-
-		@Override
-		protected void onPostExecute(SchoolLoopEventMap result) {
-			mEventsMap = result;
-			try {
-				mEventLoadingScreen.setVisibility(View.GONE);
-				if (mEventsMap != null && !mEventsMap.isEmpty()) {
-					mCalendarView.setVisibility(View.VISIBLE);
-					mCalendarView.setCalendarEvents(mEventsMap);
-				} else {
-					mEventErrorLoadingScreen.setVisibility(View.VISIBLE);
-				}
-			} catch (Exception e) {
-			}
-		}
 	}
 
 }
