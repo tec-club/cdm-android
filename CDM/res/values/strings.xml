@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, CDMActivity!</string>
     <string name="app_name">CDM</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="submit">Submit</string>
     <string name="previous">Previous</string>
     <string name="next">Next</string>
+    
+    <string name="drawerOpen">Navigation Menu</string>
 
 </resources>

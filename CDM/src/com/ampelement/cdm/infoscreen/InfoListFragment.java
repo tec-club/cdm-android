@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -19,14 +18,19 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.ampelement.cdm.R;
+import com.ampelement.cdm.utils.android.TitledSherlockFragment;
 
-public class InfoListFragment extends SherlockFragment {
+public class InfoListFragment extends TitledSherlockFragment {
 
 	public static final String TAG = "InfoListFragment";
 	private static final String BASE_URL = "http://www.ampelement.com/cdm";
 	private ListView mInfoListView;
+	
+	@Override
+	public String getTitle() {
+		return "Info / Handbook";
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -9,16 +9,16 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.calendar.library.CalendarView;
 import com.ampelement.cdm.calendar.library.CalendarView.OnCellTouchListener;
 import com.ampelement.cdm.calendar.library.CalendarView.OnMonthChangeListener;
+import com.ampelement.cdm.schoolloop.SchoolLoopAPI.EventFetcher;
 import com.ampelement.cdm.schoolloop.SchoolLoopEvent;
 import com.ampelement.cdm.schoolloop.SchoolLoopEventMap;
-import com.ampelement.cdm.schoolloop.SchoolLoopAPI.EventFetcher;
+import com.ampelement.cdm.utils.android.TitledSherlockFragment;
 
-public class CalendarFragment extends SherlockFragment {
+public class CalendarFragment extends TitledSherlockFragment {
 
 	private RelativeLayout mEventLoadingScreen;
 	private RelativeLayout mEventErrorLoadingScreen;
@@ -29,6 +29,11 @@ public class CalendarFragment extends SherlockFragment {
 	private SchoolLoopEventMap mEventsMap;
 
 	public static final String TAG = "CalendarFragment";
+
+	@Override
+	public String getTitle() {
+		return "Calendar";
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -2,143 +2,74 @@ package com.ampelement.cdm;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.TransitionDrawable;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.text.Html;
+import android.view.View;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
+import com.ampelement.cdm.NavAdapter.OnNavChangeListener;
 import com.ampelement.cdm.calendar.CalendarFragment;
 import com.ampelement.cdm.clubs.ClubsFragment;
-import com.ampelement.cdm.helper.DefaultViewPagerOnChangeListener;
 import com.ampelement.cdm.infoscreen.InfoListFragment;
 import com.ampelement.cdm.schoolloop.SchoolLoopFragment;
-import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
+import com.ampelement.cdm.utils.android.AndroidUtils;
+import com.ampelement.cdm.utils.android.TitledSherlockFragment;
 
 public class CDMActivity extends SherlockFragmentActivity {
 
 	private static final String TAG = "CDMActivity";
 
-	ViewPager mViewPager;
-	PagerSlidingTabStrip mPagerSlidingTabs;
-	CDMTabsAdapter mCDMTabsAdapter;
-
-	CalendarFragment mFragmentCalendar;
-	InfoListFragment mFragmentInfoList;
-	SchoolLoopFragment mFragmentSchoolLoop;
-	ClubsFragment mFragmentClubs;
+	private NavAdapter mNavAdapter;
 
 	/** Called when the activity is first created. */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
-		/*getSupportActionBar().setLogo(R.drawable.crown);
-		getSupportActionBar().setDisplayUseLogoEnabled(true);
-		// getSupportActionBar().setTitle("Corona del Mar");
-		getSupportActionBar().setTitle(Html.fromHtml("<b><font color='#ffffff'>Corona del Mar</font></b>"));*/
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
 
-		mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
-		mPagerSlidingTabs = (PagerSlidingTabStrip) findViewById(R.id.main_tabs);
-		
-		mPagerSlidingTabs.setIndicatorColor(CDMColors.BLUE);
+		mNavAdapter = new NavAdapter(this, findViewById(android.R.id.content), R.id.main_drawer_layout, R.id.main_nav_drawer, R.id.main_frame,
+				new OnNavChangeListener() {
 
-		mCDMTabsAdapter = new CDMTabsAdapter(getSupportFragmentManager());
-		setupTabs();
+					@Override
+					public void onFragmentLoaded(TitledSherlockFragment oldFragment, TitledSherlockFragment newFragment) {
+						getSupportActionBar().setTitle(newFragment.getTitle());
+					}
+
+					@SuppressLint("NewApi")
+					@Override
+					public void onDrawerOpen(View drawerView) {
+						getSupportActionBar().setTitle(R.string.drawerOpen);
+						if (AndroidUtils.API_LEVEL() >= 11)
+							invalidateOptionsMenu();
+					}
+
+					@SuppressLint("NewApi")
+					@Override
+					public void onDrawerClose(View drawerView) {
+						getSupportActionBar().setTitle(mNavAdapter.getCurrentTitle());
+						if (AndroidUtils.API_LEVEL() >= 11)
+							invalidateOptionsMenu();
+					}
+
+				}, CalendarFragment.class, InfoListFragment.class, SchoolLoopFragment.class, ClubsFragment.class);
 	}
-
-	void setupTabs() {
-		mFragmentCalendar = new CalendarFragment();
-		mFragmentSchoolLoop = new SchoolLoopFragment();
-		mFragmentInfoList = new InfoListFragment();
-		mFragmentClubs = new ClubsFragment();
-		mCDMTabsAdapter.addTab(new TitledFragment("Events", mFragmentCalendar, CDMColors.BLUE));
-		mCDMTabsAdapter.addTab(new TitledFragment("SchoolLoop", mFragmentSchoolLoop, CDMColors.GREEN));
-		mCDMTabsAdapter.addTab(new TitledFragment("Info", mFragmentInfoList, CDMColors.ORANGE));
-		mCDMTabsAdapter.addTab(new TitledFragment("Clubs", mFragmentClubs, CDMColors.PURPLE));
-
-		mViewPager.setAdapter(mCDMTabsAdapter);
-		mPagerSlidingTabs.setViewPager(mViewPager);
-
-		mPagerSlidingTabs.setOnPageChangeListener(new DefaultViewPagerOnChangeListener() {
-
-			@Override
-			public void onPageScrollStateChanged(int position) {
-				changeActionBarColor(mCDMTabsAdapter.getCurrentItem().color);
-			}
-		});
-
-		changeActionBarColor(mCDMTabsAdapter.getCurrentItem().color);
-
-		mViewPager.setOffscreenPageLimit(mCDMTabsAdapter.getCount() - 1);
-	}
-
-	Drawable oldActionBar = null;
-
-	public void changeActionBarColor(int color) {
-		/*mPagerSlidingTabs.setIndicatorColor(mCDMTabsAdapter.getCurrentItem().color);
-
-		Drawable colorDrawable = new ColorDrawable(color);
-		Drawable bottomDrawable = getResources().getDrawable(R.drawable.actionbar_bottom);
-		LayerDrawable ld = new LayerDrawable(new Drawable[] { colorDrawable, bottomDrawable });
-		// getSupportActionBar().setBackgroundDrawable(ld);
-		// getSupportActionBar().setDisplayShowTitleEnabled(false);
-		// getSupportActionBar().setDisplayShowTitleEnabled(true);
-
-		if (oldActionBar != null) {
-			TransitionDrawable td = new TransitionDrawable(new Drawable[] { oldActionBar, ld });
-			getSupportActionBar().setBackgroundDrawable(td);
-			// td.setCallback(drawableCallback);
-			td.startTransition(200);
-			oldActionBar = td;
-		} else {
-			getSupportActionBar().setBackgroundDrawable(ld);
-			oldActionBar = ld;
-		}
-
-		getSupportActionBar().setDisplayShowTitleEnabled(false);
-		getSupportActionBar().setDisplayShowTitleEnabled(true);*/
-
-	}
-
-	private Handler handler = new Handler();
-
-	private Drawable.Callback drawableCallback = new Drawable.Callback() {
-		@Override
-		public void invalidateDrawable(Drawable who) {
-			getSupportActionBar().setBackgroundDrawable(who);
-		}
-
-		@Override
-		public void scheduleDrawable(Drawable who, Runnable what, long when) {
-			handler.postAtTime(what, when);
-		}
-
-		@Override
-		public void unscheduleDrawable(Drawable who, Runnable what) {
-			handler.removeCallbacks(what);
-		}
-	};
 
 	@Override
 	public void onBackPressed() {
 		try {
-			SherlockFragment fragment = mCDMTabsAdapter.getCurrentFragment();
-			if (fragment != null) {
-				if (fragment != null && fragment instanceof SchoolLoopFragment) {
-					SchoolLoopFragment schoolLoopFragment = (SchoolLoopFragment) fragment;
+			TitledSherlockFragment currentFragment = mNavAdapter.getCurrentFragment();
+			if (currentFragment != null) {
+				if (currentFragment != null && currentFragment instanceof SchoolLoopFragment) {
+					SchoolLoopFragment schoolLoopFragment = (SchoolLoopFragment) currentFragment;
 					if (schoolLoopFragment.webView == null) {
 						String url = "http://www.example.com";
 						Intent i = new Intent(Intent.ACTION_VIEW);
@@ -165,52 +96,29 @@ public class CDMActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	private static class TitledFragment {
-		SherlockFragment fragment;
-		String title;
-		int color;
-
-		TitledFragment(String title, SherlockFragment fragment, int color) {
-			this.fragment = fragment;
-			this.title = title;
-			this.color = color;
-		}
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+		// Sync the toggle state after onRestoreInstanceState has occurred.
+		mNavAdapter.onPostCreate(savedInstanceState);
 	}
 
-	public class CDMTabsAdapter extends FragmentPagerAdapter {
-		private final ArrayList<TitledFragment> mFragments = new ArrayList<TitledFragment>();
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		mNavAdapter.onConfigurationChanged(newConfig);
+	}
 
-		public CDMTabsAdapter(FragmentManager fm) {
-			super(fm);
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Pass the event to ActionBarDrawerToggle, if it returns
+		// true, then it has handled the app icon touch event
+		if (mNavAdapter.onOptionsItemSelected(item)) {
+			return true;
 		}
+		// Handle your other action bar items...
 
-		@Override
-		public CharSequence getPageTitle(int position) {
-			return mFragments.get(position).title;
-		}
-
-		public void addTab(TitledFragment frag) {
-			mFragments.add(frag);
-			notifyDataSetChanged();
-		}
-
-		@Override
-		public int getCount() {
-			return mFragments.size();
-		}
-
-		@Override
-		public SherlockFragment getItem(int position) {
-			return mFragments.get(position).fragment;
-		}
-
-		public TitledFragment getCurrentItem() {
-			return mFragments.get(mViewPager.getCurrentItem());
-		}
-
-		public SherlockFragment getCurrentFragment() {
-			return getItem(mViewPager.getCurrentItem());
-		}
+		return super.onOptionsItemSelected(item);
 	}
 
 }

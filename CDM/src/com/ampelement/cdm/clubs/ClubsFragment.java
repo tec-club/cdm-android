@@ -2,28 +2,24 @@ package com.ampelement.cdm.clubs;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
 import com.ampelement.cdm.Preferences;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.clubs.GetClubsTask.OnUpdateComplete;
-import com.ampelement.cdm.utils.Utils;
-import com.ampelement.cdm.utils.picasso.CircleTransform;
+import com.ampelement.cdm.utils.android.TitledSherlockFragment;
+import com.ampelement.cdm.utils.android.picasso.CircleTransform;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 
-public class ClubsFragment extends SherlockFragment {
+public class ClubsFragment extends TitledSherlockFragment {
 
 	public static final String TAG = "ClubsFragment";
 
@@ -33,6 +29,11 @@ public class ClubsFragment extends SherlockFragment {
 
 	// View variables
 	ClubListAdapter mClubListAdapter;
+	
+	@Override
+	public String getTitle() {
+		return "Clubs";
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
