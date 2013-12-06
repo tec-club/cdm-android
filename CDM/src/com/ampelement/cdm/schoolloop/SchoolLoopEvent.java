@@ -1,8 +1,11 @@
 package com.ampelement.cdm.schoolloop;
 
+import java.util.regex.Pattern;
+
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -15,14 +18,11 @@ public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 	public String location;
 	public String description;
 
-	public SchoolLoopEvent(String title, String location, String description,
-			DateTime startTime, DateTime endTime) {
-		this(title, location, description, new Interval(startTime.getMillis(),
-				endTime.getMillis(), startTime.getChronology()));
+	public SchoolLoopEvent(String title, String location, String description, DateTime startTime, DateTime endTime) {
+		this(title, location, description, new Interval(startTime.getMillis(), endTime.getMillis(), startTime.getChronology()));
 	}
 
-	public SchoolLoopEvent(String title, String location, String description,
-			Interval timeSpan) {
+	public SchoolLoopEvent(String title, String location, String description, Interval timeSpan) {
 		super(timeSpan);
 		this.title = title;
 		this.location = location;
@@ -35,6 +35,12 @@ public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 	 *         Used for generating a SchoolLoopEvent in an XML Parser loop
 	 */
 	public static class SchoolLoopEventBuilder {
+
+		static final DateTimeFormatter SCHOOLLOOP_DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd.hh:mm aa");
+
+		static final Pattern SCHOOLLOOP_DATE_REGEX = Pattern.compile("[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])");
+		static final Pattern SCHOOLLOOP_TIME_REGEX = Pattern.compile("(|1)[0-9]:[0-5][0-9] (AM|PM)");
+
 		String title, location, description;
 		String isoDate, startTime, endTime;
 		boolean allDay;
@@ -48,12 +54,9 @@ public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 		 * @return SchoolLoopEvent
 		 */
 		SchoolLoopEvent build() {
-			DateTime startDateTime = DateTime.parse(isoDate + "." + startTime,
-					DateTimeFormat.forPattern("yyyy-MM-dd.hh:mm aa"));
-			DateTime endDateTime = DateTime.parse(isoDate + "." + endTime,
-					DateTimeFormat.forPattern("yyyy-MM-dd.hh:mm aa"));
-			return new SchoolLoopEvent(title, location, description,
-					startDateTime, endDateTime);
+			DateTime startDateTime = DateTime.parse(isoDate + "." + startTime, SCHOOLLOOP_DATE_FORMAT);
+			DateTime endDateTime = DateTime.parse(isoDate + "." + endTime, SCHOOLLOOP_DATE_FORMAT);
+			return new SchoolLoopEvent(title, location, description, startDateTime, endDateTime);
 		}
 
 		/**
@@ -104,11 +107,10 @@ public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 		 *             - if the date does not pass the regex pattern
 		 */
 		void setDate(String date) {
-			if (date.matches("[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])"))
+			if (SCHOOLLOOP_DATE_REGEX.matcher(date).matches())
 				this.isoDate = date;
 			else
-				throw new IllegalArgumentException("\"" + date
-						+ "\" is not a valid ISO formatted date string");
+				throw new IllegalArgumentException("\"" + date + "\" is not a valid ISO formatted date string");
 		}
 
 		/**
@@ -121,11 +123,10 @@ public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 		 *             - if the startTime does not pass the regex pattern
 		 */
 		void setStartTime(String startTime) {
-			if (startTime.matches("(|1)[0-9]:[0-5][0-9] (AM|PM)"))
+			if (SCHOOLLOOP_TIME_REGEX.matcher(startTime).matches())
 				this.startTime = startTime;
 			else
-				throw new IllegalArgumentException("\"" + startTime
-						+ "\" is not a valid time in the 'hh:mm aa' format");
+				throw new IllegalArgumentException("\"" + startTime + "\" is not a valid time in the 'hh:mm aa' format");
 		}
 
 		/**
@@ -138,11 +139,10 @@ public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 		 *             - if the endTime does not pass the regex pattern
 		 */
 		void setEndTime(String endTime) {
-			if (endTime.matches("(|1)[0-9]:[0-5][0-9] (AM|PM)"))
+			if (SCHOOLLOOP_TIME_REGEX.matcher(endTime).matches())
 				this.endTime = endTime;
 			else
-				throw new IllegalArgumentException("\"" + endTime
-						+ "\" is not a valid time in the 'hh:mm aa' format");
+				throw new IllegalArgumentException("\"" + endTime + "\" is not a valid time in the 'hh:mm aa' format");
 		}
 	}
 
@@ -178,8 +178,7 @@ public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 	 *      DateTime)
 	 */
 	public SchoolLoopEvent(Parcel parcel) {
-		this(parcel.readString(), parcel.readString(), parcel.readString(),
-				Interval.parse(parcel.readString()));
+		this(parcel.readString(), parcel.readString(), parcel.readString(), Interval.parse(parcel.readString()));
 	}
 
 	/*
