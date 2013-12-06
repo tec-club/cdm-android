@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -106,32 +107,33 @@ public class NavAdapter {
 		};
 
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-		
+
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
 		for (TitledSherlockFragment fragment : mFragments) {
 			transaction.add(mResFragmentFrame, fragment);
 			transaction.hide(fragment);
 		}
+		transaction.show(getCurrentFragment());
 		transaction.commit();
-
-		loadPosition(0);
 	}
 
 	public void loadPosition(int position) {
-		int oldFragmentPos = mCurrentPos;
-		mCurrentPos = position;
+		if (mCurrentPos != position) {
+			int oldFragmentPos = mCurrentPos;
+			mCurrentPos = position;
 
-		FragmentTransaction transaction = mFragmentManager.beginTransaction();
-		transaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-		transaction.hide(mFragments.get(oldFragmentPos));
-		transaction.show(getCurrentFragment());
-		transaction.commit();
+			FragmentTransaction transaction = mFragmentManager.beginTransaction();
+			transaction.setCustomAnimations(R.anim.drop_and_fade_in, R.anim.fade_out);
+			transaction.hide(mFragments.get(oldFragmentPos));
+			transaction.show(getCurrentFragment());
+			transaction.commit();
 
-		// Highlight the selected item, update the title, and close the
-		// drawer
-		mDrawerList.setItemChecked(position, true);
-		if (mOnNavChangeListener != null)
-			mOnNavChangeListener.onFragmentLoaded(mFragments.get(oldFragmentPos), mFragments.get(mCurrentPos));
+			// Highlight the selected item, update the title, and close the
+			// drawer
+			mDrawerList.setItemChecked(position, true);
+			if (mOnNavChangeListener != null)
+				mOnNavChangeListener.onFragmentLoaded(mFragments.get(oldFragmentPos), mFragments.get(mCurrentPos));
+		}
 		mDrawerLayout.closeDrawer(mDrawerList);
 	}
 
@@ -167,9 +169,9 @@ public class NavAdapter {
 
 			try {
 				if (mCurrentPos == position)
-					viewHolder.title.setTypeface(viewHolder.title.getTypeface(), Typeface.BOLD_ITALIC);
+					viewHolder.title.setTypeface(Typeface.DEFAULT_BOLD);
 				else
-					viewHolder.title.setTypeface(viewHolder.title.getTypeface(), Typeface.NORMAL);
+					viewHolder.title.setTypeface(null, Typeface.NORMAL);
 				viewHolder.title.setText(mFragments.get(position).getTitle());
 			} catch (Exception e) {
 
