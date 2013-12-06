@@ -1,4 +1,4 @@
-package com.ampelement.cdm.utils.picasso;
+package com.ampelement.cdm.utils.android.picasso;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
