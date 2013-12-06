@@ -1,5 +1,6 @@
 package com.ampelement.cdm.clubs;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -34,13 +35,11 @@ public class ClubsFragment extends TitledSherlockFragment {
 	public String getTitle() {
 		return "Clubs";
 	}
-
+	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		// Setup view
-		View view = inflater.inflate(R.layout.club_screen, container, false);
-		ListView viewClubList = (ListView) view.findViewById(R.id.club_screen_listView);
-
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		
 		// Retrieve cached club JSON
 		mPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 		String cachedClubJson = mPref.getString(Preferences.CLUB_CACHED_DATA, null);
@@ -52,7 +51,7 @@ public class ClubsFragment extends TitledSherlockFragment {
 			@Override
 			public void onComplete(ClubData[] clubData) {
 				if (clubData != null) {
-					mClubListAdapter.clubData = clubData;
+					mClubData = clubData;
 					mClubListAdapter.notifyDataSetChanged();
 				}
 			}
@@ -61,9 +60,19 @@ public class ClubsFragment extends TitledSherlockFragment {
 
 		// Setup ListAdapter to show Club data
 		mClubData = GetClubsTask.parseClubData(cachedClubJson);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		// Setup view
+		View view = inflater.inflate(R.layout.club_screen, container, false);
+		ListView viewClubList = (ListView) view.findViewById(R.id.club_screen_listView);
+		
 		if (mClubData != null) {
-			mClubListAdapter = new ClubListAdapter(getSherlockActivity(), mClubData);
+			mClubListAdapter = new ClubListAdapter(getSherlockActivity());
 			viewClubList.setAdapter(mClubListAdapter);
+		} else {
+			// TODO Implement "no data found"
 		}
 
 		return view;
@@ -72,14 +81,12 @@ public class ClubsFragment extends TitledSherlockFragment {
 	private class ClubListAdapter extends BaseAdapter {
 		private final Context context;
 		private final LayoutInflater inflater;
-		private ClubData[] clubData;
 		
 		CircleTransform picassoCircleTransform = new CircleTransform();
 
-		public ClubListAdapter(Context context, ClubData[] values) {
+		public ClubListAdapter(Context context) {
 			this.context = context;
-			this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			this.clubData = values;
+			this.inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
 
 		@Override
@@ -97,7 +104,7 @@ public class ClubsFragment extends TitledSherlockFragment {
 
 			try {
 				// Get current row item
-				ClubData club = clubData[position];
+				ClubData club = mClubData[position];
 
 				// Populate view
 				viewHolder.viewName.setText(club.name);
@@ -114,12 +121,12 @@ public class ClubsFragment extends TitledSherlockFragment {
 
 		@Override
 		public int getCount() {
-			return clubData.length;
+			return mClubData.length;
 		}
 
 		@Override
 		public Object getItem(int pos) {
-			return clubData[pos];
+			return mClubData[pos];
 		}
 
 		@Override
