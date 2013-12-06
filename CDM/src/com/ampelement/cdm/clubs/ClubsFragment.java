@@ -26,6 +26,7 @@ public class ClubsFragment extends TitledSherlockFragment {
 
 	SharedPreferences mPref;
 
+	GetClubsTask mGetClubsTask;
 	ClubData[] mClubData;
 
 	// View variables
@@ -46,7 +47,7 @@ public class ClubsFragment extends TitledSherlockFragment {
 		int cachedClubJsonVersion = mPref.getInt(Preferences.CLUB_CACHED_DATA_VERSION, -1);
 
 		// Start off Club data update
-		GetClubsTask clubsTask = new GetClubsTask(cachedClubJsonVersion, mPref, new OnUpdateComplete() {
+		mGetClubsTask = new GetClubsTask(cachedClubJsonVersion, mPref, new OnUpdateComplete() {
 
 			@Override
 			public void onComplete(ClubData[] clubData) {
@@ -56,7 +57,7 @@ public class ClubsFragment extends TitledSherlockFragment {
 				}
 			}
 		});
-		clubsTask.execute();
+		mGetClubsTask.execute();
 
 		// Setup ListAdapter to show Club data
 		mClubData = GetClubsTask.parseClubData(cachedClubJson);
@@ -76,6 +77,13 @@ public class ClubsFragment extends TitledSherlockFragment {
 		}
 
 		return view;
+	}
+	
+	@Override
+	public void onDestroyView() {
+		mGetClubsTask.setOnUpdateCompleteListener(null);
+		
+		super.onDestroyView();
 	}
 
 	private class ClubListAdapter extends BaseAdapter {
