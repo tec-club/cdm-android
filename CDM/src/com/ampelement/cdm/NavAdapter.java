@@ -111,9 +111,9 @@ public class NavAdapter {
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
 		for (TitledSherlockFragment fragment : mFragments) {
 			transaction.add(mResFragmentFrame, fragment);
-			transaction.hide(fragment);
+			transaction.detach(fragment);
 		}
-		transaction.show(getCurrentFragment());
+		transaction.attach(getCurrentFragment());
 		transaction.commit();
 	}
 
@@ -124,8 +124,8 @@ public class NavAdapter {
 
 			FragmentTransaction transaction = mFragmentManager.beginTransaction();
 			transaction.setCustomAnimations(R.anim.drop_and_fade_in, R.anim.fade_out);
-			transaction.hide(mFragments.get(oldFragmentPos));
-			transaction.show(getCurrentFragment());
+			transaction.detach(mFragments.get(oldFragmentPos));
+			transaction.attach(getCurrentFragment());
 			transaction.commit();
 
 			// Highlight the selected item, update the title, and close the
