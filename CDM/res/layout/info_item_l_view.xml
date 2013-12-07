@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="@drawable/background_card_inset"
+    android:background="@drawable/card_background_inset"
     android:padding="20dp" >
 
         <LinearLayout

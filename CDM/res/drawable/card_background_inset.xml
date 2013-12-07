@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <inset xmlns:android="http://schemas.android.com/apk/res/android"
-    android:drawable="@drawable/background_card"
+    android:drawable="@drawable/card_background"
     android:insetTop="5dip"
     android:insetRight="10dip"
     android:insetLeft="10dip"
-    android:insetBottom="0dip" />
+    android:insetBottom="4dip" />
