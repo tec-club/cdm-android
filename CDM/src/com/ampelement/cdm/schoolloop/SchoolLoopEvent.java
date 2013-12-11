@@ -9,6 +9,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.ampelement.cdm.calendar.library.CalendarEvent;
 
@@ -56,6 +57,13 @@ public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 		SchoolLoopEvent build() {
 			DateTime startDateTime = DateTime.parse(isoDate + "." + startTime, SCHOOLLOOP_DATE_FORMAT);
 			DateTime endDateTime = DateTime.parse(isoDate + "." + endTime, SCHOOLLOOP_DATE_FORMAT);
+			if (startDateTime.isAfter(endDateTime)) {
+				// Probably a user entry error for whoever created the event
+				DateTime temp = startDateTime;
+				startDateTime = endDateTime;
+				endDateTime = temp;
+				Log.d(SchoolLoopAPI.TAG, "The start time is after the end time for: " + title);
+			}
 			return new SchoolLoopEvent(title, location, description, startDateTime, endDateTime);
 		}
 
