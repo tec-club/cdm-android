@@ -19,6 +19,10 @@ import com.ampelement.cdm.infoscreen.InfoListFragment;
 import com.ampelement.cdm.schoolloop.SchoolLoopFragment;
 import com.ampelement.cdm.utils.android.AndroidUtils;
 import com.ampelement.cdm.utils.android.TitledSherlockFragment;
+import com.parse.Parse;
+import com.parse.ParseAnalytics;
+import com.parse.ParseInstallation;
+import com.parse.PushService;
 
 public class CDMActivity extends SherlockFragmentActivity {
 
@@ -61,6 +65,13 @@ public class CDMActivity extends SherlockFragmentActivity {
 					}
 
 				}, CalendarFragment.class, InfoListFragment.class, SchoolLoopFragment.class, ClubsFragment.class);
+		
+		/* Setup Parse for notifications */
+		Parse.initialize(this, "gsXQZjeTDxb3Ekjp8PJ8TrY5X9NJROPpIq2E5ljm", "BMHgC1jqWcF3H8QFdqNFKnw1JJgeT1cuWct1W449");
+		PushService.setDefaultPushCallback(this, CDMActivity.class);
+		ParseInstallation.getCurrentInstallation().saveInBackground();
+		/* Use Parse to track analytics */
+		ParseAnalytics.trackAppOpened(getIntent());
 	}
 
 	@Override
