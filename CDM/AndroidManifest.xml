@@ -23,8 +23,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".services.Update_Service" android:label="Update Service"></service>
-        <receiver android:name=".services.BootReceiver"></receiver>
     </application>
 
 </manifest>
