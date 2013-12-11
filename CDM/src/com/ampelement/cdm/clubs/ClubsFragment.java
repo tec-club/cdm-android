@@ -53,7 +53,8 @@ public class ClubsFragment extends TitledSherlockFragment {
 			public void onComplete(ClubData[] clubData) {
 				if (clubData != null) {
 					mClubData = clubData;
-					mClubListAdapter.notifyDataSetChanged();
+					if (mClubListAdapter != null)
+						mClubListAdapter.notifyDataSetChanged();
 				}
 			}
 		});
@@ -112,14 +113,14 @@ public class ClubsFragment extends TitledSherlockFragment {
 
 			try {
 				// Get current row item
-				ClubData club = mClubData[position];
+				ClubData club = getItem(position);
 
 				// Populate view
 				viewHolder.viewName.setText(club.name);
 				viewHolder.viewDesc.setText(club.description);
 				// viewTimes.setText(Utils.combine(club.meetingTimes, "\n"));
 				viewHolder.viewTimes.setText(club.president);
-				Picasso.with(getActivity()).load(club.getLogoUrl()).transform(picassoCircleTransform).into(viewHolder.viewLogo);
+				Picasso.with(getActivity()).load(club.getLogoUrl()).placeholder(R.drawable.avatar_missing_circle).transform(picassoCircleTransform).into(viewHolder.viewLogo);
 			} catch (Exception e) {
 
 			}
@@ -133,7 +134,7 @@ public class ClubsFragment extends TitledSherlockFragment {
 		}
 
 		@Override
-		public Object getItem(int pos) {
+		public ClubData getItem(int pos) {
 			return mClubData[pos];
 		}
 
