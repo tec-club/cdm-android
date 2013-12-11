@@ -256,7 +256,7 @@ public class CalendarView extends View {
 			// Begins the animation
 			mScroller.fling(
 			// Current scroll position
-					0, 0, 0, (int) velocityY / 1,
+					0, 0, 0, (int) (velocityY / .5),
 					/*
 					 * Minimum and maximum scroll positions. The minimum scroll
 					 * position is generally zero and the maximum scroll
