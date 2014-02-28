@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -65,7 +66,7 @@ public class CDMActivity extends SherlockFragmentActivity {
 					}
 
 				}, CalendarFragment.class, InfoListFragment.class, SchoolLoopFragment.class, ClubsFragment.class);
-		
+
 		/* Setup Parse for notifications */
 		Parse.initialize(this, "gsXQZjeTDxb3Ekjp8PJ8TrY5X9NJROPpIq2E5ljm", "BMHgC1jqWcF3H8QFdqNFKnw1JJgeT1cuWct1W449");
 		PushService.setDefaultPushCallback(this, CDMActivity.class);
@@ -81,13 +82,7 @@ public class CDMActivity extends SherlockFragmentActivity {
 			if (currentFragment != null) {
 				if (currentFragment != null && currentFragment instanceof SchoolLoopFragment) {
 					SchoolLoopFragment schoolLoopFragment = (SchoolLoopFragment) currentFragment;
-					if (schoolLoopFragment.webView == null) {
-						String url = "http://www.example.com";
-						Intent i = new Intent(Intent.ACTION_VIEW);
-						i.setData(Uri.parse(url));
-						startActivity(i);
-					}
-					if (schoolLoopFragment.webView.canGoBack()) {
+					if (schoolLoopFragment.webView != null && schoolLoopFragment.webView.canGoBack()) {
 						schoolLoopFragment.webView.goBack();
 					} else {
 						super.onBackPressed();
