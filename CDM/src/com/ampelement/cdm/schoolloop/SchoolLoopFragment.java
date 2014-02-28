@@ -50,7 +50,7 @@ public class SchoolLoopFragment extends TitledSherlockFragment {
 	SharedPreferences sharedPreferences;
 
 	public static final String TAG = "SchoolLoopFragment";
-	
+
 	@Override
 	public String getTitle() {
 		return "School Loop";
@@ -171,7 +171,6 @@ public class SchoolLoopFragment extends TitledSherlockFragment {
 				// Calculated as still logged in. Timeout is around 15 min
 				if (lastActiveTime != 0 && (System.currentTimeMillis() - lastActiveTime) < 900000) {
 					SchoolLoopAPI.Dirty.loadLoginDataToWebView(sharedPreferences, webView);
-					loadWebView();
 					return true;
 				} else { // Not logged in
 					try {
@@ -179,7 +178,6 @@ public class SchoolLoopFragment extends TitledSherlockFragment {
 						if (loginCookieStore != null) {
 							SchoolLoopAPI.Dirty.migrateCookieStore2WebView(loginCookieStore, webView, sharedPrefEditor);
 							updateCredentials(newCredentials ? login.user : null, newCredentials ? login.pass : null, System.currentTimeMillis());
-							loadWebView();
 							return true;
 						} else {
 							return false;
@@ -192,6 +190,21 @@ public class SchoolLoopFragment extends TitledSherlockFragment {
 				}
 			} else {
 				return null;
+			}
+		}
+
+		@Override
+		protected void onPostExecute(Boolean success) {
+			if (success != null) {
+				if (success) {
+					loadWebView();
+					LinearLayout webViewScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_webview_screen);
+					webViewScreen.setVisibility(View.VISIBLE);
+				} else {
+					loginScreenWithErrorMessage("Bad Username or Password");
+				}
+			} else {
+				loginScreenWithErrorMessage("Error Logging In");
 			}
 		}
 
@@ -212,20 +225,6 @@ public class SchoolLoopFragment extends TitledSherlockFragment {
 					startActivity(i);
 				}
 			});
-		}
-
-		@Override
-		protected void onPostExecute(Boolean success) {
-			if (success != null) {
-				if (success) {
-					LinearLayout webViewScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_webview_screen);
-					webViewScreen.setVisibility(View.VISIBLE);
-				} else {
-					loginScreenWithErrorMessage("Bad Username or Password");
-				}
-			} else {
-				loginScreenWithErrorMessage("Error Logging In");
-			}
 		}
 	}
 
