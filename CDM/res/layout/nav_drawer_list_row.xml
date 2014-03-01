@@ -3,16 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingBottom="20dp"
+    android:paddingBottom="16dp"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
-    android:paddingTop="20dp" >
+    android:paddingTop="16dp" >
 
     <TextView
-        android:id="@+id/nav_item_title_textView"
+        android:id="@+id/nav_drawer_list_item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#111"
+        android:textColor="#505050"
         android:textSize="20sp" />
 
 </LinearLayout>

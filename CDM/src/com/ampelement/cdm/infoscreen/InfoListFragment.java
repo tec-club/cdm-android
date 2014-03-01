@@ -2,6 +2,7 @@ package com.ampelement.cdm.infoscreen;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,29 +17,58 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.utils.android.TitledSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.NavDrawerEntry;
 
-public class InfoListFragment extends TitledSherlockFragment {
+public class InfoListFragment extends ExtendedSherlockFragment {
 
 	public static final String TAG = "InfoListFragment";
-	
-	private static final String BASE_URL = "http://www.ampelement.com/cdm";
-	
-	private ListView mInfoListView;
-	
-	private InfoAdapter mInfoAdapter;
 
-	@Override
-	public String getTitle() {
-		return "Info / Handbook";
+	public static class Entry extends NavDrawerEntry {
+
+		@Override
+		public String getTitle() {
+			return "Info / Handbook";
+		}
+
+		@Override
+		public boolean isCategory() {
+			return false;
+		}
+
+		@Override
+		public int getIcon() {
+			return 0;
+		}
+
+		@Override
+		public boolean isFragment() {
+			return true;
+		}
+
+		@Override
+		public Class<? extends ExtendedSherlockFragment> getFragmentType() {
+			return InfoListFragment.class;
+		}
+
+		@Override
+		public void runAction(Activity activity) {
+			// None
+		}
 	}
+
+	private static final String BASE_URL = "http://www.ampelement.com/cdm";
+
+	private ListView mInfoListView;
+
+	private InfoAdapter mInfoAdapter;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View infoScreen = inflater.inflate(R.layout.info_screen, container, false);
 		mInfoListView = (ListView) infoScreen.findViewById(R.id.info_screen_gridView);
-		
+
 		mInfoAdapter = new InfoAdapter(getSherlockActivity());
 		mInfoListView.setAdapter(mInfoAdapter);
 

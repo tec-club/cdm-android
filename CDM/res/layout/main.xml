@@ -19,7 +19,7 @@
         android:layout_gravity="start"
         android:background="#eee"
         android:choiceMode="singleChoice"
-        android:divider="#ccc"
-        android:dividerHeight="1px" />
+        android:divider="@color/transparent"
+        android:dividerHeight="0px" />
 
 </android.support.v4.widget.DrawerLayout>

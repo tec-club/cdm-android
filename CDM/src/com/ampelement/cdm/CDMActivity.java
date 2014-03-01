@@ -9,7 +9,6 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -17,9 +16,11 @@ import com.ampelement.cdm.NavAdapter.OnNavChangeListener;
 import com.ampelement.cdm.calendar.CalendarFragment;
 import com.ampelement.cdm.clubs.ClubsFragment;
 import com.ampelement.cdm.infoscreen.InfoListFragment;
+import com.ampelement.cdm.other.CategoryEntryWeb;
+import com.ampelement.cdm.other.InstagramEntry;
 import com.ampelement.cdm.schoolloop.SchoolLoopFragment;
 import com.ampelement.cdm.utils.android.AndroidUtils;
-import com.ampelement.cdm.utils.android.TitledSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseInstallation;
@@ -27,7 +28,7 @@ import com.parse.PushService;
 
 public class CDMActivity extends SherlockFragmentActivity {
 
-	private static final String TAG = "CDMActivity";
+	public static final String TAG = "CDMActivity";
 
 	private NavAdapter mNavAdapter;
 
@@ -41,18 +42,20 @@ public class CDMActivity extends SherlockFragmentActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
 
+		getSupportActionBar().setIcon(R.drawable.trident);
+
 		mNavAdapter = new NavAdapter(this, findViewById(android.R.id.content), R.id.main_drawer_layout, R.id.main_nav_drawer, R.id.main_frame,
 				new OnNavChangeListener() {
 
 					@Override
-					public void onFragmentLoaded(TitledSherlockFragment oldFragment, TitledSherlockFragment newFragment) {
-						getSupportActionBar().setTitle(newFragment.getTitle());
+					public void onFragmentLoaded(ExtendedSherlockFragment oldFragment, ExtendedSherlockFragment newFragment) {
+						// getSupportActionBar().setTitle(newFragment.getTitle());
 					}
 
 					@SuppressLint("NewApi")
 					@Override
 					public void onDrawerOpen(View drawerView) {
-						getSupportActionBar().setTitle(R.string.drawerOpen);
+						// getSupportActionBar().setTitle(R.string.drawerOpen);
 						if (AndroidUtils.API_LEVEL() >= 11)
 							invalidateOptionsMenu();
 					}
@@ -60,12 +63,12 @@ public class CDMActivity extends SherlockFragmentActivity {
 					@SuppressLint("NewApi")
 					@Override
 					public void onDrawerClose(View drawerView) {
-						getSupportActionBar().setTitle(mNavAdapter.getCurrentTitle());
+						// getSupportActionBar().setTitle(mNavAdapter.getCurrentTitle());
 						if (AndroidUtils.API_LEVEL() >= 11)
 							invalidateOptionsMenu();
 					}
 
-				}, CalendarFragment.class, InfoListFragment.class, SchoolLoopFragment.class, ClubsFragment.class);
+				}, CalendarFragment.Entry.class, InfoListFragment.Entry.class, SchoolLoopFragment.Entry.class, /*ClubsFragment.Entry.class,*/ CategoryEntryWeb.class, InstagramEntry.class);
 
 		/* Setup Parse for notifications */
 		Parse.initialize(this, "gsXQZjeTDxb3Ekjp8PJ8TrY5X9NJROPpIq2E5ljm", "BMHgC1jqWcF3H8QFdqNFKnw1JJgeT1cuWct1W449");
@@ -75,10 +78,14 @@ public class CDMActivity extends SherlockFragmentActivity {
 		ParseAnalytics.trackAppOpened(getIntent());
 	}
 
+	public void loadPosition(int p) {
+		mNavAdapter.loadPosition(p);
+	}
+
 	@Override
 	public void onBackPressed() {
 		try {
-			TitledSherlockFragment currentFragment = mNavAdapter.getCurrentFragment();
+			ExtendedSherlockFragment currentFragment = mNavAdapter.getCurrentFragment();
 			if (currentFragment != null) {
 				if (currentFragment != null && currentFragment instanceof SchoolLoopFragment) {
 					SchoolLoopFragment schoolLoopFragment = (SchoolLoopFragment) currentFragment;

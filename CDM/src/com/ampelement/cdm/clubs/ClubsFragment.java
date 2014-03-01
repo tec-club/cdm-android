@@ -15,14 +15,49 @@ import android.widget.TextView;
 
 import com.ampelement.cdm.Preferences;
 import com.ampelement.cdm.R;
+import com.ampelement.cdm.calendar.CalendarFragment;
 import com.ampelement.cdm.clubs.GetClubsTask.OnUpdateComplete;
-import com.ampelement.cdm.utils.android.TitledSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.NavDrawerEntry;
 import com.ampelement.cdm.utils.android.picasso.CircleTransform;
 import com.squareup.picasso.Picasso;
 
-public class ClubsFragment extends TitledSherlockFragment {
+public class ClubsFragment extends ExtendedSherlockFragment {
 
 	public static final String TAG = "ClubsFragment";
+
+	public static class Entry extends NavDrawerEntry {
+
+		@Override
+		public String getTitle() {
+			return "Clubs";
+		}
+
+		@Override
+		public boolean isCategory() {
+			return false;
+		}
+
+		@Override
+		public int getIcon() {
+			return 0;
+		}
+
+		@Override
+		public boolean isFragment() {
+			return true;
+		}
+
+		@Override
+		public Class<? extends ExtendedSherlockFragment> getFragmentType() {
+			return ClubsFragment.class;
+		}
+
+		@Override
+		public void runAction(Activity activity) {
+			// None
+		}
+	}
 
 	SharedPreferences mPref;
 
@@ -31,16 +66,11 @@ public class ClubsFragment extends TitledSherlockFragment {
 
 	// View variables
 	ClubListAdapter mClubListAdapter;
-	
-	@Override
-	public String getTitle() {
-		return "Clubs";
-	}
-	
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		
+
 		// Retrieve cached club JSON
 		mPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 		String cachedClubJson = mPref.getString(Preferences.CLUB_CACHED_DATA, null);
@@ -69,7 +99,7 @@ public class ClubsFragment extends TitledSherlockFragment {
 		// Setup view
 		View view = inflater.inflate(R.layout.club_screen, container, false);
 		ListView viewClubList = (ListView) view.findViewById(R.id.club_screen_listView);
-		
+
 		if (mClubData != null) {
 			mClubListAdapter = new ClubListAdapter(getSherlockActivity());
 			viewClubList.setAdapter(mClubListAdapter);
@@ -79,18 +109,18 @@ public class ClubsFragment extends TitledSherlockFragment {
 
 		return view;
 	}
-	
+
 	@Override
 	public void onDestroyView() {
 		mGetClubsTask.setOnUpdateCompleteListener(null);
-		
+
 		super.onDestroyView();
 	}
 
 	private class ClubListAdapter extends BaseAdapter {
 		private final Context context;
 		private final LayoutInflater inflater;
-		
+
 		CircleTransform picassoCircleTransform = new CircleTransform();
 
 		public ClubListAdapter(Context context) {
@@ -103,9 +133,9 @@ public class ClubsFragment extends TitledSherlockFragment {
 			// Setup row view
 			if (convertView == null)
 				convertView = inflater.inflate(R.layout.club_item_view, parent, false);
-			
+
 			ViewHolder viewHolder = (ViewHolder) convertView.getTag();
-			
+
 			if (viewHolder == null) {
 				viewHolder = new ViewHolder(convertView);
 				convertView.setTag(viewHolder);
@@ -120,7 +150,8 @@ public class ClubsFragment extends TitledSherlockFragment {
 				viewHolder.viewDesc.setText(club.description);
 				// viewTimes.setText(Utils.combine(club.meetingTimes, "\n"));
 				viewHolder.viewTimes.setText(club.president);
-				Picasso.with(getActivity()).load(club.getLogoUrl()).placeholder(R.drawable.avatar_missing_circle).transform(picassoCircleTransform).into(viewHolder.viewLogo);
+				Picasso.with(getActivity()).load(club.getLogoUrl()).placeholder(R.drawable.avatar_missing_circle).transform(picassoCircleTransform)
+						.into(viewHolder.viewLogo);
 			} catch (Exception e) {
 
 			}
@@ -143,13 +174,13 @@ public class ClubsFragment extends TitledSherlockFragment {
 			return pos;
 		}
 	}
-	
+
 	static class ViewHolder {
 		TextView viewName;
 		TextView viewDesc;
 		TextView viewTimes;
 		ImageView viewLogo;
-		
+
 		public ViewHolder(View rowRootView) {
 			viewName = (TextView) rowRootView.findViewById(R.id.club_item_title_textView);
 			viewDesc = (TextView) rowRootView.findViewById(R.id.club_item_description_textView);

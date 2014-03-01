@@ -7,6 +7,7 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -34,9 +35,45 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.ampelement.cdm.Preferences;
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.utils.android.TitledSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.NavDrawerEntry;
 
-public class SchoolLoopFragment extends TitledSherlockFragment {
+public class SchoolLoopFragment extends ExtendedSherlockFragment {
+
+	public static final String TAG = "SchoolLoopFragment";
+
+	public static class Entry extends NavDrawerEntry {
+
+		@Override
+		public String getTitle() {
+			return "School Loop";
+		}
+
+		@Override
+		public boolean isCategory() {
+			return false;
+		}
+
+		@Override
+		public int getIcon() {
+			return 0;
+		}
+
+		@Override
+		public boolean isFragment() {
+			return true;
+		}
+
+		@Override
+		public Class<? extends ExtendedSherlockFragment> getFragmentType() {
+			return SchoolLoopFragment.class;
+		}
+
+		@Override
+		public void runAction(Activity activity) {
+			// None
+		}
+	}
 
 	private RelativeLayout schoolLoopScreen;
 	private LinearLayout mLoginScreen;
@@ -48,13 +85,6 @@ public class SchoolLoopFragment extends TitledSherlockFragment {
 
 	public WebView webView;
 	SharedPreferences sharedPreferences;
-
-	public static final String TAG = "SchoolLoopFragment";
-
-	@Override
-	public String getTitle() {
-		return "School Loop";
-	}
 
 	private class Login {
 		String user;

@@ -20,9 +20,45 @@ import com.ampelement.cdm.calendar.library.CalendarView.OnMonthChangeListener;
 import com.ampelement.cdm.schoolloop.SchoolLoopAPI.EventFetcher;
 import com.ampelement.cdm.schoolloop.SchoolLoopEvent;
 import com.ampelement.cdm.schoolloop.SchoolLoopEventMap;
-import com.ampelement.cdm.utils.android.TitledSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.NavDrawerEntry;
 
-public class CalendarFragment extends TitledSherlockFragment {
+public class CalendarFragment extends ExtendedSherlockFragment {
+
+	public static final String TAG = "CalendarFragment";
+
+	public static class Entry extends NavDrawerEntry {
+
+		@Override
+		public String getTitle() {
+			return "Calendar";
+		}
+
+		@Override
+		public boolean isCategory() {
+			return false;
+		}
+
+		@Override
+		public int getIcon() {
+			return 0;
+		}
+
+		@Override
+		public boolean isFragment() {
+			return true;
+		}
+
+		@Override
+		public Class<? extends ExtendedSherlockFragment> getFragmentType() {
+			return CalendarFragment.class;
+		}
+
+		@Override
+		public void runAction(Activity activity) {
+			// None
+		}
+	}
 
 	private RelativeLayout mEventLoadingScreen;
 	private RelativeLayout mEventErrorLoadingScreen;
@@ -33,13 +69,6 @@ public class CalendarFragment extends TitledSherlockFragment {
 	private GetEventsTask mGetEventsTask;
 	private SharedPreferences mSharedPref;
 	private SchoolLoopEventMap mEventsMap;
-
-	public static final String TAG = "CalendarFragment";
-
-	@Override
-	public String getTitle() {
-		return "Calendar";
-	}
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -93,11 +122,11 @@ public class CalendarFragment extends TitledSherlockFragment {
 
 		return eventScreen;
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		mGetEventsTask.setOnUpdateCompleteListener(null);
-		
+
 		super.onDestroy();
 	}
 

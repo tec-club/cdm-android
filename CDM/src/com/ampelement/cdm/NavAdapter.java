@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
@@ -24,13 +23,14 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
-import com.ampelement.cdm.utils.android.TitledSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.NavDrawerEntry;
 
 public class NavAdapter {
 
 	private static final String TAG = "NavAdapter";
 
-	List<TitledSherlockFragment> mFragments;
+	List<NavDrawerEntry> mEntries;
 
 	private ActionBarDrawerToggle mDrawerToggle;
 	private NavListAdapter mNavListAdapter;
@@ -53,21 +53,21 @@ public class NavAdapter {
 
 		public void onDrawerClose(View drawerView);
 
-		public void onFragmentLoaded(TitledSherlockFragment oldFragment, TitledSherlockFragment newFragment);
+		public void onFragmentLoaded(ExtendedSherlockFragment oldFragment, ExtendedSherlockFragment newFragment);
 	}
 
 	public NavAdapter(SherlockFragmentActivity activity, View parentView, int resDrawerLayout, int resDrawerList, int resFragmentFrame,
-			OnNavChangeListener onNavChangeListener, Class<? extends TitledSherlockFragment>... classes) {
+			OnNavChangeListener onNavChangeListener, Class<? extends NavDrawerEntry>... classes) {
 		mActivity = activity;
 
 		mFragmentManager = mActivity.getSupportFragmentManager();
 		mInflater = (LayoutInflater) mActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mOnNavChangeListener = onNavChangeListener;
 
-		mFragments = new ArrayList<TitledSherlockFragment>();
-		for (Class<? extends TitledSherlockFragment> fragmentClass : classes) {
+		mEntries = new ArrayList<NavDrawerEntry>();
+		for (Class<? extends NavDrawerEntry> fragmentClass : classes) {
 			try {
-				mFragments.add(fragmentClass.newInstance());
+				mEntries.add(fragmentClass.newInstance());
 			} catch (InstantiationException e) {
 				Log.e(TAG, e.getMessage(), e);
 			} catch (IllegalAccessException e) {
@@ -86,7 +86,8 @@ public class NavAdapter {
 		mDrawerList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> listView, View rowView, int position, long itemId) {
-				loadPosition(position - 1);
+				if (!getEntry(position - 1).isCategory())
+					loadPosition(position - 1);
 			}
 		});
 
@@ -109,44 +110,60 @@ public class NavAdapter {
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
 
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
-		for (TitledSherlockFragment fragment : mFragments) {
-			transaction.add(mResFragmentFrame, fragment);
-			transaction.detach(fragment);
+		for (NavDrawerEntry entry : mEntries) {
+			if (entry.isFragment()) {
+				ExtendedSherlockFragment fragment = entry.getFragment();
+				transaction.add(mResFragmentFrame, fragment);
+				transaction.detach(fragment);
+			}
 		}
 		transaction.attach(getCurrentFragment());
 		transaction.commit();
 	}
 
+	private NavDrawerEntry getEntry(int position) {
+		return mEntries.get(position);
+	}
+
 	public void loadPosition(int position) {
-		if (mCurrentPos != position) {
-			int oldFragmentPos = mCurrentPos;
-			mCurrentPos = position;
+		if (position >= 0) {
+			if (mCurrentPos != position) {
+				NavDrawerEntry entry = getEntry(position);
+				if (!entry.isFragment()) {
+					entry.runAction(mActivity);
+				} else {
+					int oldFragmentPos = mCurrentPos;
+					mCurrentPos = position;
 
-			FragmentTransaction transaction = mFragmentManager.beginTransaction();
-			transaction.setCustomAnimations(R.anim.drop_and_fade_in, R.anim.fade_out);
-			transaction.detach(mFragments.get(oldFragmentPos));
-			transaction.attach(getCurrentFragment());
-			transaction.commit();
+					FragmentTransaction transaction = mFragmentManager.beginTransaction();
+					transaction.setCustomAnimations(R.anim.drop_and_fade_in, R.anim.fade_out);
+					transaction.detach(mEntries.get(oldFragmentPos).getFragment());
+					transaction.attach(getCurrentFragment());
+					transaction.commit();
 
-			// Highlight the selected item, update the title, and close the
-			// drawer
-			mDrawerList.setItemChecked(position, true);
-			if (mOnNavChangeListener != null)
-				mOnNavChangeListener.onFragmentLoaded(mFragments.get(oldFragmentPos), mFragments.get(mCurrentPos));
+					/*
+					 * Highlight the selected item, update the title, and close
+					 * the drawer
+					 */
+					mDrawerList.setItemChecked(position, true);
+					if (mOnNavChangeListener != null)
+						mOnNavChangeListener.onFragmentLoaded(mEntries.get(oldFragmentPos).getFragment(), mEntries.get(mCurrentPos).getFragment());
+				}
+			}
+			mDrawerLayout.closeDrawer(mDrawerList);
 		}
-		mDrawerLayout.closeDrawer(mDrawerList);
 	}
 
 	private class NavListAdapter extends BaseAdapter {
 
 		@Override
 		public int getCount() {
-			return mFragments.size();
+			return mEntries.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return mFragments.get(position);
+			return mEntries.get(position);
 		}
 
 		@Override
@@ -155,47 +172,45 @@ public class NavAdapter {
 		}
 
 		@Override
+		public boolean isEnabled(int position) {
+			if (getEntry(position).isCategory())
+				return false;
+			return super.isEnabled(position);
+		}
+
+		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// Setup row view
-			if (convertView == null)
+			if (getEntry(position).isCategory()) {
+				convertView = mInflater.inflate(R.layout.nav_drawer_list_item_header, parent, false);
+
+				TextView title = (TextView) convertView.findViewById(R.id.nav_drawer_item_header_title);
+				title.setText(mEntries.get(position).getTitle());
+			} else {
 				convertView = mInflater.inflate(R.layout.nav_drawer_list_row, parent, false);
 
-			ViewHolder viewHolder = (ViewHolder) convertView.getTag();
-
-			if (viewHolder == null) {
-				viewHolder = new ViewHolder(convertView);
-				convertView.setTag(viewHolder);
-			}
-
-			try {
-				if (mCurrentPos == position)
-					viewHolder.title.setTypeface(Typeface.DEFAULT_BOLD);
-				else
-					viewHolder.title.setTypeface(null, Typeface.NORMAL);
-				viewHolder.title.setText(mFragments.get(position).getTitle());
-			} catch (Exception e) {
-
+				TextView title = (TextView) convertView.findViewById(R.id.nav_drawer_list_item_title);
+				try {
+					if (mCurrentPos == position)
+						title.setTypeface(Typeface.DEFAULT_BOLD);
+					else
+						title.setTypeface(null, Typeface.NORMAL);
+					title.setText(mEntries.get(position).getTitle());
+				} catch (Exception e) {
+				}
 			}
 
 			return convertView;
 		}
 
-		class ViewHolder {
-			TextView title;
-
-			public ViewHolder(View rowRootView) {
-				title = (TextView) rowRootView.findViewById(R.id.nav_item_title_textView);
-			}
-		}
-
 	}
 
 	public CharSequence getCurrentTitle() {
-		return mFragments.get(mCurrentPos).getTitle();
+		return mEntries.get(mCurrentPos).getTitle();
 	}
 
-	public TitledSherlockFragment getCurrentFragment() {
-		return mFragments.get(mCurrentPos);
+	public ExtendedSherlockFragment getCurrentFragment() {
+		return mEntries.get(mCurrentPos).getFragment();
 	}
 
 	public void onPostCreate(Bundle savedInstanceState) {
