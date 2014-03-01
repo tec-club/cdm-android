@@ -7,23 +7,21 @@ import android.net.Uri;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
-import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryStyle;
-import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
 
-public class InstagramEntry extends NavDrawerEntry {
+public class TwitterEntry extends NavDrawerEntry {
 
-	public static final String TAG = "InstagramEntry";
+	public static final String TAG = "TwitterEntry";
 
 	@Override
 	public String getTitle() {
-		return "Instagram";
+		return "Twitter";
 	}
 
 	@Override
 	public EntryType getType() {
 		return EntryType.ACTION;
 	}
-	
+
 	@Override
 	public EntryStyle getStyle() {
 		return EntryStyle.SMALL;
@@ -31,7 +29,7 @@ public class InstagramEntry extends NavDrawerEntry {
 
 	@Override
 	public int getIcon() {
-		return R.drawable.ic_instagram;
+		return R.drawable.ic_twitter;
 	}
 
 	@Override
@@ -39,12 +37,14 @@ public class InstagramEntry extends NavDrawerEntry {
 		return null;
 	}
 
-	private static final String INSTAGRAM_URL = "http://instagram.com/cdm_asb";
+	private static final String TWITTER_USERNAME = "CdMASB";
 
 	@Override
 	public void runAction(Activity activity) {
-		Uri uri = Uri.parse(INSTAGRAM_URL);
-		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-		activity.startActivity(intent);
+		try {
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=" + TWITTER_USERNAME)));
+		} catch (Exception e) {
+			activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/#!/" + TWITTER_USERNAME)));
+		}
 	}
 }

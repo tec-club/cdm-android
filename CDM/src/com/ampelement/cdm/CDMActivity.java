@@ -14,10 +14,11 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.ampelement.cdm.NavAdapter.OnNavChangeListener;
 import com.ampelement.cdm.calendar.CalendarFragment;
-import com.ampelement.cdm.clubs.ClubsFragment;
 import com.ampelement.cdm.infoscreen.InfoListFragment;
 import com.ampelement.cdm.other.CategoryEntryWeb;
 import com.ampelement.cdm.other.InstagramEntry;
+import com.ampelement.cdm.other.TridentEntry;
+import com.ampelement.cdm.other.TwitterEntry;
 import com.ampelement.cdm.schoolloop.SchoolLoopFragment;
 import com.ampelement.cdm.utils.android.AndroidUtils;
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
@@ -43,6 +44,7 @@ public class CDMActivity extends SherlockFragmentActivity {
 		getSupportActionBar().setHomeButtonEnabled(true);
 
 		getSupportActionBar().setIcon(R.drawable.trident);
+		getSupportActionBar().setTitle("Corona del Mar HS");
 
 		mNavAdapter = new NavAdapter(this, findViewById(android.R.id.content), R.id.main_drawer_layout, R.id.main_nav_drawer, R.id.main_frame,
 				new OnNavChangeListener() {
@@ -68,7 +70,7 @@ public class CDMActivity extends SherlockFragmentActivity {
 							invalidateOptionsMenu();
 					}
 
-				}, CalendarFragment.Entry.class, InfoListFragment.Entry.class, SchoolLoopFragment.Entry.class, /*ClubsFragment.Entry.class,*/ CategoryEntryWeb.class, InstagramEntry.class);
+				}, CalendarFragment.Entry.class, InfoListFragment.Entry.class, SchoolLoopFragment.Entry.class, /*ClubsFragment.Entry.class,*/ CategoryEntryWeb.class, InstagramEntry.class, TwitterEntry.class, TridentEntry.class);
 
 		/* Setup Parse for notifications */
 		Parse.initialize(this, "gsXQZjeTDxb3Ekjp8PJ8TrY5X9NJROPpIq2E5ljm", "BMHgC1jqWcF3H8QFdqNFKnw1JJgeT1cuWct1W449");
