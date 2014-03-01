@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
+import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
 
 public class NavAdapter {
 
@@ -86,7 +88,7 @@ public class NavAdapter {
 		mDrawerList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> listView, View rowView, int position, long itemId) {
-				if (!getEntry(position - 1).isCategory())
+				if (getEntry(position - 1).getType() != EntryType.LABEL)
 					loadPosition(position - 1);
 			}
 		});
@@ -111,7 +113,7 @@ public class NavAdapter {
 
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
 		for (NavDrawerEntry entry : mEntries) {
-			if (entry.isFragment()) {
+			if (entry.getType() == EntryType.FRAGMENT) {
 				ExtendedSherlockFragment fragment = entry.getFragment();
 				transaction.add(mResFragmentFrame, fragment);
 				transaction.detach(fragment);
@@ -129,9 +131,9 @@ public class NavAdapter {
 		if (position >= 0) {
 			if (mCurrentPos != position) {
 				NavDrawerEntry entry = getEntry(position);
-				if (!entry.isFragment()) {
+				if (entry.getType() == EntryType.ACTION) {
 					entry.runAction(mActivity);
-				} else {
+				} else if (entry.getType() == EntryType.FRAGMENT) {
 					int oldFragmentPos = mCurrentPos;
 					mCurrentPos = position;
 
@@ -173,7 +175,7 @@ public class NavAdapter {
 
 		@Override
 		public boolean isEnabled(int position) {
-			if (getEntry(position).isCategory())
+			if (getEntry(position).getType() == EntryType.LABEL)
 				return false;
 			return super.isEnabled(position);
 		}
@@ -181,15 +183,19 @@ public class NavAdapter {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// Setup row view
-			if (getEntry(position).isCategory()) {
+			TextView title;
+			ImageView icon;
+			switch (getEntry(position).getStyle()) {
+			case CATEGORY:
 				convertView = mInflater.inflate(R.layout.nav_drawer_list_item_header, parent, false);
 
-				TextView title = (TextView) convertView.findViewById(R.id.nav_drawer_item_header_title);
+				title = (TextView) convertView.findViewById(R.id.nav_drawer_item_header_title);
 				title.setText(mEntries.get(position).getTitle());
-			} else {
-				convertView = mInflater.inflate(R.layout.nav_drawer_list_row, parent, false);
+				break;
+			case NORMAL:
+				convertView = mInflater.inflate(R.layout.nav_drawer_list_item_normal, parent, false);
 
-				TextView title = (TextView) convertView.findViewById(R.id.nav_drawer_list_item_title);
+				title = (TextView) convertView.findViewById(R.id.nav_drawer_list_item_title);
 				try {
 					if (mCurrentPos == position)
 						title.setTypeface(Typeface.DEFAULT_BOLD);
@@ -198,11 +204,22 @@ public class NavAdapter {
 					title.setText(mEntries.get(position).getTitle());
 				} catch (Exception e) {
 				}
+				break;
+			case SMALL:
+				convertView = mInflater.inflate(R.layout.nav_drawer_list_item_small, parent, false);
+
+				title = (TextView) convertView.findViewById(R.id.nav_drawer_list_item_small_title);
+				title.setText(mEntries.get(position).getTitle());
+
+				if (mEntries.get(position).getIcon() != 0) {
+					icon = (ImageView) convertView.findViewById(R.id.nav_drawer_list_item_small_icon);
+					icon.setImageResource(mEntries.get(position).getIcon());
+				}
+				break;
 			}
 
 			return convertView;
 		}
-
 	}
 
 	public CharSequence getCurrentTitle() {

@@ -19,6 +19,8 @@ import android.widget.TextView;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
+import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryStyle;
+import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
 
 public class InfoListFragment extends ExtendedSherlockFragment {
 
@@ -28,22 +30,22 @@ public class InfoListFragment extends ExtendedSherlockFragment {
 
 		@Override
 		public String getTitle() {
-			return "Info / Handbook";
+			return "Bell Schedule / Handbook";
 		}
 
 		@Override
-		public boolean isCategory() {
-			return false;
+		public EntryType getType() {
+			return EntryType.FRAGMENT;
+		}
+		
+		@Override
+		public EntryStyle getStyle() {
+			return EntryStyle.NORMAL;
 		}
 
 		@Override
 		public int getIcon() {
 			return 0;
-		}
-
-		@Override
-		public boolean isFragment() {
-			return true;
 		}
 
 		@Override

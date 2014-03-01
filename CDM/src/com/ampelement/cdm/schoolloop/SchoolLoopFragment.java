@@ -50,18 +50,18 @@ public class SchoolLoopFragment extends ExtendedSherlockFragment {
 		}
 
 		@Override
-		public boolean isCategory() {
-			return false;
+		public EntryType getType() {
+			return EntryType.FRAGMENT;
+		}
+		
+		@Override
+		public EntryStyle getStyle() {
+			return EntryStyle.NORMAL;
 		}
 
 		@Override
 		public int getIcon() {
 			return 0;
-		}
-
-		@Override
-		public boolean isFragment() {
-			return true;
 		}
 
 		@Override

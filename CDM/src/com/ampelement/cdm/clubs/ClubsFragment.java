@@ -19,6 +19,8 @@ import com.ampelement.cdm.calendar.CalendarFragment;
 import com.ampelement.cdm.clubs.GetClubsTask.OnUpdateComplete;
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
+import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryStyle;
+import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
 import com.ampelement.cdm.utils.android.picasso.CircleTransform;
 import com.squareup.picasso.Picasso;
 
@@ -34,18 +36,18 @@ public class ClubsFragment extends ExtendedSherlockFragment {
 		}
 
 		@Override
-		public boolean isCategory() {
-			return false;
+		public EntryType getType() {
+			return EntryType.FRAGMENT;
+		}
+		
+		@Override
+		public EntryStyle getStyle() {
+			return EntryStyle.NORMAL;
 		}
 
 		@Override
 		public int getIcon() {
 			return 0;
-		}
-
-		@Override
-		public boolean isFragment() {
-			return true;
 		}
 
 		@Override

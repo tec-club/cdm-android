@@ -22,6 +22,8 @@ import com.ampelement.cdm.schoolloop.SchoolLoopEvent;
 import com.ampelement.cdm.schoolloop.SchoolLoopEventMap;
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
+import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryStyle;
+import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
 
 public class CalendarFragment extends ExtendedSherlockFragment {
 
@@ -35,18 +37,18 @@ public class CalendarFragment extends ExtendedSherlockFragment {
 		}
 
 		@Override
-		public boolean isCategory() {
-			return false;
+		public EntryType getType() {
+			return EntryType.FRAGMENT;
+		}
+		
+		@Override
+		public EntryStyle getStyle() {
+			return EntryStyle.NORMAL;
 		}
 
 		@Override
 		public int getIcon() {
 			return 0;
-		}
-
-		@Override
-		public boolean isFragment() {
-			return true;
 		}
 
 		@Override

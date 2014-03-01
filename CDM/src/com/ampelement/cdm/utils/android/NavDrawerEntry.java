@@ -14,12 +14,27 @@ public abstract class NavDrawerEntry {
 	 */
 	public abstract String getTitle();
 
+	public enum EntryType {
+		LABEL, ACTION, FRAGMENT;
+	}
+
 	/**
-	 * If this entry represents a category header or not
+	 * Which {@link EntryType} is this entry.
 	 * 
-	 * @return false if not a category, true otherwise
+	 * @return {@link EntryType}
 	 */
-	public abstract boolean isCategory();
+	public abstract EntryType getType();
+
+	public enum EntryStyle {
+		NORMAL, CATEGORY, SMALL;
+	}
+
+	/**
+	 * Which {@link EntryStyle} is this entry.
+	 * 
+	 * @return {@link EntryStyle}
+	 */
+	public abstract EntryStyle getStyle();
 
 	/**
 	 * Returns an icon res id for the navigation drawer entry. Returns 0 if
@@ -28,13 +43,6 @@ public abstract class NavDrawerEntry {
 	 * @return Icon res id or 0 for no icon
 	 */
 	public abstract int getIcon();
-
-	/**
-	 * If this entry represents a view or an action.
-	 * 
-	 * @return true if this entry represents a view
-	 */
-	public abstract boolean isFragment();
 
 	public abstract Class<? extends ExtendedSherlockFragment> getFragmentType();
 

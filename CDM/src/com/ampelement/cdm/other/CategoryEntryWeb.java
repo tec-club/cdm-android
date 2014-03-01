@@ -4,6 +4,8 @@ import android.app.Activity;
 
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
+import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryStyle;
+import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
 
 public class CategoryEntryWeb extends NavDrawerEntry {
 
@@ -13,18 +15,18 @@ public class CategoryEntryWeb extends NavDrawerEntry {
 	}
 
 	@Override
-	public boolean isCategory() {
-		return true;
+	public EntryType getType() {
+		return EntryType.LABEL;
+	}
+	
+	@Override
+	public EntryStyle getStyle() {
+		return EntryStyle.CATEGORY;
 	}
 
 	@Override
 	public int getIcon() {
 		return 0;
-	}
-
-	@Override
-	public boolean isFragment() {
-		return false;
 	}
 
 	@Override
