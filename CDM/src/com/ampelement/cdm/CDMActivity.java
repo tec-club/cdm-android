@@ -5,9 +5,11 @@ import java.io.StringWriter;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -15,8 +17,10 @@ import com.actionbarsherlock.view.MenuItem;
 import com.ampelement.cdm.NavAdapter.OnNavChangeListener;
 import com.ampelement.cdm.calendar.CalendarFragment;
 import com.ampelement.cdm.infoscreen.InfoListFragment;
-import com.ampelement.cdm.other.CategoryEntryWeb;
+import com.ampelement.cdm.other.categories.CategoryEntryWeb;
+import com.ampelement.cdm.other.categories.CategoryEntryOther;
 import com.ampelement.cdm.other.InstagramEntry;
+import com.ampelement.cdm.other.SettingsEntry;
 import com.ampelement.cdm.other.TridentEntry;
 import com.ampelement.cdm.other.TwitterEntry;
 import com.ampelement.cdm.schoolloop.SchoolLoopFragment;
@@ -33,6 +37,8 @@ public class CDMActivity extends SherlockFragmentActivity {
 
 	private NavAdapter mNavAdapter;
 
+	private SharedPreferences mSharedPreferences;
+
 	/** Called when the activity is first created. */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -46,8 +52,8 @@ public class CDMActivity extends SherlockFragmentActivity {
 		getSupportActionBar().setIcon(R.drawable.trident);
 		getSupportActionBar().setTitle("Corona del Mar HS");
 
-		mNavAdapter = new NavAdapter(this, findViewById(android.R.id.content), R.id.main_drawer_layout, R.id.main_nav_drawer, R.id.main_frame,
-				new OnNavChangeListener() {
+		mNavAdapter = new NavAdapter(this, savedInstanceState, findViewById(android.R.id.content), R.id.main_drawer_layout, R.id.main_nav_drawer,
+				R.id.main_frame, new OnNavChangeListener() {
 
 					@Override
 					public void onFragmentLoaded(ExtendedSherlockFragment oldFragment, ExtendedSherlockFragment newFragment) {
@@ -70,14 +76,21 @@ public class CDMActivity extends SherlockFragmentActivity {
 							invalidateOptionsMenu();
 					}
 
-				}, CalendarFragment.Entry.class, InfoListFragment.Entry.class, SchoolLoopFragment.Entry.class, /*ClubsFragment.Entry.class,*/ CategoryEntryWeb.class, InstagramEntry.class, TwitterEntry.class, TridentEntry.class);
-
-		/* Setup Parse for notifications */
-		Parse.initialize(this, "gsXQZjeTDxb3Ekjp8PJ8TrY5X9NJROPpIq2E5ljm", "BMHgC1jqWcF3H8QFdqNFKnw1JJgeT1cuWct1W449");
-		PushService.setDefaultPushCallback(this, CDMActivity.class);
-		ParseInstallation.getCurrentInstallation().saveInBackground();
-		/* Use Parse to track analytics */
-		ParseAnalytics.trackAppOpened(getIntent());
+				},// Main items
+				SchoolLoopFragment.Entry.class, InfoListFragment.Entry.class, CalendarFragment.Entry.class,
+				// Web Views/External
+				CategoryEntryWeb.class, InstagramEntry.class, TwitterEntry.class, TridentEntry.class,
+				// Other/Settings
+				CategoryEntryOther.class, SettingsEntry.class);
+		mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		if (mSharedPreferences.getBoolean(Preferences.SETTINGS_ALLOW_PUSH_NOTIFS, true)) {
+			/* Setup Parse for notifications */
+			Parse.initialize(this, "gsXQZjeTDxb3Ekjp8PJ8TrY5X9NJROPpIq2E5ljm", "BMHgC1jqWcF3H8QFdqNFKnw1JJgeT1cuWct1W449");
+			PushService.setDefaultPushCallback(this, CDMActivity.class);
+			ParseInstallation.getCurrentInstallation().saveInBackground();
+			/* Use Parse to track analytics */
+			ParseAnalytics.trackAppOpened(getIntent());
+		}
 	}
 
 	public void loadPosition(int p) {
@@ -91,8 +104,8 @@ public class CDMActivity extends SherlockFragmentActivity {
 			if (currentFragment != null) {
 				if (currentFragment != null && currentFragment instanceof SchoolLoopFragment) {
 					SchoolLoopFragment schoolLoopFragment = (SchoolLoopFragment) currentFragment;
-					if (schoolLoopFragment.webView != null && schoolLoopFragment.webView.canGoBack()) {
-						schoolLoopFragment.webView.goBack();
+					if (schoolLoopFragment.mWebView != null && schoolLoopFragment.mWebView.canGoBack()) {
+						schoolLoopFragment.mWebView.goBack();
 					} else {
 						super.onBackPressed();
 					}
@@ -122,6 +135,12 @@ public class CDMActivity extends SherlockFragmentActivity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		mNavAdapter.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		mNavAdapter.onSaveInstanceState(outState);
+		super.onSaveInstanceState(outState);
 	}
 
 	@Override

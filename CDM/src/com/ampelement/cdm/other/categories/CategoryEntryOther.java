@@ -1,17 +1,15 @@
-package com.ampelement.cdm.other;
+package com.ampelement.cdm.other.categories;
 
 import android.app.Activity;
 
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
-import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryStyle;
-import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
 
-public class CategoryEntryWeb extends NavDrawerEntry {
+public class CategoryEntryOther extends NavDrawerEntry {
 
 	@Override
 	public String getTitle() {
-		return "Web";
+		return "Other";
 	}
 
 	@Override

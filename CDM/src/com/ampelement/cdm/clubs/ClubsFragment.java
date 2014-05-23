@@ -15,18 +15,20 @@ import android.widget.TextView;
 
 import com.ampelement.cdm.Preferences;
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.calendar.CalendarFragment;
 import com.ampelement.cdm.clubs.GetClubsTask.OnUpdateComplete;
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
-import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryStyle;
-import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
 import com.ampelement.cdm.utils.android.picasso.CircleTransform;
 import com.squareup.picasso.Picasso;
 
 public class ClubsFragment extends ExtendedSherlockFragment {
 
 	public static final String TAG = "ClubsFragment";
+	
+	@Override
+	public String getFragmentTag() {
+		return ClubsFragment.class.getSimpleName();
+	}
 
 	public static class Entry extends NavDrawerEntry {
 

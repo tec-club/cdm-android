@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory
+        android:key="main_category"
+        android:title="Main Settings" >
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="allowPushNotifs"
+            android:summary="Enable or disable push notifications"
+            android:title="Push notifications" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="about_category"
+        android:title="About" >
+        <Preference
+            android:summary="Developer\nClass of 2015"
+            android:title="Alex Wendland" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

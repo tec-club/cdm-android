@@ -59,12 +59,15 @@
             android:text="@string/submit" />
     </LinearLayout>
 
-    <TextView
+    <com.ampelement.cdm.widgets.TextViewRBI
         android:id="@+id/school_loop_error"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/school_loop_inputs"
-        android:gravity="center_horizontal|center_vertical" />
+        android:layout_alignTop="@id/school_loop_inputs"
+        android:gravity="center_horizontal|center_vertical"
+        android:paddingTop="20dp"
+        android:textColor="#ffcdcdcd"
+        android:textSize="25sp" />
 
     <RelativeLayout
         android:id="@+id/school_loop_loading"

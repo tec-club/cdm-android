@@ -80,7 +80,7 @@ public class SchoolLoopAPI {
 			try {
 				return loadEvents(new InputSource(new StringReader(xmlString)));
 			} catch (Exception e) {
-				Log.e(TAG, e.getLocalizedMessage(), e);
+				Log.d(TAG, e.getLocalizedMessage(), e);
 				return null;
 			}
 		}

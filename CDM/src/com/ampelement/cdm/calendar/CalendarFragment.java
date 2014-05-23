@@ -2,6 +2,7 @@ package com.ampelement.cdm.calendar;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
@@ -22,12 +23,15 @@ import com.ampelement.cdm.schoolloop.SchoolLoopEvent;
 import com.ampelement.cdm.schoolloop.SchoolLoopEventMap;
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
-import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryStyle;
-import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
 
 public class CalendarFragment extends ExtendedSherlockFragment {
 
 	public static final String TAG = "CalendarFragment";
+
+	@Override
+	public String getFragmentTag() {
+		return CalendarFragment.class.getSimpleName();
+	}
 
 	public static class Entry extends NavDrawerEntry {
 
@@ -40,7 +44,7 @@ public class CalendarFragment extends ExtendedSherlockFragment {
 		public EntryType getType() {
 			return EntryType.FRAGMENT;
 		}
-		
+
 		@Override
 		public EntryStyle getStyle() {
 			return EntryStyle.NORMAL;
@@ -73,29 +77,6 @@ public class CalendarFragment extends ExtendedSherlockFragment {
 	private SchoolLoopEventMap mEventsMap;
 
 	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-
-		mSharedPref = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity());
-		String cachedXMLData = mSharedPref.getString(Preferences.CALENDAR_CACHED_DATA, null);
-
-		mGetEventsTask = new GetEventsTask(mSharedPref, cachedXMLData, new OnUpdateComplete() {
-
-			@Override
-			public void onComplete(SchoolLoopEventMap eventsMap) {
-				if (eventsMap != null) {
-					mEventsMap = eventsMap;
-					mCalendarView.setCalendarEvents(mEventsMap);
-				}
-			}
-		});
-		mGetEventsTask.execute();
-
-		if (cachedXMLData != null)
-			mEventsMap = new EventFetcher().loadEvents(cachedXMLData);
-	}
-
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View eventScreen = inflater.inflate(R.layout.event_screen, container, false);
@@ -113,21 +94,60 @@ public class CalendarFragment extends ExtendedSherlockFragment {
 		if (mEventsMap != null) {
 			mCalendarView.setCalendarEvents(mEventsMap);
 			mCalendarView.setVisibility(View.VISIBLE);
-		} else {// If no data exists
-			if (mGetEventsTask.isFinished()) // and the update task finished
-				// then show an error loading data screen
-				mEventErrorLoadingScreen.setVisibility(View.VISIBLE);
-			else
-				// otherwise show a loading screen
-				mEventLoadingScreen.setVisibility(View.VISIBLE);
+		} else {
+			// otherwise show a loading screen
+			mEventLoadingScreen.setVisibility(View.VISIBLE);
 		}
+
+		runAsyncTasks();
 
 		return eventScreen;
 	}
 
+	void runAsyncTasks() {
+		mSharedPref = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity());
+		final String cachedXMLData = mSharedPref.getString(Preferences.CALENDAR_CACHED_DATA, null);
+
+		if (mGetEventsTask == null) {
+			mGetEventsTask = new GetEventsTask(mSharedPref, cachedXMLData, new OnUpdateComplete() {
+
+				@Override
+				public void onComplete(SchoolLoopEventMap eventsMap) {
+					if (eventsMap != null) {
+						mEventsMap = eventsMap;
+						mCalendarView.setCalendarEvents(mEventsMap);
+					} else {
+						mEventLoadingScreen.setVisibility(View.GONE);
+						mEventErrorLoadingScreen.setVisibility(View.VISIBLE);
+					}
+				}
+			});
+			mGetEventsTask.execute();
+
+			if (cachedXMLData != null) {
+				new AsyncTask<Void, Void, SchoolLoopEventMap>() {
+
+					@Override
+					protected SchoolLoopEventMap doInBackground(Void... params) {
+						return new EventFetcher().loadEvents(cachedXMLData);
+					}
+
+					@Override
+					protected void onPostExecute(SchoolLoopEventMap result) {
+						if (result != null) {
+							mEventsMap = result;
+							mCalendarView.setCalendarEvents(mEventsMap);
+						}
+					}
+				}.execute();
+			}
+		}
+	}
+
 	@Override
 	public void onDestroy() {
-		mGetEventsTask.setOnUpdateCompleteListener(null);
+		if (mGetEventsTask != null)
+			mGetEventsTask.setOnUpdateCompleteListener(null);
 
 		super.onDestroy();
 	}

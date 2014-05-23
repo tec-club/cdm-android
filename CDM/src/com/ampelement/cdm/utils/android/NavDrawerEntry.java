@@ -1,9 +1,11 @@
 package com.ampelement.cdm.utils.android;
 
-import com.ampelement.cdm.CDMActivity;
-
 import android.app.Activity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
+
+import com.ampelement.cdm.CDMActivity;
 
 public abstract class NavDrawerEntry {
 	/**
@@ -65,6 +67,13 @@ public abstract class NavDrawerEntry {
 				Log.e(CDMActivity.TAG, e.getMessage(), e);
 			}
 		return fragment;
+	}
+
+	public ExtendedSherlockFragment findFragment(FragmentManager fm) {
+		Fragment f = fm.findFragmentByTag(getFragmentType().getSimpleName());
+		if (f != null && f instanceof ExtendedSherlockFragment)
+			fragment = (ExtendedSherlockFragment) f;
+		return getFragment();
 	}
 
 	/**

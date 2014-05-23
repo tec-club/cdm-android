@@ -26,11 +26,14 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
+import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryStyle;
 import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
 
 public class NavAdapter {
 
 	private static final String TAG = "NavAdapter";
+
+	private static final String BUNDLE_CURRENT_POS = "currentPos";
 
 	List<NavDrawerEntry> mEntries;
 
@@ -58,8 +61,8 @@ public class NavAdapter {
 		public void onFragmentLoaded(ExtendedSherlockFragment oldFragment, ExtendedSherlockFragment newFragment);
 	}
 
-	public NavAdapter(SherlockFragmentActivity activity, View parentView, int resDrawerLayout, int resDrawerList, int resFragmentFrame,
-			OnNavChangeListener onNavChangeListener, Class<? extends NavDrawerEntry>... classes) {
+	public NavAdapter(SherlockFragmentActivity activity, Bundle savedInstanceState, View parentView, int resDrawerLayout, int resDrawerList,
+			int resFragmentFrame, OnNavChangeListener onNavChangeListener, Class<? extends NavDrawerEntry>... classes) {
 		mActivity = activity;
 
 		mFragmentManager = mActivity.getSupportFragmentManager();
@@ -88,7 +91,7 @@ public class NavAdapter {
 		mDrawerList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> listView, View rowView, int position, long itemId) {
-				if (getEntry(position - 1).getType() != EntryType.LABEL)
+				if (position > 0 && getEntry(position - 1).getType() != EntryType.LABEL)
 					loadPosition(position - 1);
 			}
 		});
@@ -114,11 +117,16 @@ public class NavAdapter {
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
 		for (NavDrawerEntry entry : mEntries) {
 			if (entry.getType() == EntryType.FRAGMENT) {
-				ExtendedSherlockFragment fragment = entry.getFragment();
-				transaction.add(mResFragmentFrame, fragment);
-				transaction.detach(fragment);
+				ExtendedSherlockFragment fragment = entry.findFragment(mFragmentManager);
+				if (savedInstanceState == null || fragment == null) {
+					fragment = entry.getFragment();
+					transaction.add(mResFragmentFrame, fragment, fragment.getFragmentTag());
+					transaction.detach(fragment);
+				}
 			}
 		}
+		if (savedInstanceState != null)
+			mCurrentPos = savedInstanceState.getInt(BUNDLE_CURRENT_POS);
 		transaction.attach(getCurrentFragment());
 		transaction.commit();
 	}
@@ -215,6 +223,11 @@ public class NavAdapter {
 					icon = (ImageView) convertView.findViewById(R.id.nav_drawer_list_item_small_icon);
 					icon.setImageResource(mEntries.get(position).getIcon());
 				}
+
+				if (position > 1 && mEntries.get(position - 1).getStyle() == EntryStyle.CATEGORY) {
+					View dividerView = convertView.findViewById(R.id.nav_drawer_list_item_divider);
+					dividerView.setVisibility(View.INVISIBLE);
+				}
 				break;
 			}
 
@@ -251,5 +264,9 @@ public class NavAdapter {
 		}
 
 		return false;
+	}
+
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putInt(BUNDLE_CURRENT_POS, mCurrentPos);
 	}
 }

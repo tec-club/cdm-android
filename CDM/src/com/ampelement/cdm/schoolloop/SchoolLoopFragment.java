@@ -42,6 +42,11 @@ public class SchoolLoopFragment extends ExtendedSherlockFragment {
 
 	public static final String TAG = "SchoolLoopFragment";
 
+	@Override
+	public String getFragmentTag() {
+		return SchoolLoopFragment.class.getSimpleName();
+	}
+
 	public static class Entry extends NavDrawerEntry {
 
 		@Override
@@ -53,7 +58,7 @@ public class SchoolLoopFragment extends ExtendedSherlockFragment {
 		public EntryType getType() {
 			return EntryType.FRAGMENT;
 		}
-		
+
 		@Override
 		public EntryStyle getStyle() {
 			return EntryStyle.NORMAL;
@@ -83,8 +88,8 @@ public class SchoolLoopFragment extends ExtendedSherlockFragment {
 
 	boolean newCredentials = false;
 
-	public WebView webView;
-	SharedPreferences sharedPreferences;
+	public WebView mWebView;
+	SharedPreferences mSharedPreferences;
 
 	private class Login {
 		String user;
@@ -106,7 +111,7 @@ public class SchoolLoopFragment extends ExtendedSherlockFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Loading Screen Handler
-		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+		mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 		// Get Screens
 		schoolLoopScreen = (RelativeLayout) inflater.inflate(R.layout.school_loop_screen, container, false);
 		mLoginScreen = (LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_inputs);
@@ -115,12 +120,12 @@ public class SchoolLoopFragment extends ExtendedSherlockFragment {
 		mPasswordInput = (EditText) schoolLoopScreen.findViewById(R.id.school_loop_password);
 
 		// Attempt to retrieve stored credentials
-		Login login = new Login(sharedPreferences.getString(Preferences.SCHOOL_LOOP_USERNAME, ""), sharedPreferences.getString(
+		Login login = new Login(mSharedPreferences.getString(Preferences.SCHOOL_LOOP_USERNAME, ""), mSharedPreferences.getString(
 				Preferences.SCHOOL_LOOP_PASSWORD, ""));
 
 		// Setup WebView
-		webView = new WebView(getActivity().getApplicationContext());
-		((LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_webview_screen)).addView(webView);
+		mWebView = new WebView(getActivity().getApplicationContext());
+		((LinearLayout) schoolLoopScreen.findViewById(R.id.school_loop_webview_screen)).addView(mWebView);
 		/* Setup Login View */
 		// Setup Submit button
 		final Button submitButton = (Button) schoolLoopScreen.findViewById(R.id.school_loop_submit);
@@ -196,17 +201,17 @@ public class SchoolLoopFragment extends ExtendedSherlockFragment {
 		protected Boolean doInBackground(Login... logins) {
 			if (logins.length > 0) {
 				Login login = logins[0];
-				long lastActiveTime = sharedPreferences.getLong(Preferences.SCHOOL_LOOP_TIME, 0);
-				SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
+				long lastActiveTime = mSharedPreferences.getLong(Preferences.SCHOOL_LOOP_TIME, 0);
+				SharedPreferences.Editor sharedPrefEditor = mSharedPreferences.edit();
 				// Calculated as still logged in. Timeout is around 15 min
 				if (lastActiveTime != 0 && (System.currentTimeMillis() - lastActiveTime) < 900000) {
-					SchoolLoopAPI.Dirty.loadLoginDataToWebView(sharedPreferences, webView);
+					SchoolLoopAPI.Dirty.loadLoginDataToWebView(mSharedPreferences, mWebView);
 					return true;
 				} else { // Not logged in
 					try {
 						CookieStore loginCookieStore = SchoolLoopAPI.loginToSchoolloop(new DefaultHttpClient(), login.user, login.pass, true);
 						if (loginCookieStore != null) {
-							SchoolLoopAPI.Dirty.migrateCookieStore2WebView(loginCookieStore, webView, sharedPrefEditor);
+							SchoolLoopAPI.Dirty.migrateCookieStore2WebView(loginCookieStore, mWebView, sharedPrefEditor);
 							updateCredentials(newCredentials ? login.user : null, newCredentials ? login.pass : null, System.currentTimeMillis());
 							return true;
 						} else {
@@ -240,14 +245,14 @@ public class SchoolLoopFragment extends ExtendedSherlockFragment {
 
 		@SuppressLint("NewApi")
 		private void loadWebView() {
-			webView.getSettings().setJavaScriptEnabled(true);
-			webView.setWebViewClient(new SchoolLoopWebViewClient());
-			webView.loadUrl(SchoolLoopAPI.BASE_URL_SECURE + "/mobile/index");
-			webView.getSettings().setSupportZoom(true);
-			webView.getSettings().setBuiltInZoomControls(true);
+			mWebView.getSettings().setJavaScriptEnabled(true);
+			mWebView.setWebViewClient(new SchoolLoopWebViewClient());
+			mWebView.loadUrl(SchoolLoopAPI.BASE_URL_SECURE + "/mobile/index");
+			mWebView.getSettings().setSupportZoom(true);
+			mWebView.getSettings().setBuiltInZoomControls(true);
 			if (android.os.Build.VERSION.SDK_INT >= 11)
-				webView.getSettings().setDisplayZoomControls(false);
-			webView.setDownloadListener(new DownloadListener() {
+				mWebView.getSettings().setDisplayZoomControls(false);
+			mWebView.setDownloadListener(new DownloadListener() {
 				@Override
 				public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
 					Intent i = new Intent(Intent.ACTION_VIEW);
@@ -296,7 +301,7 @@ public class SchoolLoopFragment extends ExtendedSherlockFragment {
 	}
 
 	void updateCredentials(String username, String password, long time) {
-		SharedPreferences.Editor sharedPrefEditor = sharedPreferences.edit();
+		SharedPreferences.Editor sharedPrefEditor = mSharedPreferences.edit();
 		if (username != null)
 			sharedPrefEditor.putString(Preferences.SCHOOL_LOOP_USERNAME, username);
 		if (password != null)

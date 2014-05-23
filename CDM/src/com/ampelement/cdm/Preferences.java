@@ -14,5 +14,8 @@ public class Preferences {
 	
 	// Calendar Event XML data
 	public static final String CALENDAR_CACHED_DATA = "cachedCalendarData";
+	
+	// Settings
+	public static final String SETTINGS_ALLOW_PUSH_NOTIFS = "allowPushNotifs";
 
 }

@@ -19,12 +19,15 @@ import android.widget.TextView;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
-import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryStyle;
-import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
 
 public class InfoListFragment extends ExtendedSherlockFragment {
 
 	public static final String TAG = "InfoListFragment";
+
+	@Override
+	public String getFragmentTag() {
+		return InfoListFragment.class.getSimpleName();
+	}
 
 	public static class Entry extends NavDrawerEntry {
 
@@ -37,7 +40,7 @@ public class InfoListFragment extends ExtendedSherlockFragment {
 		public EntryType getType() {
 			return EntryType.FRAGMENT;
 		}
-		
+
 		@Override
 		public EntryStyle getStyle() {
 			return EntryStyle.NORMAL;
