@@ -1,7 +1,5 @@
 package com.ampelement.cdm.infoscreen;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
@@ -19,6 +17,8 @@ import android.widget.TextView;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
+
+import java.util.ArrayList;
 
 public class InfoListFragment extends ExtendedSherlockFragment {
 

@@ -1,17 +1,10 @@
 package com.ampelement.cdm.calendar.library;
 
-import java.text.DateFormatSymbols;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.MutableDateTime;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.support.v4.view.ViewCompat;
@@ -27,6 +20,12 @@ import com.ampelement.cdm.CDMColors;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.calendar.library.CalendarHelper.Day;
 import com.ampelement.cdm.schoolloop.SchoolLoopEventMap;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.MutableDateTime;
+
+import java.text.DateFormatSymbols;
 
 public class CalendarView extends View {
 	private float WEEK_HEIGHT = 0;

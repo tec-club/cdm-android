@@ -1,7 +1,6 @@
 package com.ampelement.cdm.schoolloop;
 
 import com.ampelement.cdm.calendar.library.CalendarEvents;
-import com.ampelement.cdm.schoolloop.SchoolLoopEvent;
 
 public class SchoolLoopEventMap extends CalendarEvents<SchoolLoopEvent> {
 

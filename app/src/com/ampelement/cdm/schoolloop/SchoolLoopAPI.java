@@ -1,15 +1,14 @@
 package com.ampelement.cdm.schoolloop;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import android.content.SharedPreferences;
+import android.util.Log;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.WebView;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import com.ampelement.cdm.Preferences;
+import com.ampelement.cdm.schoolloop.SchoolLoopEvent.SchoolLoopEventBuilder;
+import com.ampelement.cdm.utils.Utils;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -28,15 +27,16 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
-import android.content.SharedPreferences;
-import android.util.Log;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
-import android.webkit.WebView;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import com.ampelement.cdm.Preferences;
-import com.ampelement.cdm.schoolloop.SchoolLoopEvent.SchoolLoopEventBuilder;
-import com.ampelement.cdm.utils.Utils;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 public class SchoolLoopAPI {
 	public final static String TAG = "SchoolLoopAPI";

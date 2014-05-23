@@ -1,10 +1,7 @@
 package com.ampelement.cdm.calendar.library;
 
 import org.joda.time.DateTimeConstants;
-import org.joda.time.Days;
 import org.joda.time.MutableDateTime;
-
-import android.util.Log;
 
 public class CalendarHelper {
 	

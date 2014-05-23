@@ -1,17 +1,17 @@
 package com.ampelement.cdm.schoolloop;
 
-import java.util.regex.Pattern;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+import com.ampelement.cdm.calendar.library.CalendarEvent;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.util.Log;
-
-import com.ampelement.cdm.calendar.library.CalendarEvent;
+import java.util.regex.Pattern;
 
 public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 

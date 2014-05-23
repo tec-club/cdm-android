@@ -2,8 +2,6 @@ package com.ampelement.cdm.calendar.library;
 
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Instant;
 import org.joda.time.Interval;
 
 public class CalendarEvent {

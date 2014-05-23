@@ -1,9 +1,5 @@
 package com.ampelement.cdm.calendar;
 
-import java.text.DateFormatSymbols;
-
-import org.joda.time.DateTime;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -27,6 +23,10 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.schoolloop.SchoolLoopEvent;
+
+import org.joda.time.DateTime;
+
+import java.text.DateFormatSymbols;
 
 public class CalendarDayFragment extends SherlockDialogFragment {
 

@@ -1,8 +1,5 @@
 package com.ampelement.cdm;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,12 +14,12 @@ import com.actionbarsherlock.view.MenuItem;
 import com.ampelement.cdm.NavAdapter.OnNavChangeListener;
 import com.ampelement.cdm.calendar.CalendarFragment;
 import com.ampelement.cdm.infoscreen.InfoListFragment;
-import com.ampelement.cdm.other.categories.CategoryEntryWeb;
-import com.ampelement.cdm.other.categories.CategoryEntryOther;
 import com.ampelement.cdm.other.InstagramEntry;
 import com.ampelement.cdm.other.SettingsEntry;
 import com.ampelement.cdm.other.TridentEntry;
 import com.ampelement.cdm.other.TwitterEntry;
+import com.ampelement.cdm.other.categories.CategoryEntryOther;
+import com.ampelement.cdm.other.categories.CategoryEntryWeb;
 import com.ampelement.cdm.schoolloop.SchoolLoopFragment;
 import com.ampelement.cdm.utils.android.AndroidUtils;
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
@@ -30,6 +27,9 @@ import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseInstallation;
 import com.parse.PushService;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class CDMActivity extends SherlockFragmentActivity {
 

@@ -1,8 +1,5 @@
 package com.ampelement.cdm;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
@@ -28,6 +25,9 @@ import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
 import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryStyle;
 import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class NavAdapter {
 

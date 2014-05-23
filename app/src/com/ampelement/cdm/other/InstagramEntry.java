@@ -7,8 +7,6 @@ import android.net.Uri;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
-import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryStyle;
-import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
 
 public class InstagramEntry extends NavDrawerEntry {
 
