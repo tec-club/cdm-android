@@ -21,10 +21,10 @@ import com.ampelement.cdm.calendar.library.CalendarView.OnMonthChangeListener;
 import com.ampelement.cdm.schoolloop.SchoolLoopAPI.EventFetcher;
 import com.ampelement.cdm.schoolloop.SchoolLoopEvent;
 import com.ampelement.cdm.schoolloop.SchoolLoopEventMap;
-import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
 
-public class CalendarFragment extends ExtendedSherlockFragment {
+public class CalendarFragment extends ExtendedFragment {
 
 	public static final String TAG = "CalendarFragment";
 
@@ -56,7 +56,7 @@ public class CalendarFragment extends ExtendedSherlockFragment {
 		}
 
 		@Override
-		public Class<? extends ExtendedSherlockFragment> getFragmentType() {
+		public Class<? extends ExtendedFragment> getFragmentType() {
 			return CalendarFragment.class;
 		}
 
@@ -105,7 +105,7 @@ public class CalendarFragment extends ExtendedSherlockFragment {
 	}
 
 	void runAsyncTasks() {
-		mSharedPref = PreferenceManager.getDefaultSharedPreferences(getSherlockActivity());
+		mSharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		final String cachedXMLData = mSharedPref.getString(Preferences.CALENDAR_CACHED_DATA, null);
 
 		if (mGetEventsTask == null) {
@@ -170,7 +170,7 @@ public class CalendarFragment extends ExtendedSherlockFragment {
 	};
 
 	private void showDaysEventDialog(SchoolLoopEvent[] events) {
-		FragmentManager fm = getSherlockActivity().getSupportFragmentManager();
+		FragmentManager fm = getActivity().getSupportFragmentManager();
 		CalendarDayFragment calendarDayDialogFragment = CalendarDayFragment.newInstance(events);
 		calendarDayDialogFragment.show(fm, "calendar_day_fragment");
 	}

@@ -5,7 +5,7 @@ import android.content.Intent;
 
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.SettingsActivity;
-import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
 
 public class SettingsEntry extends NavDrawerEntry {
@@ -33,7 +33,7 @@ public class SettingsEntry extends NavDrawerEntry {
 	}
 
 	@Override
-	public Class<ExtendedSherlockFragment> getFragmentType() {
+	public Class<ExtendedFragment> getFragmentType() {
 		return null;
 	}
 

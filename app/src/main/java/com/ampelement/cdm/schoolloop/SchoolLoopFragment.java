@@ -29,7 +29,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.ampelement.cdm.Preferences;
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
 
 import org.apache.http.client.ClientProtocolException;
@@ -38,7 +38,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
 
-public class SchoolLoopFragment extends ExtendedSherlockFragment {
+public class SchoolLoopFragment extends ExtendedFragment {
 
 	public static final String TAG = "SchoolLoopFragment";
 
@@ -70,7 +70,7 @@ public class SchoolLoopFragment extends ExtendedSherlockFragment {
 		}
 
 		@Override
-		public Class<? extends ExtendedSherlockFragment> getFragmentType() {
+		public Class<? extends ExtendedFragment> getFragmentType() {
 			return SchoolLoopFragment.class;
 		}
 
@@ -160,7 +160,7 @@ public class SchoolLoopFragment extends ExtendedSherlockFragment {
 
 	void submitLogin(View v) {
 		// Hide keyboard
-		InputMethodManager inputManager = (InputMethodManager) getSherlockActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+		InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 		inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 		// Create Login object
 		Login newLogin = new Login();

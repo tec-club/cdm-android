@@ -8,8 +8,6 @@ import com.ampelement.cdm.Preferences;
 import com.ampelement.cdm.schoolloop.SchoolLoopAPI.EventFetcher;
 import com.ampelement.cdm.schoolloop.SchoolLoopEventMap;
 
-import org.xml.sax.SAXException;
-
 public class GetEventsTask extends AsyncTask<Void, String, SchoolLoopEventMap> {
 
     public final String TAG = this.getClass().getCanonicalName();
@@ -42,13 +40,13 @@ public class GetEventsTask extends AsyncTask<Void, String, SchoolLoopEventMap> {
 	protected SchoolLoopEventMap doInBackground(Void... params) {
 		EventFetcher eventFetcher = new EventFetcher();
         try {
-		String latestXMLData = eventFetcher.fetchEventXML();
-		if (mPrevXMLData == null || !mPrevXMLData.equals(latestXMLData)) {
-			SharedPreferences.Editor edit = mSharedPref.edit();
-			edit.putString(Preferences.CALENDAR_CACHED_DATA, latestXMLData);
-			edit.commit();
-			return eventFetcher.loadEvents(latestXMLData);
-		}
+            String latestXMLData = eventFetcher.fetchEventXML();
+            if (mPrevXMLData == null || !mPrevXMLData.equals(latestXMLData)) {
+                SharedPreferences.Editor edit = mSharedPref.edit();
+                edit.putString(Preferences.CALENDAR_CACHED_DATA, latestXMLData);
+                edit.commit();
+                return eventFetcher.loadEvents(latestXMLData);
+            }
         } catch (Exception e) {
             Log.d(TAG, "Parsing exception.\n" + e.getMessage());
         }

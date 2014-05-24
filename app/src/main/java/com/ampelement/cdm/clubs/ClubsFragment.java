@@ -16,12 +16,12 @@ import android.widget.TextView;
 import com.ampelement.cdm.Preferences;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.clubs.GetClubsTask.OnUpdateComplete;
-import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
 import com.ampelement.cdm.utils.android.picasso.CircleTransform;
 import com.squareup.picasso.Picasso;
 
-public class ClubsFragment extends ExtendedSherlockFragment {
+public class ClubsFragment extends ExtendedFragment {
 
 	public static final String TAG = "ClubsFragment";
 	
@@ -53,7 +53,7 @@ public class ClubsFragment extends ExtendedSherlockFragment {
 		}
 
 		@Override
-		public Class<? extends ExtendedSherlockFragment> getFragmentType() {
+		public Class<? extends ExtendedFragment> getFragmentType() {
 			return ClubsFragment.class;
 		}
 
@@ -105,7 +105,7 @@ public class ClubsFragment extends ExtendedSherlockFragment {
 		ListView viewClubList = (ListView) view.findViewById(R.id.club_screen_listView);
 
 		if (mClubData != null) {
-			mClubListAdapter = new ClubListAdapter(getSherlockActivity());
+			mClubListAdapter = new ClubListAdapter(getActivity());
 			viewClubList.setAdapter(mClubListAdapter);
 		} else {
 			// TODO Implement "no data found"

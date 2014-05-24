@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
 
 public class InstagramEntry extends NavDrawerEntry {
@@ -33,7 +33,7 @@ public class InstagramEntry extends NavDrawerEntry {
 	}
 
 	@Override
-	public Class<ExtendedSherlockFragment> getFragmentType() {
+	public Class<ExtendedFragment> getFragmentType() {
 		return null;
 	}
 

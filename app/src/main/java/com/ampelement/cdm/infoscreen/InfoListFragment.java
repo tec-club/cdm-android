@@ -15,12 +15,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
 
 import java.util.ArrayList;
 
-public class InfoListFragment extends ExtendedSherlockFragment {
+public class InfoListFragment extends ExtendedFragment {
 
 	public static final String TAG = "InfoListFragment";
 
@@ -52,7 +52,7 @@ public class InfoListFragment extends ExtendedSherlockFragment {
 		}
 
 		@Override
-		public Class<? extends ExtendedSherlockFragment> getFragmentType() {
+		public Class<? extends ExtendedFragment> getFragmentType() {
 			return InfoListFragment.class;
 		}
 
@@ -74,7 +74,7 @@ public class InfoListFragment extends ExtendedSherlockFragment {
 		View infoScreen = inflater.inflate(R.layout.info_screen, container, false);
 		mInfoListView = (ListView) infoScreen.findViewById(R.id.info_screen_gridView);
 
-		mInfoAdapter = new InfoAdapter(getSherlockActivity());
+		mInfoAdapter = new InfoAdapter(getActivity());
 		mInfoListView.setAdapter(mInfoAdapter);
 
 		mInfoListView.setOnItemClickListener(new OnItemClickListener() {
@@ -82,7 +82,7 @@ public class InfoListFragment extends ExtendedSherlockFragment {
 			@Override
 			public void onItemClick(AdapterView<?> listView, View rowView, int position, long itemID) {
 				InfoItem item = mInfoAdapter.getItem(position);
-				WebViewDialogFragment.newInstance(item.url, false, item.initialScaleFull).show(getSherlockActivity().getSupportFragmentManager(), item.name);
+				WebViewDialogFragment.newInstance(item.url, false, item.initialScaleFull).show(getActivity().getSupportFragmentManager(), item.name);
 			}
 		});
 

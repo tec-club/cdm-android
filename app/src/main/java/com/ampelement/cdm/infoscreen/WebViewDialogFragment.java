@@ -9,11 +9,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
+import android.support.v4.app.DialogFragment;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.infoscreen.WebViewDialogFragment.DialogWebViewClient.OnPageLoaded;
 
-public class WebViewDialogFragment extends SherlockDialogFragment {
+public class WebViewDialogFragment extends DialogFragment {
 
 	public static final String TAG = "InfoListFragment";
 

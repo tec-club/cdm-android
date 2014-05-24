@@ -1,6 +1,5 @@
 package com.ampelement.cdm;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
@@ -22,7 +21,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
 import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryStyle;
 import com.ampelement.cdm.utils.android.NavDrawerEntry.EntryType;
@@ -59,7 +58,7 @@ public class NavAdapter {
 
 		public void onDrawerClose(View drawerView);
 
-		public void onFragmentLoaded(ExtendedSherlockFragment oldFragment, ExtendedSherlockFragment newFragment);
+		public void onFragmentLoaded(ExtendedFragment oldFragment, ExtendedFragment newFragment);
 	}
 
 	public NavAdapter(ActionBarActivity activity, Bundle savedInstanceState, View parentView, int resDrawerLayout, int resDrawerList,
@@ -118,7 +117,7 @@ public class NavAdapter {
 		FragmentTransaction transaction = mFragmentManager.beginTransaction();
 		for (NavDrawerEntry entry : mEntries) {
 			if (entry.getType() == EntryType.FRAGMENT) {
-				ExtendedSherlockFragment fragment = entry.findFragment(mFragmentManager);
+				ExtendedFragment fragment = entry.findFragment(mFragmentManager);
 				if (savedInstanceState == null || fragment == null) {
 					fragment = entry.getFragment();
 					transaction.add(mResFragmentFrame, fragment, fragment.getFragmentTag());
@@ -240,7 +239,7 @@ public class NavAdapter {
 		return mEntries.get(mCurrentPos).getTitle();
 	}
 
-	public ExtendedSherlockFragment getCurrentFragment() {
+	public ExtendedFragment getCurrentFragment() {
 		return mEntries.get(mCurrentPos).getFragment();
 	}
 

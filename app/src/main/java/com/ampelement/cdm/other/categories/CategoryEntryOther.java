@@ -2,7 +2,7 @@ package com.ampelement.cdm.other.categories;
 
 import android.app.Activity;
 
-import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
 
 public class CategoryEntryOther extends NavDrawerEntry {
@@ -28,7 +28,7 @@ public class CategoryEntryOther extends NavDrawerEntry {
 	}
 
 	@Override
-	public Class<? extends ExtendedSherlockFragment> getFragmentType() {
+	public Class<? extends ExtendedFragment> getFragmentType() {
 		return null;
 	}
 

@@ -46,16 +46,16 @@ public abstract class NavDrawerEntry {
 	 */
 	public abstract int getIcon();
 
-	public abstract Class<? extends ExtendedSherlockFragment> getFragmentType();
+	public abstract Class<? extends ExtendedFragment> getFragmentType();
 
-	private ExtendedSherlockFragment fragment;
+	private ExtendedFragment fragment;
 
 	/**
 	 * Should be overridden for entries that represent a view.
 	 * 
 	 * @return the fragment to be shown
 	 */
-	public ExtendedSherlockFragment getFragment() {
+	public ExtendedFragment getFragment() {
 		if (fragment == null)
 			try {
 				fragment = getFragmentType().newInstance();
@@ -69,10 +69,10 @@ public abstract class NavDrawerEntry {
 		return fragment;
 	}
 
-	public ExtendedSherlockFragment findFragment(FragmentManager fm) {
+	public ExtendedFragment findFragment(FragmentManager fm) {
 		Fragment f = fm.findFragmentByTag(getFragmentType().getSimpleName());
-		if (f != null && f instanceof ExtendedSherlockFragment)
-			fragment = (ExtendedSherlockFragment) f;
+		if (f != null && f instanceof ExtendedFragment)
+			fragment = (ExtendedFragment) f;
 		return getFragment();
 	}
 

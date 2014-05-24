@@ -20,7 +20,6 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockDialogFragment;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.schoolloop.SchoolLoopEvent;
 
@@ -28,7 +27,7 @@ import org.joda.time.DateTime;
 
 import java.text.DateFormatSymbols;
 
-public class CalendarDayFragment extends SherlockDialogFragment {
+public class CalendarDayFragment extends DialogFragment {
 
 	public static final String TAG = "InstagramListFragment";
 
@@ -93,8 +92,8 @@ public class CalendarDayFragment extends SherlockDialogFragment {
 					if (item != null && item instanceof SchoolLoopEvent) {
 						final SchoolLoopEvent event = ((SchoolLoopEvent) item);
 						if (!event.location.equals("")) {
-							Context context = Build.VERSION.SDK_INT >= 11 ? new ContextThemeWrapper(getSherlockActivity(), android.R.style.Theme_Holo_Dialog)
-									: getSherlockActivity();
+							Context context = Build.VERSION.SDK_INT >= 11 ? new ContextThemeWrapper(getActivity(), android.R.style.Theme_Holo_Dialog)
+									: getActivity();
 							AlertDialog.Builder adb = new AlertDialog.Builder(context);
 							adb.setTitle(event.title);
 							View adView = LayoutInflater.from(context).inflate(R.layout.calendar_day_map_dialog, null);
@@ -107,7 +106,7 @@ public class CalendarDayFragment extends SherlockDialogFragment {
 								public void onClick(DialogInterface dialog, int which) {
 									dialog.cancel();
 									String uri = "geo:0,0?q=" + event.location;
-									getSherlockActivity().startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri)));
+									getActivity().startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri)));
 								}
 							});
 							adb.setNegativeButton("Close", new DialogInterface.OnClickListener() {
