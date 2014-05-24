@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -239,7 +241,14 @@ public class SchoolLoopFragment extends ExtendedFragment {
 					loginScreenWithErrorMessage("Bad Username or Password");
 				}
 			} else {
-				loginScreenWithErrorMessage("Error Logging In");
+                // Test Internet connection
+                ConnectivityManager cm = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+                boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+                if (!isConnected)
+                    noConnectionScreen();
+                else
+				    loginScreenWithErrorMessage("Error Logging In");
 			}
 		}
 
@@ -273,6 +282,13 @@ public class SchoolLoopFragment extends ExtendedFragment {
 		loginScreen.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), android.R.anim.fade_in));
 		errorText.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), android.R.anim.fade_in));
 	}
+
+    private void noConnectionScreen() {
+        ((RelativeLayout) schoolLoopScreen.findViewById(R.id.school_loop_loading)).setVisibility(View.GONE);
+        TextView errorText = (TextView) schoolLoopScreen.findViewById(R.id.school_loop_error);
+        errorText.setVisibility(View.VISIBLE);
+        errorText.setText(getString(R.string.cdm_no_connection));
+    }
 
 	private class SchoolLoopWebViewClient extends WebViewClient {
 		@Override
