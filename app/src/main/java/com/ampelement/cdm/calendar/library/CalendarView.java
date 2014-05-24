@@ -189,7 +189,7 @@ public class CalendarView extends View {
 		// prepare static vars
 		Resources res = getResources();
 
-		CELL_TEXT_SIZE = res.getDimension(R.dimen.cell_text_size) * 1.2f;
+		CELL_TEXT_SIZE = res.getDimension(R.dimen.cell_text_size);
 		WEEK_HEIGHT = CELL_TEXT_SIZE * 2f;
 		SAVED_MONTH_HEIGHT = MONTH_HEIGHT = CELL_TEXT_SIZE * 1.3f;
 
