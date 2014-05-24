@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +23,7 @@ import com.ampelement.cdm.other.categories.CategoryEntryOther;
 import com.ampelement.cdm.other.categories.CategoryEntryWeb;
 import com.ampelement.cdm.schoolloop.SchoolLoopFragment;
 import com.ampelement.cdm.utils.android.AndroidUtils;
-import com.ampelement.cdm.utils.android.ExtendedSherlockFragment;
+import com.ampelement.cdm.utils.android.ExtendedFragment;
 import com.parse.Parse;
 import com.parse.ParseAnalytics;
 import com.parse.ParseInstallation;
@@ -56,7 +57,7 @@ public class CDMActivity extends ActionBarActivity {
 				R.id.main_frame, new OnNavChangeListener() {
 
 					@Override
-					public void onFragmentLoaded(ExtendedSherlockFragment oldFragment, ExtendedSherlockFragment newFragment) {
+					public void onFragmentLoaded(ExtendedFragment oldFragment, ExtendedFragment newFragment) {
 						// getSupportActionBar().setTitle(newFragment.getTitle());
 					}
 
@@ -87,7 +88,9 @@ public class CDMActivity extends ActionBarActivity {
 			/* Setup Parse for notifications */
 			Parse.initialize(this, "gsXQZjeTDxb3Ekjp8PJ8TrY5X9NJROPpIq2E5ljm", "BMHgC1jqWcF3H8QFdqNFKnw1JJgeT1cuWct1W449");
 			PushService.setDefaultPushCallback(this, CDMActivity.class);
-			ParseInstallation.getCurrentInstallation().saveInBackground();
+            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+            installation.put("UniqueId", Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
+            installation.saveInBackground();
 			/* Use Parse to track analytics */
 			ParseAnalytics.trackAppOpened(getIntent());
 		}
@@ -100,7 +103,7 @@ public class CDMActivity extends ActionBarActivity {
 	@Override
 	public void onBackPressed() {
 		try {
-			ExtendedSherlockFragment currentFragment = mNavAdapter.getCurrentFragment();
+			ExtendedFragment currentFragment = mNavAdapter.getCurrentFragment();
 			if (currentFragment != null) {
 				if (currentFragment != null && currentFragment instanceof SchoolLoopFragment) {
 					SchoolLoopFragment schoolLoopFragment = (SchoolLoopFragment) currentFragment;
