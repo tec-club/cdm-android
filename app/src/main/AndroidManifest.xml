@@ -26,13 +26,13 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
+        android:label="@string/cdm_app_name"
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.ampelement.cdm.CDMActivity"
-            android:label="@string/app_name_long"
+            android:label="@string/cdm_app_name_long"
             android:uiOptions="splitActionBarWhenNarrow" >
-            <intent-filter android:label="@string/app_name_long" >
+            <intent-filter android:label="@string/cdm_app_name_long" >
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -41,7 +41,7 @@
         <activity
             android:name="com.ampelement.cdm.SettingsActivity"
             android:icon="@drawable/trident"
-            android:label="@string/settings" >
+            android:label="@string/cdm_settings" >
         </activity>
 
         <!-- Parse classes for notifications -->

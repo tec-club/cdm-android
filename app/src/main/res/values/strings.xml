@@ -2,14 +2,14 @@
 <resources>
 
     <string name="cdm_app_name">CDM</string>
-    <string name="app_name_long">Corona del Mar HS</string>
-    <string name="settings">Settings</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="submit">Submit</string>
-    <string name="previous">Previous</string>
-    <string name="next">Next</string>
-    <string name="drawerOpen">Navigation Menu</string>
+    <string name="cdm_app_name_long">Corona del Mar HS</string>
+    <string name="cdm_settings">Settings</string>
+    <string name="cdm_username">Username</string>
+    <string name="cdm_password">Password</string>
+    <string name="cdm_submit">Submit</string>
+    <string name="cdm_previous">Previous</string>
+    <string name="cdm_next">Next</string>
+    <string name="cdm_drawer_open">Navigation Menu</string>
     <string name="cdm_no_connection">No Internet Connection</string>
 
 </resources>

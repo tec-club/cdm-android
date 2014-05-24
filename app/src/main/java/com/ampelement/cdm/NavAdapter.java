@@ -96,7 +96,7 @@ public class NavAdapter {
 			}
 		});
 
-		mDrawerToggle = new ActionBarDrawerToggle(activity, mDrawerLayout, R.drawable.ic_drawer, R.string.drawerOpen, R.string.app_name) {
+		mDrawerToggle = new ActionBarDrawerToggle(activity, mDrawerLayout, R.drawable.ic_drawer, R.string.cdm_drawer_open, R.string.cdm_app_name) {
 			/** Called when a drawer has settled in a completely closed state. */
 			public void onDrawerClosed(View view) {
 				mIsDrawerOpen = false;

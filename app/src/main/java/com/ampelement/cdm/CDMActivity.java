@@ -64,7 +64,7 @@ public class CDMActivity extends ActionBarActivity {
 					@SuppressLint("NewApi")
 					@Override
 					public void onDrawerOpen(View drawerView) {
-						// getSupportActionBar().setTitle(R.string.drawerOpen);
+						// getSupportActionBar().setTitle(R.string.cdm_drawer_open);
 						if (AndroidUtils.API_LEVEL() >= 11)
 							invalidateOptionsMenu();
 					}

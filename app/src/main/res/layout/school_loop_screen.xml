@@ -26,7 +26,7 @@
                 android:id="@+id/school_loop_username"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/username"
+                android:hint="@string/cdm_username"
                 android:imeOptions="actionNext"
                 android:nextFocusDown="@+id/school_loop_password"
                 android:singleLine="true" />
@@ -46,7 +46,7 @@
                 android:id="@+id/school_loop_password"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/password"
+                android:hint="@string/cdm_password"
                 android:imeOptions="actionGo"
                 android:inputType="textPassword"
                 android:singleLine="true" />
@@ -56,7 +56,7 @@
             android:id="@+id/school_loop_submit"
             android:layout_width="wrap_content"
             android:layout_height="48dip"
-            android:text="@string/submit" />
+            android:text="@string/cdm_submit" />
     </LinearLayout>
 
     <com.ampelement.cdm.widgets.TextViewRBI
