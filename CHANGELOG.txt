@@ -1,0 +1,22 @@
+*** Version 1.1.1 ***
+ * Bug fixes
+    - Event loading
+    - School Loop handling no-network
+    - Calendar text is better sized
+
+*** Version 1.1.0 ***
+ * Major UI redesign
+    - New navigation drawer
+    - New icon
+    - New color scheme
+ * Notifications are more efficient
+ * Bug fixes
+
+*** Version 1.0.1 ***
+  * Extremely minor UI changes
+    - Calendar indicates which day is today
+    - Calendar swipes better
+  * Hopefully the crash caused by pressing the back button is fixed
+
+*** Version 1 ***
+  * It's out!
