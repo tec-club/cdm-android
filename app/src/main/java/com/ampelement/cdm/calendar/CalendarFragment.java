@@ -116,7 +116,11 @@ public class CalendarFragment extends ExtendedFragment {
 					if (eventsMap != null) {
 						mEventsMap = eventsMap;
 						mCalendarView.setCalendarEvents(mEventsMap);
+                        // Show calendar view
+                        mEventLoadingScreen.setVisibility(View.GONE);
+                        mCalendarView.setVisibility(View.VISIBLE);
 					} else {
+                        // Show error view
 						mEventLoadingScreen.setVisibility(View.GONE);
 						mEventErrorLoadingScreen.setVisibility(View.VISIBLE);
 					}
