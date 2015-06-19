@@ -30,8 +30,13 @@ public class Utils {
 	 * @param c
 	 *            Delimiter to use
 	 * @return a single String
-	 */
-	public static String combine(String[] arr, String c) {
+     *
+     * For example if String arr[]= {"5", "4", "3"}
+     * then a call to combine(arr, "+") would return
+     * a string "5+4+3"
+     *
+     */
+    public static String combine(String[] arr, String c) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < arr.length; i++) {
 			sb.append(arr[i]).append(c);
@@ -43,8 +48,10 @@ public class Utils {
 	/**
 	 * Open an InputStream of the supplied URL and read the response into a
 	 * String object.
-	 * 
-	 * @param url
+     *
+     * Can be used to return a string of an html page to be parsed later on
+     *
+     * @param url
 	 *            URL to fetch
 	 * @return String response from the URL
 	 */

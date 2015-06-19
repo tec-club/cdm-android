@@ -4,12 +4,17 @@ import org.joda.time.Chronology;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
+/**
+ */
 public class CalendarEvent {
 
 	public Interval eventPeriod;
 
-	public CalendarEvent(Interval timeSpan) {
-		eventPeriod = timeSpan;
+    /*
+    All constructors here create the CalendarEvent object with a joda.time.Interval
+     */
+    public CalendarEvent(Interval timeSpan) {
+        eventPeriod = timeSpan;
 	}
 
 	public CalendarEvent(long startInstant, long endInstant, Chronology chronology) {
@@ -20,16 +25,27 @@ public class CalendarEvent {
 		this(startTime.getMillis(), endTime.getMillis(), startTime.getChronology());
 	}
 
-	public String getIsoDate() {
-		return eventPeriod.getStart().toString("yyyy-MM-dd");
+
+    /**
+     * @return Date of when the Interval started
+     */
+    public String getIsoDate() {
+        return eventPeriod.getStart().toString("yyyy-MM-dd");
 	}
 
-	int getStartMinute() {
-		return eventPeriod.getStart().getMinuteOfDay();
+    /**
+     * @return Minute of the day when the Interval started
+     */
+    int getStartMinute() {
+        return eventPeriod.getStart().getMinuteOfDay();
 	}
 
-	int getEndMinute() {
-		return eventPeriod.getEnd().getMinuteOfDay();
+    /**
+     *
+     * @return Minute of the day when the Interval will end
+     */
+    int getEndMinute() {
+        return eventPeriod.getEnd().getMinuteOfDay();
 	}
 
 }
