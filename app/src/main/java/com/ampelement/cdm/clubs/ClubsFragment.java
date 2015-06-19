@@ -66,7 +66,7 @@ public class ClubsFragment extends ExtendedFragment {
 	SharedPreferences mPref;
 
 	GetClubsTask mGetClubsTask;
-	ClubData[] mClubData;
+    ClubData[] mClubData; //holds the array of Club values
 
 	// View variables
 	ClubListAdapter mClubListAdapter;
@@ -80,8 +80,8 @@ public class ClubsFragment extends ExtendedFragment {
 		String cachedClubJson = mPref.getString(Preferences.CLUB_CACHED_DATA, null);
 		int cachedClubJsonVersion = mPref.getInt(Preferences.CLUB_CACHED_DATA_VERSION, -1);
 
-		// Start off Club data update
-		mGetClubsTask = new GetClubsTask(cachedClubJsonVersion, mPref, new OnUpdateComplete() {
+        // Start off Club data update, its asynchronous
+        mGetClubsTask = new GetClubsTask(cachedClubJsonVersion, mPref, new OnUpdateComplete() {
 
 			@Override
 			public void onComplete(ClubData[] clubData) {
@@ -92,6 +92,7 @@ public class ClubsFragment extends ExtendedFragment {
 				}
 			}
 		});
+
 		mGetClubsTask.execute();
 
 		// Setup ListAdapter to show Club data
@@ -103,25 +104,32 @@ public class ClubsFragment extends ExtendedFragment {
 		// Setup view
 		View view = inflater.inflate(R.layout.club_screen, container, false);
 		ListView viewClubList = (ListView) view.findViewById(R.id.club_screen_listView);
-
+        //set the viewClubList adapter
 		if (mClubData != null) {
 			mClubListAdapter = new ClubListAdapter(getActivity());
 			viewClubList.setAdapter(mClubListAdapter);
 		} else {
-			// TODO Implement "no data found"
-		}
+            // TODO Implement "no data found" \
+            /*
+            What should be done here???
+            A "sorry no clubs found" page?
+             */
+        }
 
 		return view;
 	}
 
 	@Override
 	public void onDestroyView() {
-		mGetClubsTask.setOnUpdateCompleteListener(null);
+        mGetClubsTask.setOnUpdateCompleteListener(null); //Why?????
 
 		super.onDestroyView();
 	}
 
-	private class ClubListAdapter extends BaseAdapter {
+    /*
+    Adapter for the listview that contains the club data
+     */
+    private class ClubListAdapter extends BaseAdapter {
 		private final Context context;
 		private final LayoutInflater inflater;
 
@@ -137,8 +145,13 @@ public class ClubsFragment extends ExtendedFragment {
 			// Setup row view
 			if (convertView == null)
 				convertView = inflater.inflate(R.layout.club_item_view, parent, false);
-
-			ViewHolder viewHolder = (ViewHolder) convertView.getTag();
+            /*
+             *The first time around that the adapter cycles through the club_items
+              * the getTag() call will return null, this means that every single
+               * club_item view will pass through the following if statement and
+               * have it's tag set to the viewHolder object
+             */
+            ViewHolder viewHolder = (ViewHolder) convertView.getTag();
 
 			if (viewHolder == null) {
 				viewHolder = new ViewHolder(convertView);
@@ -154,7 +167,8 @@ public class ClubsFragment extends ExtendedFragment {
 				viewHolder.viewDesc.setText(club.description);
 				// viewTimes.setText(Utils.combine(club.meetingTimes, "\n"));
 				viewHolder.viewTimes.setText(club.president);
-				Picasso.with(getActivity()).load(club.getLogoUrl()).placeholder(R.drawable.avatar_missing_circle).transform(picassoCircleTransform)
+                //perform Picasso animation
+                Picasso.with(getActivity()).load(club.getLogoUrl()).placeholder(R.drawable.avatar_missing_circle).transform(picassoCircleTransform)
 						.into(viewHolder.viewLogo);
 			} catch (Exception e) {
 
@@ -179,7 +193,11 @@ public class ClubsFragment extends ExtendedFragment {
 		}
 	}
 
-	static class ViewHolder {
+    /**
+     * This ViewHolder class is used to limit resource consumption when looking for Views
+     * by setting View references in it which is set in each club_item View tag as static data
+     */
+    static class ViewHolder {
 		TextView viewName;
 		TextView viewDesc;
 		TextView viewTimes;

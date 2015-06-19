@@ -3,8 +3,10 @@ package com.ampelement.cdm.clubs;
 import android.net.Uri;
 
 public class ClubData {
-
-	public String name;
+    /*
+    Variables that every club should have
+     */
+    public String name;
 //	public String logoURL;
 	public String logoURL = "http://dummyimage.com/256/" + Integer.toHexString((int) (Math.random() * 255)) + Integer.toHexString((int) (Math.random() * 255)) + Integer.toHexString((int) (Math.random() * 255));
 	public String description;
