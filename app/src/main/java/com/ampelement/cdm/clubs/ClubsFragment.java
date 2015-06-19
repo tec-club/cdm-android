@@ -158,8 +158,8 @@ public class ClubsFragment extends ExtendedFragment {
 				convertView.setTag(viewHolder);
 			}
 
-			try {
-				// Get current row item
+
+            // Get current row item
 				ClubData club = getItem(position);
 
 				// Populate view
@@ -170,9 +170,7 @@ public class ClubsFragment extends ExtendedFragment {
                 //perform Picasso animation
                 Picasso.with(getActivity()).load(club.getLogoUrl()).placeholder(R.drawable.avatar_missing_circle).transform(picassoCircleTransform)
 						.into(viewHolder.viewLogo);
-			} catch (Exception e) {
 
-			}
 
 			return convertView;
 		}
