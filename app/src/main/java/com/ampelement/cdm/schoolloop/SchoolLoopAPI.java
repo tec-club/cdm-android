@@ -196,7 +196,7 @@ public class SchoolLoopAPI {
 
 
 				if (m.find()) {
-			String formDataIDString = m.group(1);
+			String formDataIDString = m.group(1);  //The id in the form_data_id input
 			//Sets up HTTPPost to fill in the form
 			HttpPost schoolloopLoginHttpPost = new HttpPost(BASE_URL + "/portal/login?etarget=login_form");
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
@@ -204,7 +204,7 @@ public class SchoolLoopAPI {
 			nameValuePairs.add(new BasicNameValuePair("password", pPassword));
 			nameValuePairs.add(new BasicNameValuePair("form_data_id", formDataIDString));
 			nameValuePairs.add(new BasicNameValuePair("event_override", "login"));
-			String[] blankFields = { "reverse", "sort", "login_form_reverse", "login_form_page_index", "login_form_page_item_count", "login_form_sort",
+			final String[] blankFields = { "reverse", "sort", "login_form_reverse", "login_form_page_index", "login_form_page_item_count", "login_form_sort",
 					"return_url", "forward", "redirect", "login_form_letter", "login_form_filter" };
 			populateNVListWithBlank(nameValuePairs, blankFields);
 			schoolloopLoginHttpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
