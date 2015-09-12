@@ -13,7 +13,9 @@ import org.joda.time.format.DateTimeFormatter;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+/*
+It seems like this is the only file Alex commented on :)
+ */
 public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 
 	public String title;
@@ -30,6 +32,15 @@ public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 		this.location = location;
 		this.description = description;
 	}
+
+
+
+
+
+
+
+
+
 
 	/**
 	 * @author Alex
@@ -156,6 +167,13 @@ public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 				throw new IllegalArgumentException("\"" + endTime + "\" is not a valid time in the 'hh:mm aa' format");
 		}
 	}
+//SchoolloopEventBuilder class ends here
+
+
+
+
+
+
 
 	/*
 	 * (non-Javadoc)
