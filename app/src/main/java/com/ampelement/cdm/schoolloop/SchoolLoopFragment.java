@@ -197,6 +197,8 @@ public class SchoolLoopFragment extends ExtendedFragment {
 		two.startAnimation(AnimationUtils.loadAnimation(getActivity().getApplicationContext(), android.R.anim.fade_in));
 	}
 
+
+
 	private class SchoolLoopLoginTask extends AsyncTask<Login, Void, Boolean> {
 
 		@Override
@@ -271,6 +273,8 @@ public class SchoolLoopFragment extends ExtendedFragment {
 			});
 		}
 	}
+		//SchoolLoopLoginTask Class ends here
+
 
 	private void loginScreenWithErrorMessage(String errorString) {
 		((RelativeLayout) schoolLoopScreen.findViewById(R.id.school_loop_loading)).setVisibility(View.GONE);
@@ -315,6 +319,8 @@ public class SchoolLoopFragment extends ExtendedFragment {
 			return true;
 		}
 	}
+		//SchoolLoopWebview Client ends here
+
 
 	void updateCredentials(String username, String password, long time) {
 		SharedPreferences.Editor sharedPrefEditor = mSharedPreferences.edit();
