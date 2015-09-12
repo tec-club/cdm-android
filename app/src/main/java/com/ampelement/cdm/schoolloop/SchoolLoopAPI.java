@@ -212,6 +212,11 @@ public class SchoolLoopAPI {
 			// Execute HTTP Post Request
 			HttpResponse schoolloopLoginPostResponse = httpclient.execute(schoolloopLoginHttpPost);
 			if (checkLogin) {
+
+				/*
+				When the login POST request fails, the new URL contains the form_data_id value in the address bar,
+				so return null if login failed
+				 */
 				if (EntityUtils.toString(schoolloopLoginPostResponse.getEntity()).contains("form_data_id")) {
 					return null;
 				} else {
