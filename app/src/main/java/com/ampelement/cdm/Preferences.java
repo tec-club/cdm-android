@@ -1,8 +1,11 @@
 package com.ampelement.cdm;
 
 public class Preferences {
-	
-	public static final String SCHOOL_LOOP_USERNAME = "schoolLoopUsername";
+    /*
+    Class contains the constant strings for
+    sharedPreferences file names, keys, and other variables
+     */
+    public static final String SCHOOL_LOOP_USERNAME = "schoolLoopUsername";
 	public static final String SCHOOL_LOOP_PASSWORD = "schoolLoopPassword";
 	public static final String SCHOOL_LOOP_SLID = "loginSLID";
 	public static final String SCHOOL_LOOP_JSESSIONID = "loginJSESSIONID";

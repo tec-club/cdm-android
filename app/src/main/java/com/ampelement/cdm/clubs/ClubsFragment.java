@@ -119,7 +119,11 @@ public class ClubsFragment extends ExtendedFragment {
 		return view;
 	}
 
-	@Override
+    /**
+     * Setting the UpdateCompleteListener object as null
+     * signifies that it is finished
+     */
+    @Override
 	public void onDestroyView() {
         mGetClubsTask.setOnUpdateCompleteListener(null); //Why?????
 

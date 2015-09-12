@@ -2,6 +2,9 @@ package com.ampelement.cdm.schoolloop;
 
 import com.ampelement.cdm.calendar.library.CalendarEvents;
 
+/**
+ * Represents the schoolloop events using the underlying storage as a CalendarEvent Map
+ */
 public class SchoolLoopEventMap extends CalendarEvents<SchoolLoopEvent> {
 
 	public boolean isEmpty() {

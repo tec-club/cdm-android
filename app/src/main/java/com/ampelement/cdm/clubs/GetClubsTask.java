@@ -44,14 +44,16 @@ public class GetClubsTask extends AsyncTask<Void, Void, ClubData[]> {
 		mOnUpdateComplete = onUpdateComplete;
 	}
 
+
 	@Override
 	protected ClubData[] doInBackground(Void... voids) {
 		HttpURLConnection urlConnection = null;
 		try {
 			// Get latest club data
-			URL url = new URL("http://alexwendland.com/cdm/clubs");
-			urlConnection = (HttpURLConnection) url.openConnection();
-			InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+            URL url = new URL("http://alexwendland.com/cdm/clubs"); //TODO Update all old urls to new ones that direct towards http://cdmtecclub.com/
+            //URL seems like a 404 error
+            urlConnection = (HttpURLConnection) url.openConnection();
+            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 			String response = Utils.convertStreamToString(in, "UTF-8");
 
 			// Handle club data
@@ -59,12 +61,15 @@ public class GetClubsTask extends AsyncTask<Void, Void, ClubData[]> {
 			int cachedClubDataVersion = mSharedPref.getInt(Preferences.CLUB_CACHED_DATA_VERSION, -1);
 			int jsonClubDataVersion = json.getInt("version");
 			if (jsonClubDataVersion > cachedClubDataVersion) {
-				SharedPreferences.Editor edit = mSharedPref.edit();
+                /*
+                If newer version, then update the sharedPreferences with new CLUB_CACHED_DATA values
+                 */
+                SharedPreferences.Editor edit = mSharedPref.edit();
 				edit.putInt(Preferences.CLUB_CACHED_DATA_VERSION, jsonClubDataVersion);
 				edit.putString(Preferences.CLUB_CACHED_DATA, response);
 				edit.commit();
-				return parseClubData(json);
-			}
+                return parseClubData(json); //At this line, before returning, it will go to the finally-statement
+            }
 
 		} catch (MalformedURLException e) {
 			Log.e(ClubsFragment.TAG, e.getMessage());
@@ -78,7 +83,12 @@ public class GetClubsTask extends AsyncTask<Void, Void, ClubData[]> {
 		return null;
 	}
 
-	@Override
+    /**
+     * Called after executing
+     *
+     * @param clubData The array of clubData, null value means its done
+     */
+    @Override
 	protected void onPostExecute(ClubData[] clubData) {
 		if (mOnUpdateComplete != null)
 			mOnUpdateComplete.onComplete(clubData);
@@ -98,10 +108,17 @@ public class GetClubsTask extends AsyncTask<Void, Void, ClubData[]> {
 			return parseClubData(new JSONObject(json));
 		} catch (Exception e) {
 			return null;
-		}
-	}
+        }
+    }
 
-	public static ClubData[] parseClubData(JSONObject j) {
+    /**Creates a JSONArray object from the param j
+     * and then traverses the array and creates
+     * clubData objects from JSONObjects in the JSONArray
+     *
+     * @param j The JSONObject that contains the string of club data from the URL
+     * @return the array of ClubData objects
+     */
+    public static ClubData[] parseClubData(JSONObject j) {
 		ClubData[] clubs = null;
 
 		try {

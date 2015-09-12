@@ -29,7 +29,10 @@ public class InfoListFragment extends ExtendedFragment {
 		return InfoListFragment.class.getSimpleName();
 	}
 
-	public static class Entry extends NavDrawerEntry {
+    /**
+     * Entry for the Bell Schedule/ Handbook
+     */
+    public static class Entry extends NavDrawerEntry {
 
 		@Override
 		public String getTitle() {
@@ -62,7 +65,7 @@ public class InfoListFragment extends ExtendedFragment {
 		}
 	}
 
-	private static final String BASE_URL = "http://www.ampelement.com/cdm";
+    private static final String BASE_URL = "http://www.ampelement.com/cdm"; //TODO update URLS
 
 	private ListView mInfoListView;
 
@@ -70,8 +73,10 @@ public class InfoListFragment extends ExtendedFragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-		View infoScreen = inflater.inflate(R.layout.info_screen, container, false);
+    /*
+    Inflate the info_screen layout and set the listView adapter
+     */
+        View infoScreen = inflater.inflate(R.layout.info_screen, container, false);
 		mInfoListView = (ListView) infoScreen.findViewById(R.id.info_screen_gridView);
 
 		mInfoAdapter = new InfoAdapter(getActivity());
@@ -81,8 +86,12 @@ public class InfoListFragment extends ExtendedFragment {
 
 			@Override
 			public void onItemClick(AdapterView<?> listView, View rowView, int position, long itemID) {
-				InfoItem item = mInfoAdapter.getItem(position);
-				WebViewDialogFragment.newInstance(item.url, false, item.initialScaleFull).show(getActivity().getSupportFragmentManager(), item.name);
+                //Create infoItem and show WebViewDialogFragment of this item
+                /*
+                NOTE:The layout that appears when clicking an InfoItem is merely a webpage in a dialog
+                 */
+                InfoItem item = mInfoAdapter.getItem(position);
+                WebViewDialogFragment.newInstance(item.url, false, item.initialScaleFull).show(getActivity().getSupportFragmentManager(), item.name);
 			}
 		});
 
@@ -101,7 +110,11 @@ public class InfoListFragment extends ExtendedFragment {
 	static class ViewHolderLeft extends ViewHolder {
 	}
 
-	private class InfoItem {
+    /**
+     * This class represents an item on the InfoList ListView, and
+     * contains a url for the WebViewDialog
+     */
+    private class InfoItem {
 		String name;
 		String description;
 		int thumbnailRes;
@@ -117,12 +130,20 @@ public class InfoListFragment extends ExtendedFragment {
 		}
 	}
 
-	private class InfoAdapter extends BaseAdapter {
+
+    /**
+     * The adapter for the InfoList objects
+     */
+    private class InfoAdapter extends BaseAdapter {
 		ArrayList<InfoItem> infoList;
 		LayoutInflater layoutInflater;
 
 		public InfoAdapter(Context context) {
-			layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        /*
+		Initialize the layoutInflater and infoList
+		add the Handbook and Bell Schedule items to it
+		 */
+            layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			infoList = new ArrayList<InfoItem>();
 			infoList.add(new InfoItem(
 					"Handbook",

@@ -8,6 +8,9 @@ import com.ampelement.cdm.R;
 import com.ampelement.cdm.utils.android.ExtendedFragment;
 import com.ampelement.cdm.utils.android.NavDrawerEntry;
 
+/**
+ * This class represents an entry on the Navigation Drawer
+ */
 public class TwitterEntry extends NavDrawerEntry {
 
 	public static final String TAG = "TwitterEntry";

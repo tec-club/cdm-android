@@ -13,6 +13,15 @@ import android.support.v4.app.DialogFragment;
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.infoscreen.WebViewDialogFragment.DialogWebViewClient.OnPageLoaded;
 
+/* TODO Redesign implementation
+I don't really agree with this design structure. Right now all of the InfoItems open a WebViewDialogFragment
+to display the information, which requires an inefficient amount of data usage. I think that each of the
+displays should be given a SHA256 hash, and displays should be cached onto the devices. The phone should only
+check if the hash on our server is different than the one cached and then download the new version in the background.
+This would allow for smaller data usage, on average faster loading, and the ability for a native UI design that doesn't
+ depend on the webview. Instead we could have a similar styled ImageFragment class that holds the drawable resources.
+ I want the new app to be capable of presenting cached data in the case of users not having network access.
+ */
 public class WebViewDialogFragment extends DialogFragment {
 
 	public static final String TAG = "InfoListFragment";
@@ -58,8 +67,11 @@ public class WebViewDialogFragment extends DialogFragment {
 			allowURLLoading = args.getBoolean("allownav");
 			setInitialScaleFull = args.getBoolean("initialScaleFull");
 		}
-
-		final WebView webView = new WebView(getActivity());
+        /*
+        Setup the WebView display
+        When done loading close the progressView and open the page
+         */
+        final WebView webView = new WebView(getActivity());
 		DialogWebViewClient dwvClient = new DialogWebViewClient(allowURLLoading);
 		dwvClient.setOnPageLoaded(new OnPageLoaded() {
 			@Override
@@ -68,7 +80,9 @@ public class WebViewDialogFragment extends DialogFragment {
 				webView.setVisibility(View.VISIBLE);
 			}
 		});
-		webView.setWebViewClient(dwvClient);
+
+
+        webView.setWebViewClient(dwvClient);
 		webView.getSettings().setBuiltInZoomControls(false);
 		webView.getSettings().setSupportZoom(true);
 		webView.getSettings().setBuiltInZoomControls(true);
@@ -83,7 +97,10 @@ public class WebViewDialogFragment extends DialogFragment {
 		return v;
 	}
 
-	public static class DialogWebViewClient extends WebViewClient {
+    /**
+     * The client for handling the WebView in the DialogFragment
+     */
+    public static class DialogWebViewClient extends WebViewClient {
 		private boolean allowURLLoading = false;
 		private OnPageLoaded onPageLoaded;
 

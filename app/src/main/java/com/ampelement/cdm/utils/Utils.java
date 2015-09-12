@@ -47,7 +47,8 @@ public class Utils {
 
 	/**
 	 * Open an InputStream of the supplied URL and read the response into a
-	 * String object.
+     * String object. Used for HTTP GET Requests, since further socket interactions
+     * are restricted.
      *
      * Can be used to return a string of an html page to be parsed later on
      *

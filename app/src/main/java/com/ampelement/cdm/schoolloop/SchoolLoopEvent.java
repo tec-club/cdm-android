@@ -14,6 +14,9 @@ import org.joda.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The object that represents a schoolloop calendar event
+ */
 public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 
 	public String title;
