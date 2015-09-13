@@ -43,6 +43,10 @@ public class SchoolLoopAPI {
 	public static final String BASE_URL_SECURE = "https://cdm.schoolloop.com";
 	public static final String BASE_URL = "http://cdm.schoolloop.com";
 
+	/**
+	 * This class is used to parse the CdM homepage RSS Feed
+	 * to create Schoolloop event objects to display on the Calendar fragment
+	 */
 	public static class EventFetcher {
 		// public static final String EVENT_RSS_URL =
 		// "http://ampelement.com/cdm/test_rss.xml";
@@ -119,7 +123,7 @@ public class SchoolLoopAPI {
 		@Override
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			elementOn = true;
-			content.setLength(0);
+			content.setLength(0);   //Resets content value to get ready for this upcoming element
 			if (localName.equals("item")) {
 				if (currentEventBuilder != null) {
 					eventMap.addEvent(currentEventBuilder.isoDate, currentEventBuilder.build());
@@ -136,6 +140,8 @@ public class SchoolLoopAPI {
 			elementOn = false;
 			String elementValue = content.toString();
 			if (currentEventBuilder != null) {
+				//Why not just a simple switch statement?
+
 				if (localName.equalsIgnoreCase("title")) {
 					currentEventBuilder.setTitle(elementValue);
 				} else if (localName.equalsIgnoreCase("location")) {
@@ -162,26 +168,43 @@ public class SchoolLoopAPI {
 			content.append(ch, start, length);
 		}
 	}
+	 //EventParser Class ends here
 
+
+	/**
+	 *
+	 * @param httpclient The HTTPClient that executes the requests
+	 * @param pUserName The client username
+	 * @param pPassword	The client password
+	 * @param checkLogin  ?????
+	 * @return  The CookieStore that the HTTPPost statement generates if login was successful, else if {@code checkLogin} is null
+	 * @throws ClientProtocolException If the HTTP requests fail
+	 * @throws IOException If the HTTP requests fail
+	 */
 	public static CookieStore loginToSchoolloop(DefaultHttpClient httpclient, String pUserName, String pPassword, boolean checkLogin)
 			throws ClientProtocolException, IOException {
+
+		//Executes the GET Request
 		HttpResponse schoolloopLoginGetResponse = null;
 		HttpGet schoolloopLoginHttpGet = new HttpGet(BASE_URL + "/portal/login");
 		schoolloopLoginGetResponse = httpclient.execute(schoolloopLoginHttpGet);
 
+		//Receives HTML response and finds the input form to submit the credentials to
 		String schoolLoopString = EntityUtils.toString(schoolloopLoginGetResponse.getEntity());
 		Pattern p = Pattern.compile("<input\\b[^>]+\\bname=\"form_data_id\"[^>]+\\bvalue=\"([0-9]*)\"");
 		Matcher m = p.matcher(schoolLoopString);
-		if (m.find()) {
-			String formDataIDString = m.group(1);
 
+
+				if (m.find()) {
+			String formDataIDString = m.group(1);  //The id in the form_data_id input
+			//Sets up HTTPPost to fill in the form
 			HttpPost schoolloopLoginHttpPost = new HttpPost(BASE_URL + "/portal/login?etarget=login_form");
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair("login_name", pUserName));
 			nameValuePairs.add(new BasicNameValuePair("password", pPassword));
 			nameValuePairs.add(new BasicNameValuePair("form_data_id", formDataIDString));
 			nameValuePairs.add(new BasicNameValuePair("event_override", "login"));
-			String[] blankFields = { "reverse", "sort", "login_form_reverse", "login_form_page_index", "login_form_page_item_count", "login_form_sort",
+			final String[] blankFields = { "reverse", "sort", "login_form_reverse", "login_form_page_index", "login_form_page_item_count", "login_form_sort",
 					"return_url", "forward", "redirect", "login_form_letter", "login_form_filter" };
 			populateNVListWithBlank(nameValuePairs, blankFields);
 			schoolloopLoginHttpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -189,6 +212,11 @@ public class SchoolLoopAPI {
 			// Execute HTTP Post Request
 			HttpResponse schoolloopLoginPostResponse = httpclient.execute(schoolloopLoginHttpPost);
 			if (checkLogin) {
+
+				/*
+				When the login POST request fails, the new URL contains the form_data_id value in the address bar,
+				so return null if login failed
+				 */
 				if (EntityUtils.toString(schoolloopLoginPostResponse.getEntity()).contains("form_data_id")) {
 					return null;
 				} else {
@@ -208,6 +236,12 @@ public class SchoolLoopAPI {
 		}
 	}
 
+
+	/**
+	 * This is a "dirty" class to manage and sync cookies and login data to
+	 * the webview,
+	 * TODO update the class to new API 21 standards with CookieSyncManager, find a better way to store cookies
+	 */
 	public static class Dirty {
 
 		public static void loadLoginDataToWebView(SharedPreferences sharedPref, WebView webView) {

@@ -85,7 +85,11 @@ public class CDMActivity extends ActionBarActivity {
 				CategoryEntryOther.class, SettingsEntry.class);
 		mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		if (mSharedPreferences.getBoolean(Preferences.SETTINGS_ALLOW_PUSH_NOTIFS, true)) {
+
+
+
 			/* Setup Parse for notifications */
+			//TODO Figure out what these unique strings are???-Ryan Tolsma
 			Parse.initialize(this, "gsXQZjeTDxb3Ekjp8PJ8TrY5X9NJROPpIq2E5ljm", "BMHgC1jqWcF3H8QFdqNFKnw1JJgeT1cuWct1W449");
 			PushService.setDefaultPushCallback(this, CDMActivity.class);
             ParseInstallation installation = ParseInstallation.getCurrentInstallation();

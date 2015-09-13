@@ -1,0 +1,46 @@
+Authored by Ryan Tolsma 2015
+Basically a page for me to type out my ideas design for code and features that I'm going to write
+
+            ****For the background stuff*******
+
+  ---  I'm going to write a few classes and create a 'parsers' folder in order to scrape data from the schoolloop website once the user has already
+    logged in. Goal is to have access to all of the schoolloop data that I or any future dev might need/want to implement a feature.
+
+    One's going to scrape data on which classes the user is taking, their percentage grades, which period they're in, and their teachers, etc... and
+    keep those values in a SchoolLoopClass, each object will also contain the current GPA value that class has based off letter grade , AP, and Honors
+    The SchoolLoop class will hold all of the data and objects regarding that subject
+
+
+    One will scrape data on Assignments, their due data, date assigned, their description, teacher, etc... and represent the data as a SchoolLoopAssignmentEvent
+    that will extend the CalendarEvent and have a similar SchoolLoopAssignmentEventBuilder to keep consistency
+
+    One will scrape data on all of the assignments for the semester, their percentage and weight value, date, etc ... and represent those in a
+    SchoolLoopAssignmentEventMap that will extend CalendarEventMap
+
+    One will obtain data from the student's calendar page, and each item in the calendar will be represented as a SchoolLoopCalendarEvent with date, description,
+    and will be contained by the SchoolLoopClass object that submitted the event
+
+    *****For the controllers******
+    NOTIFICATION SYSTEM that the user can select to receive various kinds of notifications for that will be toggled in the settings activity.
+    Including: events in the RSS Feed, Late Starts, New assignments/calendar event posted (can be toggled for specific classes), assignment score posted (can be toggled
+    which type of assignment such as project, assignment, test,assessment etc..) ,  class grade changes (i.e from B- to B+)
+
+    Ability for Staff and ASB to push notifications to app users
+
+
+
+    ****For the views*******
+
+    -new views that are in the NavDrawer and display data from the new background html parsers
+
+   Possible ideas include:
+
+   {Taking away the Webview and replacing it with items in the NavDrawer like:
+   -A listview that displays each class and basic stats, including scored points/total points
+   -clicking on the listview item displays a fragment with recent calendar events, assignment history, and currently assigned homework
+   -or other variations of displaying the data in a friendly/more useable manner that is intuitive and doesn't suffer from the effects of
+   a poorly written mobile page...
+    }
+    A grade calculator NavDrawer item, that calculates how many extra credit points away from a specified grade the user is, or how large of an assignment the user is
+    away from getting the specified grade, or final grades/weighted grades etc...
+    -A trident view that allows users to watch the most recent trident newscast
