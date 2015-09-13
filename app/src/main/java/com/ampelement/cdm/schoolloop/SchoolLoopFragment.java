@@ -198,8 +198,7 @@ public class SchoolLoopFragment extends ExtendedFragment {
 	}
 
 
-
-	private class SchoolLoopLoginTask extends AsyncTask<Login, Void, Boolean> {
+    private class SchoolLoopLoginTask extends AsyncTask<Login, Void, Boolean> {
 
 		@Override
 		protected Boolean doInBackground(Login... logins) {
@@ -273,7 +272,7 @@ public class SchoolLoopFragment extends ExtendedFragment {
 			});
 		}
 	}
-		//SchoolLoopLoginTask Class ends here
+    //SchoolLoopLoginTask Class ends here
 
 
 	private void loginScreenWithErrorMessage(String errorString) {
@@ -319,7 +318,7 @@ public class SchoolLoopFragment extends ExtendedFragment {
 			return true;
 		}
 	}
-		//SchoolLoopWebview Client ends here
+    //SchoolLoopWebview Client ends here
 
 
 	void updateCredentials(String username, String password, long time) {

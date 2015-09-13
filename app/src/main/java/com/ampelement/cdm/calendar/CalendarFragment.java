@@ -104,14 +104,14 @@ public class CalendarFragment extends ExtendedFragment {
 		return eventScreen;
 	}
 
-	/**
-	 * Runs {@link GetEventsTask} to retrieve the new {@link SchoolLoopEventMap} using the {@link EventFetcher} class
-	 * And simultaneously executes an anonymous AsyncTask to use the {@link EventFetcher#loadEvents(String)} to update/set the
-	 * {@link CalendarView}
-	 */
-	void runAsyncTasks() {
-		mSharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-		final String cachedXMLData = mSharedPref.getString(Preferences.CALENDAR_CACHED_DATA, null);
+    /**
+     * Runs {@link GetEventsTask} to retrieve the new {@link SchoolLoopEventMap} using the {@link EventFetcher} class
+     * And simultaneously executes an anonymous AsyncTask to use the {@link EventFetcher#loadEvents(String)} to update/set the
+     * {@link CalendarView}
+     */
+    void runAsyncTasks() {
+        mSharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        final String cachedXMLData = mSharedPref.getString(Preferences.CALENDAR_CACHED_DATA, null);
 
 		if (mGetEventsTask == null) {
 			mGetEventsTask = new GetEventsTask(mSharedPref, cachedXMLData, new OnUpdateComplete() {
