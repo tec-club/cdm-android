@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  =======
  /*
  It seems like this is the only file Alex commented on :)
- >>>>>>> origin/master
+
  */
 public class SchoolLoopEvent extends CalendarEvent implements Parcelable {
 
