@@ -64,11 +64,11 @@ public class SchoolLoopAPI {
 		public String fetchEventXML() {
 			try {
 				URL url = new URL(EVENT_RSS_URL);
-				return Utils.getURL(url);
-			} catch (Exception e) {
-				Log.e(TAG, e.getLocalizedMessage(), e);
-				return null;
-			}
+                return Utils.getURL(url);  //Maybe asynchronous instead for optimizing load speeds???
+            } catch (Exception e) {
+                Log.e(TAG, e.getLocalizedMessage(), e);
+                return null;
+            }
 		}
 
 		/**
@@ -109,7 +109,7 @@ public class SchoolLoopAPI {
 				return null;
 			}
 		}
-	}
+    } //EventFetcher class ends here
 
 	private static class EventParser extends DefaultHandler {
 		StringBuilder content = new StringBuilder();
@@ -179,7 +179,10 @@ public class SchoolLoopAPI {
      * @return The CookieStore that the HTTPPost statement generates if login was successful, else if {@code checkLogin} is null
      * @throws ClientProtocolException If the HTTP requests fail
      * @throws IOException             If the HTTP requests fail
+     *
+     * TODO Implement an asynchronous network request using retrofit and RxAndroid
      */
+
     public static CookieStore loginToSchoolloop(DefaultHttpClient httpclient, String pUserName, String pPassword, boolean checkLogin)
             throws ClientProtocolException, IOException {
 
@@ -259,11 +262,12 @@ public class SchoolLoopAPI {
 			for (Cookie cookie : orig.getCookies()) {
 				dest.setCookie((cookie.isSecure() ? "https" : "http") + "://" + cookie.getDomain() + cookie.getPath(),
 						cookie.getName() + "=" + cookie.getValue());
-				// For saving the cookie values to Preferences
-				// TODO This is dirty and I don't like it - Alex Wendland
-				if (prefEditor != null) {
-					if (cookie.getName().matches("slid")) {
-						prefEditor.putString(Preferences.SCHOOL_LOOP_SLID, cookie.getValue());
+
+                // For saving the cookie values to Preferences
+                // TODO This is dirty and I don't like it - Alex Wendland
+                if (prefEditor != null) {
+                    if (cookie.getName().matches("slid")) {
+                        prefEditor.putString(Preferences.SCHOOL_LOOP_SLID, cookie.getValue());
 						prefEditor.commit();
 					} else if (cookie.getName().matches("JSESSIONID")) {
 						prefEditor.putString(Preferences.SCHOOL_LOOP_JSESSIONID, cookie.getValue());

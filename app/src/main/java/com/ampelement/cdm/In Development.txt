@@ -1,7 +1,8 @@
 Authored by Ryan Tolsma 2015
-Basically a page for me to type out my ideas design for code and features that I'm going to write
+Basically a page for me to type out my ideas and design for code and features that I'm going to write
 
             ****For the background stuff*******
+            Using RxJava hopefully to perform parallel asynchronous operations
 
   ---  I'm going to write a few classes and create a 'parsers' folder in order to scrape data from the schoolloop website once the user has already
     logged in. Goal is to have access to all of the schoolloop data that I or any future dev might need/want to implement a feature.
