@@ -14,7 +14,7 @@ import android.view.View;
 
 import com.ampelement.cdm.NavAdapter.OnNavChangeListener;
 import com.ampelement.cdm.calendar.CalendarFragment;
-import com.ampelement.cdm.infoscreen.InfoListFragment;
+import com.ampelement.cdm.deprecated.infoscreen.InfoListFragment;
 import com.ampelement.cdm.other.InstagramEntry;
 import com.ampelement.cdm.other.SettingsEntry;
 import com.ampelement.cdm.other.TridentEntry;

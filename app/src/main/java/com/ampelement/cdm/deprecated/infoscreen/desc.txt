@@ -1,0 +1,2 @@
+The classes in this folder don't do anything, possibly a legacy of Wendland's first infoscreen
+project.
