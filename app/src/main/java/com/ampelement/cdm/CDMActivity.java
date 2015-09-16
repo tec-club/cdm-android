@@ -24,10 +24,7 @@ import com.ampelement.cdm.other.categories.CategoryEntryWeb;
 import com.ampelement.cdm.schoolloop.SchoolLoopFragment;
 import com.ampelement.cdm.utils.android.AndroidUtils;
 import com.ampelement.cdm.utils.android.ExtendedFragment;
-import com.parse.Parse;
-import com.parse.ParseAnalytics;
-import com.parse.ParseInstallation;
-import com.parse.PushService;
+
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -88,15 +85,6 @@ public class CDMActivity extends ActionBarActivity {
 
 
 
-			/* Setup Parse for notifications */
-            //TODO Figure out what these unique strings are???-Ryan Tolsma
-            Parse.initialize(this, "gsXQZjeTDxb3Ekjp8PJ8TrY5X9NJROPpIq2E5ljm", "BMHgC1jqWcF3H8QFdqNFKnw1JJgeT1cuWct1W449");
-            PushService.setDefaultPushCallback(this, CDMActivity.class);
-            ParseInstallation installation = ParseInstallation.getCurrentInstallation();
-            installation.put("UniqueId", Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID));
-            installation.saveInBackground();
-			/* Use Parse to track analytics */
-			ParseAnalytics.trackAppOpened(getIntent());
 		}
 	}
 
