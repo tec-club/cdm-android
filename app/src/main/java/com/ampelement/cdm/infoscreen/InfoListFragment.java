@@ -1,4 +1,4 @@
-package com.ampelement.cdm.deprecated.infoscreen;
+package com.ampelement.cdm.infoscreen;
 
 import android.app.Activity;
 import android.content.Context;

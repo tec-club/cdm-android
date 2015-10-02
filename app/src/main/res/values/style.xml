@@ -2,7 +2,8 @@
 <resources>
 
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light">
-        <item name="actionBarStyle">@style/Widget.AppCompat.Light.ActionBar.Solid</item>
+        <item name="actionBarStyle">@style/Widget.AppCompat.Light.ActionBar</item>
+
     </style>
 
 </resources>

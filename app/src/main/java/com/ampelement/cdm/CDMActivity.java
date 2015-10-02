@@ -7,14 +7,13 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.ampelement.cdm.NavAdapter.OnNavChangeListener;
 import com.ampelement.cdm.calendar.CalendarFragment;
-import com.ampelement.cdm.deprecated.infoscreen.InfoListFragment;
+import com.ampelement.cdm.infoscreen.InfoListFragment;
 import com.ampelement.cdm.other.InstagramEntry;
 import com.ampelement.cdm.other.SettingsEntry;
 import com.ampelement.cdm.other.TridentEntry;
@@ -24,7 +23,6 @@ import com.ampelement.cdm.other.categories.CategoryEntryWeb;
 import com.ampelement.cdm.schoolloop.SchoolLoopFragment;
 import com.ampelement.cdm.utils.android.AndroidUtils;
 import com.ampelement.cdm.utils.android.ExtendedFragment;
-
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -47,8 +45,8 @@ public class CDMActivity extends AppCompatActivity {
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
 
-		getSupportActionBar().setIcon(R.drawable.trident);
-		getSupportActionBar().setTitle("Corona del Mar HS");
+        getSupportActionBar().setLogo(R.drawable.ic_launcher);
+        getSupportActionBar().setTitle("Corona del Mar HS");
 
 		mNavAdapter = new NavAdapter(this, savedInstanceState, findViewById(android.R.id.content), R.id.main_drawer_layout, R.id.main_nav_drawer,
 				R.id.main_frame, new OnNavChangeListener() {
@@ -82,7 +80,7 @@ public class CDMActivity extends AppCompatActivity {
 				CategoryEntryOther.class, SettingsEntry.class);
 		mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		if (mSharedPreferences.getBoolean(Preferences.SETTINGS_ALLOW_PUSH_NOTIFS, true)) {
-
+            //TODO add code to initiate service for notifications pulled from Flask server
 
 
 		}

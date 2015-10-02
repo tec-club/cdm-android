@@ -1,7 +1,8 @@
-package com.ampelement.cdm.deprecated.infoscreen;
+package com.ampelement.cdm.infoscreen;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.LinearLayout;
 
-import android.support.v4.app.DialogFragment;
 import com.ampelement.cdm.R;
-import com.ampelement.cdm.deprecated.infoscreen.WebViewDialogFragment.DialogWebViewClient.OnPageLoaded;
+import com.ampelement.cdm.infoscreen.WebViewDialogFragment.DialogWebViewClient.OnPageLoaded;
 
 /* TODO Redesign implementation
 I don't really agree with this design structure. Right now all of the InfoItems open a WebViewDialogFragment

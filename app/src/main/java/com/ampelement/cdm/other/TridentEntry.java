@@ -1,17 +1,13 @@
 package com.ampelement.cdm.other;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
-
 import com.ampelement.cdm.R;
 import com.ampelement.cdm.utils.android.ExtendedFragment;
-import com.ampelement.cdm.utils.android.NavDrawerEntry;
+import com.ampelement.cdm.utils.android.WebEntry;
 
 /**
  * This class represents an entry on the Navigation Drawer
  */
-public class TridentEntry extends NavDrawerEntry {
+public class TridentEntry extends WebEntry {
 
 	public static final String TAG = "TridentEntry";
 
@@ -20,15 +16,6 @@ public class TridentEntry extends NavDrawerEntry {
 		return "Trident Online";
 	}
 
-	@Override
-	public EntryType getType() {
-		return EntryType.ACTION;
-	}
-
-	@Override
-	public EntryStyle getStyle() {
-		return EntryStyle.SMALL;
-	}
 
 	@Override
 	public int getIcon() {
@@ -40,12 +27,12 @@ public class TridentEntry extends NavDrawerEntry {
 		return null;
 	}
 
+    @Override
+    public String getURL() {
+        return TRIDENT_URL;
+    }
+
 	private static final String TRIDENT_URL = "http://www.tridentonline.net/";
 
-	@Override
-	public void runAction(Activity activity) {
-		Uri uri = Uri.parse(TRIDENT_URL);
-		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-		activity.startActivity(intent);
-	}
+
 }

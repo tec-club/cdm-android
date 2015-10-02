@@ -17,7 +17,7 @@ public abstract class NavDrawerEntry {
 	public abstract String getTitle();
 
 	public enum EntryType {
-        LABEL, ACTION, FRAGMENT
+        LABEL, ACTION, FRAGMENT, DIALOG
     }
 
 	/**
