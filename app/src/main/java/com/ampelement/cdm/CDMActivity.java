@@ -49,7 +49,6 @@ public class CDMActivity extends AppCompatActivity {
 
 		getSupportActionBar().setIcon(R.drawable.trident);
 		getSupportActionBar().setTitle("Corona del Mar HS");
-        getSupportActionBar().
 
 		mNavAdapter = new NavAdapter(this, savedInstanceState, findViewById(android.R.id.content), R.id.main_drawer_layout, R.id.main_nav_drawer,
 				R.id.main_frame, new OnNavChangeListener() {
