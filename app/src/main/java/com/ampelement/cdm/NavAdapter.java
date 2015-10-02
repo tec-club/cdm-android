@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -44,8 +45,8 @@ public class NavAdapter {
 	private ListView mDrawerList;
 	private int mResFragmentFrame;
 
-	private ActionBarActivity mActivity;
-	private final LayoutInflater mInflater;
+    private AppCompatActivity mActivity;
+    private final LayoutInflater mInflater;
 	private FragmentManager mFragmentManager;
 
 	private int mCurrentPos;
@@ -61,8 +62,8 @@ public class NavAdapter {
 		public void onFragmentLoaded(ExtendedFragment oldFragment, ExtendedFragment newFragment);
 	}
 
-	public NavAdapter(ActionBarActivity activity, Bundle savedInstanceState, View parentView, int resDrawerLayout, int resDrawerList,
-			int resFragmentFrame, OnNavChangeListener onNavChangeListener, Class<? extends NavDrawerEntry>... classes) {
+    public NavAdapter(AppCompatActivity activity, Bundle savedInstanceState, View parentView, int resDrawerLayout, int resDrawerList,
+                      int resFragmentFrame, OnNavChangeListener onNavChangeListener, Class<? extends NavDrawerEntry>... classes) {
 		mActivity = activity;
 
 		mFragmentManager = mActivity.getSupportFragmentManager();
@@ -72,8 +73,8 @@ public class NavAdapter {
 		mEntries = new ArrayList<NavDrawerEntry>();
 		for (Class<? extends NavDrawerEntry> fragmentClass : classes) {
 			try {
-				mEntries.add(fragmentClass.newInstance());
-			} catch (InstantiationException e) {
+                mEntries.add(fragmentClass.newInstance()); //zero arg constructor for entrytype
+            } catch (InstantiationException e) {
 				Log.e(TAG, e.getMessage(), e);
 			} catch (IllegalAccessException e) {
 				Log.e(TAG, e.getMessage(), e);

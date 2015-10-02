@@ -16,6 +16,10 @@
         <Preference
             android:summary="Developer\nClass of 2015"
             android:title="Alex Wendland" />
+        <Preference
+            android:summary="Developer\nClass of 2018"
+            android:title="Ryan Tolsma"/>
     </PreferenceCategory>
+
 
 </PreferenceScreen>

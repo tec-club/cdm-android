@@ -8,7 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -29,7 +29,7 @@ import com.ampelement.cdm.utils.android.ExtendedFragment;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public class CDMActivity extends ActionBarActivity {
+public class CDMActivity extends AppCompatActivity {
 
 	public static final String TAG = "CDMActivity";
 
@@ -49,6 +49,7 @@ public class CDMActivity extends ActionBarActivity {
 
 		getSupportActionBar().setIcon(R.drawable.trident);
 		getSupportActionBar().setTitle("Corona del Mar HS");
+        getSupportActionBar().
 
 		mNavAdapter = new NavAdapter(this, savedInstanceState, findViewById(android.R.id.content), R.id.main_drawer_layout, R.id.main_nav_drawer,
 				R.id.main_frame, new OnNavChangeListener() {
@@ -113,8 +114,8 @@ public class CDMActivity extends ActionBarActivity {
 			StringWriter sw = new StringWriter();
 			PrintWriter pw = new PrintWriter(sw);
 			e.printStackTrace(pw);
-			Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "me@alexwendland.com", null));
-			emailIntent.putExtra(Intent.EXTRA_TEXT, e.getMessage() + "\n" + sw.toString());
+            Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "1tolsmar@gmail.com", null));
+            emailIntent.putExtra(Intent.EXTRA_TEXT, e.getMessage() + "\n" + sw.toString());
 			startActivity(Intent.createChooser(emailIntent, "Send email..."));
 		}
 	}
