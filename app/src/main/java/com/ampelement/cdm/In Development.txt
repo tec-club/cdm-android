@@ -21,7 +21,7 @@ Basically a page for me to type out my ideas and design for code and features th
     One will obtain data from the student's calendar page, and each item in the calendar will be represented as a SchoolLoopCalendarEvent with date, description,
     and will be contained by the SchoolLoopClass object that submitted the event
 
-    *****For the controllers******
+   TODO *****For the controllers******
     NOTIFICATION SYSTEM that the user can select to receive various kinds of notifications for that will be toggled in the settings activity.
     Including: events in the RSS Feed, Late Starts, New assignments/calendar event posted (can be toggled for specific classes), assignment score posted (can be toggled
     which type of assignment such as project, assignment, test,assessment etc..) ,  class grade changes (i.e from B- to B+)

@@ -1,7 +1,6 @@
 package com.ampelement.cdm.notification;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 
 /**
  * Base class for different notification types. Clicking the notification will open up the app
@@ -13,6 +12,10 @@ public abstract class PushNotification {
     String title;
     String content;
 
+    String category;
+    int icon;
+    int priority;
+
     public String getCategory() {
         return category;
     }
@@ -20,9 +23,6 @@ public abstract class PushNotification {
     public void setCategory(String category) {
         this.category = category;
     }
-
-    String category;
-    int icon;
 
     public int getPriority() {
         return priority;
@@ -32,7 +32,6 @@ public abstract class PushNotification {
         this.priority = priority;
     }
 
-    int priority;
 
     public String getTitle() {
         return title;

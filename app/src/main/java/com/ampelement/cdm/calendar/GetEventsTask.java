@@ -46,7 +46,7 @@ public class GetEventsTask extends AsyncTask<Void, String, SchoolLoopEventMap> {
             else {
                 SharedPreferences.Editor edit = mSharedPref.edit();
                 edit.putString(Preferences.CALENDAR_CACHED_DATA, latestXMLData);
-                edit.commit();
+                edit.apply();
                 return eventFetcher.loadEvents(latestXMLData);
             }
         } catch (Exception e) {

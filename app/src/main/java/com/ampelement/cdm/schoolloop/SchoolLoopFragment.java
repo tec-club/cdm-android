@@ -176,7 +176,7 @@ public class SchoolLoopFragment extends ExtendedFragment {
             sharedPrefEditor.putString(Preferences.SCHOOL_LOOP_PASSWORD, password);
         if (time >= 0)
             sharedPrefEditor.putLong(Preferences.SCHOOL_LOOP_TIME, time);
-        sharedPrefEditor.commit();
+        sharedPrefEditor.apply();
     }
 //SchoolLoopObservableLogin Class ends here
 

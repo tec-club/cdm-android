@@ -25,6 +25,10 @@ public class CalendarEvent {
 		this(startTime.getMillis(), endTime.getMillis(), startTime.getChronology());
 	}
 
+    public CalendarEvent(DateTime endTime) {
+        this(System.currentTimeMillis(), endTime.getMillis(), new DateTime(System.currentTimeMillis()).getChronology());
+    }
+
 
     /**
      * @return Date of when the Interval started
