@@ -154,8 +154,7 @@ public class InfoListFragment extends ExtendedFragment {
 			infoList.add(new InfoItem(
 					"Bell Schedule",
 					R.drawable.info_bell_schedule,
-                    "http://cdm.schoolloop.com/file/1385192323175/5949715866280787096.pdf", //implement autoupdate of url by parsing cdm.schoolloop
-                    //BASE_URL + "/bell_schedule",
+                    BASE_URL + "/bell_schedule",
                     "The school bell schedule. Contains time information for Late Starts, Minimum Days, Regular Days, Final Exams, Assmebly/Rally Schedule, CST Exams and Senior Projects.",
 					false));
 			/*
