@@ -12,7 +12,7 @@
             android:layout_weight="1"
             android:orientation="vertical" >
 
-            <com.ampelement.cdm.widgets.TextViewRT
+            <com.asb.cdm.widgets.TextViewRT
                 android:id="@+id/info_item_l_textView_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
                 android:textColor="#787878"
                 android:textSize="20sp" />
 
-            <com.ampelement.cdm.widgets.TextViewRCB
+            <com.asb.cdm.widgets.TextViewRCB
                 android:id="@+id/info_item_l_textView_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

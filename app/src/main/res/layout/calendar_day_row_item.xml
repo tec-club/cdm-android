@@ -19,18 +19,18 @@
         android:paddingLeft="15dp"
         android:paddingTop="5dp" >
 
-        <com.ampelement.cdm.widgets.TextViewRCB
+        <com.asb.cdm.widgets.TextViewRCB
             android:id="@+id/calendar_day_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="17sp" />
 
-        <com.ampelement.cdm.widgets.TextViewRBI
+        <com.asb.cdm.widgets.TextViewRBI
             android:id="@+id/calendar_day_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <com.ampelement.cdm.widgets.TextViewRCR
+        <com.asb.cdm.widgets.TextViewRCR
             android:id="@+id/calendar_day_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

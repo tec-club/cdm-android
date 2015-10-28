@@ -5,7 +5,7 @@ android {
     buildToolsVersion '21.1.1'
     defaultConfig {
         minSdkVersion 11
-        targetSdkVersion 21
+        targetSdkVersion 22
         versionCode 4
         versionName "1.1.1"
     }
@@ -19,7 +19,7 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:21.0.+'
+    compile 'com.android.support:appcompat-v7:22.0.+'
     compile 'io.reactivex:rxjava:1.0.10'
     compile 'io.reactivex:rxandroid:1.0.1'
     compile 'com.google.dagger:dagger:2.0.1'
@@ -27,5 +27,6 @@ dependencies {
     compile 'io.realm:realm-android:0.82.2'
     compile 'com.squareup.retrofit:retrofit:2.0.0-beta1'
     compile 'joda-time:joda-time:2.8.2'
-    compile 'com.android.support:design:22.2.1'
+    compile 'com.android.support:design:22.2.0'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
 }

@@ -59,7 +59,7 @@
             android:text="@string/cdm_submit" />
     </LinearLayout>
 
-    <com.ampelement.cdm.widgets.TextViewRBI
+    <com.asb.cdm.widgets.TextViewRBI
         android:id="@+id/school_loop_error"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

@@ -25,7 +25,7 @@
         android:layout_weight="0"
         android:visibility="gone" >
 
-        <com.ampelement.cdm.widgets.TextViewRBI
+        <com.asb.cdm.widgets.TextViewRBI
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
@@ -40,7 +40,7 @@
         android:layout_weight="0"
         android:orientation="horizontal" >
 
-        <com.ampelement.cdm.widgets.TextViewRBI
+        <com.asb.cdm.widgets.TextViewRBI
             android:id="@+id/event_screen_month"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
             android:textColor="#ff4d4d4d"
             android:textSize="40sp" />
 
-        <com.ampelement.cdm.widgets.TextViewRCB
+        <com.asb.cdm.widgets.TextViewRCB
             android:id="@+id/event_screen_year"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
             android:textSize="20sp" />
     </LinearLayout>
 
-    <com.ampelement.cdm.calendar.library.CalendarView
+    <com.asb.cdm.calendar.library.CalendarView
         android:id="@+id/event_screen_calendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

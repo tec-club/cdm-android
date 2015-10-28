@@ -16,7 +16,7 @@
         android:contentDescription="Club Logo"
         android:src="@drawable/avatar_missing_circle" />
 
-    <com.ampelement.cdm.widgets.TextViewRT
+    <com.asb.cdm.widgets.TextViewRT
         android:id="@+id/club_item_title_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
         android:textColor="#787878"
         android:textSize="20sp" />
 
-    <com.ampelement.cdm.widgets.TextViewRCB
+    <com.asb.cdm.widgets.TextViewRCB
         android:id="@+id/club_item_description_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         android:textColor="#888888"
         android:textSize="15sp" />
 
-    <com.ampelement.cdm.widgets.TextViewRT
+    <com.asb.cdm.widgets.TextViewRT
         android:id="@+id/club_item_meeting_times_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

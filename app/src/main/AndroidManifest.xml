@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.ampelement.cdm">
+          package="com.asb.cdm">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -12,10 +12,10 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <permission
-        android:name="com.ampelement.cdm.permission.C2D_MESSAGE"
+        android:name="com.asb.cdm.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="com.ampelement.cdm.permission.C2D_MESSAGE" />
+    <uses-permission android:name="com.asb.cdm.permission.C2D_MESSAGE"/>
 
     <application
         android:allowBackup="true"
@@ -23,7 +23,7 @@
         android:label="@string/cdm_app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".CDMActivity"
+            android:name="com.asb.cdm.CDMActivity"
             android:label="@string/cdm_app_name_long"
             android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter android:label="@string/cdm_app_name_long" >
@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name="com.asb.cdm.SettingsActivity"
             android:icon="@drawable/trident"
             android:label="@string/cdm_settings" >
         </activity>
@@ -50,17 +50,17 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
 
-                <category android:name="com.ampelement.cdm" />
+                <category android:name="com.asb.cdm"/>
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".schoolloop.data.NotficationReceiver"
+            android:name="com.asb.cdm.schoolloop.data.NotficationReceiver"
             android:enabled="true"
             android:exported="true">
         </receiver>
 
         <service
-            android:name=".schoolloop.data.NotificationService"
+            android:name="com.asb.cdm.schoolloop.data.NotificationService"
             android:exported="false">
         </service>
     </application>
